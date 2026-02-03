@@ -13,7 +13,7 @@ classifiers = [
 ]
 license = { file = "LICENSE" }
 dependencies = [
-        'numpy<2.0',
+        'numpy',
         'scipy',
         'astropy',
         'pyerfa',
