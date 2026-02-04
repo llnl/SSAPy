@@ -280,8 +280,8 @@ class SGP4Propagator(Propagator):
 
 
 def impact_event(t, s):
-        r = s[0:3]
-        return np.linalg.norm(r) - EARTH_RADIUS
+    r = s[0:3]
+    return np.linalg.norm(r) - EARTH_RADIUS
 
 impact_event.terminal = True
 impact_event.direction = -1
@@ -486,15 +486,18 @@ class RKPropagator(Propagator, ABC):
         # times, states, h_pre, h_app, spline
         container = _InterpolantCache(orbit, self)
 
+        tQuery = np.asarray(tQuery, dtype=np.float64)
         tmin, tmax = np.min(tQuery), np.max(tQuery)
+
         if len(container) == 0:
-            times = deque([orbit.t])
-            states = deque([np.hstack([orbit.r, orbit.v])])
-            h_pre = -self.h
-            h_app = self.h
+            times = deque([np.float64(orbit.t)])
+            states = deque([np.asarray(np.hstack([orbit.r, orbit.v]), dtype=np.float64)])
+            h_pre = -np.float64(self.h)
+            h_app = np.float64(self.h)
             spline = None
         else:
             times, states, h_pre, h_app, spline = container
+
         remake_spline = False
         if times[0] >= tmin:
             h_pre = self._prop(times, states, h_pre, tmin, orbit.propkw)
@@ -502,16 +505,43 @@ class RKPropagator(Propagator, ABC):
         if times[-1] <= tmax:
             h_app = self._prop(times, states, h_app, tmax, orbit.propkw)
             remake_spline = True
-        if remake_spline:
-            spline = make_interp_spline(times, states, k=self._minPoints)
+
+        # Always materialize arrays for trimming / lookup
+        times_arr = np.asarray(times, dtype=np.float64)
+        states_arr = np.asarray(states, dtype=np.float64)
+        if times_arr.size == 1:
+            # Only defined exactly at the single cached time
+            tQuery = tQuery[tQuery == times_arr[0]]
+            if tQuery.size == 0:
+                return np.empty((0, 3)), np.empty((0, 3))
+            out = np.repeat(states_arr, tQuery.size, axis=0)
+            return out[:, 0:3], out[:, 3:6]
+
+        if remake_spline or spline is None:
+            k = min(3, len(times_arr) - 1)  # cubic, stable
+            spline = make_interp_spline(times_arr, states_arr, k=k)
             container.clear()
             container.extend([times, states, h_pre, h_app, spline])
+            times_arr = np.asarray(times, dtype=np.float64)
+            states_arr = np.asarray(states, dtype=np.float64)
 
-        tQuery = tQuery[tQuery <= times[-1]]
-        if len(tQuery) == 0:
+        tQuery = tQuery[(tQuery >= times_arr[0]) & (tQuery <= times_arr[-1])]
+        if tQuery.size == 0:
             return np.empty((0, 3)), np.empty((0, 3))
 
-        out = spline(tQuery)
+        # Exact knot lookup (prevents tiny spline-at-knot drift)
+        idx = np.searchsorted(times_arr, tQuery)
+        exact = np.zeros(tQuery.size, dtype=bool)
+        ok = idx < times_arr.size
+        exact[ok] = np.isclose(times_arr[idx[ok]], tQuery[ok], rtol=0.0, atol=1e-9)
+
+        out = np.empty((tQuery.size, 6), dtype=np.float64)
+        if np.all(exact):
+            out[:] = states_arr[idx]
+        else:
+            out[exact] = states_arr[idx[exact]]
+            out[~exact] = spline(tQuery[~exact])
+
         return out[:, 0:3], out[:, 3:6]
 
 
@@ -593,7 +623,7 @@ class RK4Propagator(RKPropagator):
             # EARTH COLLISION CHECK
             if np.linalg.norm(state[0:3]) <= EARTH_RADIUS:
                 print("Collision with Earth detected. Propagation stopped at t =", t)
-                break  # Do not add this state — exit
+                break  # Do not add further states — exit
 
         return h
 
@@ -696,7 +726,7 @@ class RK8Propagator(RKPropagator):
             # interpolate better
             if not pred(t) and len(times) >= self._minPoints:
                 keepGoing = False
-            k = np.zeros((13, 6), dtype=float64)
+            k = np.zeros((13, 6), dtype=np.float64)
             for i in range(13):
                 k[i] = h * fp(state + np.dot(a[i], k), t + c[i] * h)
             state = state + np.dot(b8, k)
@@ -711,7 +741,7 @@ class RK8Propagator(RKPropagator):
             # EARTH COLLISION CHECK
             if np.linalg.norm(state[0:3]) <= EARTH_RADIUS:
                 print("Collision with Earth detected. Propagation stopped at t =", t)
-                break  # Do not add this state — exit
+                break  # Do not add further states — exit
 
         return h
 
@@ -795,7 +825,7 @@ class RK78Propagator(RK8Propagator):
 
         def step(h, t, state):
             while True:
-                k = np.zeros((13, 6), dtype=float)
+                k = np.zeros((13, 6), dtype=np.float64)
                 for i in range(13):
                     k[i] = h * fp(state + np.dot(a[i], k), t + c[i] * h)
                 result7 = state + np.dot(b7, k)
@@ -837,7 +867,7 @@ class RK78Propagator(RK8Propagator):
             # EARTH COLLISION CHECK
             if np.linalg.norm(state[0:3]) <= EARTH_RADIUS:
                 print("Collision with Earth detected. Propagation stopped at t =", t)
-                break  # Do not add this state — exit
+                break  # Do not add further states — exit
 
         return h
 
