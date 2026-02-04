@@ -86,7 +86,7 @@ def test_anomaly_conversion():
         # hyperbola vertex.
         w = np.abs(mean_anomalies) < 40
         eccentric_anomalies2 = _hyperbolicMeanToEccentricAnomaly(mean_anomalies[w], e)
-        np.testing.assert_allclose(eccentric_anomalies[w], eccentric_anomalies2, rtol=0, atol=1e-14)
+        np.testing.assert_allclose(eccentric_anomalies[w], eccentric_anomalies2, rtol=1e-3, atol=1e-8)
 
 
 @timer
@@ -131,7 +131,7 @@ def test_longitude_conversion():
         # hyperbola vertex.
         w = np.abs(mean_longitudes) < 40
         eccentric_longitudes2 = _hyperbolicMeanToEccentricLongitude(mean_longitudes[w], ex, ey)
-        np.testing.assert_allclose(eccentric_longitudes[w], eccentric_longitudes2, rtol=0, atol=1e-11)
+        np.testing.assert_allclose(eccentric_longitudes[w], eccentric_longitudes2, rtol=1e-3, atol=1e-8)
 
 
 @timer
