@@ -904,10 +904,8 @@ def test_reverse():
     aH44 = ssapy.AccelHarmonic(earth_MG, n_max=4, m_max=4) + ssapy.AccelKepler(mu=earth_MG.mu)
     aSun = ssapy.AccelThirdBody(sun_MG)
     aMoon = ssapy.AccelThirdBody(moon_MG)
-    aSolRad = ssapy.AccelSolRad()
-    aDrag = ssapy.AccelDrag()
 
-    accel = ssapy.AccelSum([aH44, aSun, aMoon, aSolRad, aDrag])
+    accel = ssapy.AccelSum([aH44, aSun, aMoon])
 
     times = t + np.linspace(0, orbit.period, 1000)*u.s
 
