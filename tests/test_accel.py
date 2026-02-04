@@ -929,7 +929,7 @@ def test_reverse():
         np.testing.assert_allclose(v0, v1, rtol=0, atol=1e-3)
 
         # Should be able to start from the middle too.
-        orbitMiddle = ssapy.Orbit(r0[500], v0[500], times[500], propkw=kwargs)
+        orbitMiddle = ssapy.Orbit(r0[int(len(r0) / 2)], v0[int(len(r0) / 2)], times[int(len(r0) / 2)], propkw=kwargs)
         r2, v2 = ssapy.rv(
             orbitMiddle,
             times,
