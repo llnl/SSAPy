@@ -160,4 +160,5 @@ Below is a list of other orbit propagation codes, both commercial and free. Whil
 - `MathWorks MATLAB <https://www.mathworks.com/products/matlab.html?s_tid=hp_products_matlab>`_
 - `AstroPy <https://docs.astropy.org/en/stable/index.html>`_
 - `REBOUND <https://rebound.readthedocs.io/en/latest/>`_
-    - `REBOUNDx <https://reboundx.readthedocs.io/en/latest/index.html>`_
+- `REBOUNDx <https://reboundx.readthedocs.io/en/latest/index.html>`_
+- `Nyx Space <https://nyxspace.com/nyxspace/showcase/>`_
