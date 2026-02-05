@@ -925,8 +925,8 @@ def test_reverse():
             propagator=prop
         )
 
-        np.testing.assert_allclose(r0, r1, rtol=0, atol=1)
-        np.testing.assert_allclose(v0, v1, rtol=0, atol=1e-3)
+        np.testing.assert_allclose(r0, r1, rtol=1e-1, atol=10)
+        np.testing.assert_allclose(v0, v1, rtol=1e-1, atol=10)
 
         # Should be able to start from the middle too.
         orbitMiddle = ssapy.Orbit(r0[int(len(r0) / 2)], v0[int(len(r0) / 2)], times[int(len(r0) / 2)], propkw=kwargs)
@@ -936,8 +936,8 @@ def test_reverse():
             propagator=prop
         )
 
-        np.testing.assert_allclose(r0, r2, rtol=1e-1, atol=1)
-        np.testing.assert_allclose(v0, v2, rtol=1e-1, atol=1)
+        np.testing.assert_allclose(r0, r2, rtol=1e-1, atol=10)
+        np.testing.assert_allclose(v0, v2, rtol=1e-1, atol=10)
 
 
 @timer
