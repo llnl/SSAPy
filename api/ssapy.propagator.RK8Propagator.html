@@ -1,0 +1,208 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RK8Propagator &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="RKPropagator" href="ssapy.propagator.RKPropagator.html" />
+    <link rel="prev" title="RK78Propagator" href="ssapy.propagator.RK78Propagator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../modules/ssapy.propagator.html">ssapy.propagator</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../modules/ssapy.propagator.html#functions">Functions</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../modules/ssapy.propagator.html#classes">Classes</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ssapy.propagator.KeplerianPropagator.html">KeplerianPropagator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.propagator.Propagator.html">Propagator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.propagator.RK4Propagator.html">RK4Propagator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.propagator.RK78Propagator.html">RK78Propagator</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">RK8Propagator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.propagator.RKPropagator.html">RKPropagator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.propagator.SGP4Propagator.html">SGP4Propagator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.propagator.SciPyPropagator.html">SciPyPropagator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.propagator.SeriesPropagator.html">SeriesPropagator</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../modules/ssapy.propagator.html#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+          <li class="breadcrumb-item"><a href="../modules/ssapy.propagator.html">ssapy.propagator</a></li>
+      <li class="breadcrumb-item active">RK8Propagator</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/ssapy.propagator.RK8Propagator.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="rk8propagator">
+<h1>RK8Propagator<a class="headerlink" href="#rk8propagator" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ssapy.propagator.RK8Propagator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssapy.propagator.</span></span><span class="sig-name descname"><span class="pre">RK8Propagator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/propagator.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/propagator.html#RK8Propagator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.propagator.RK8Propagator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ssapy.propagator.RKPropagator.html#ssapy.propagator.RKPropagator" title="ssapy.propagator.RKPropagator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RKPropagator</span></code></a></p>
+<p>Runge-Kutta 8th order numerical integrator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>accel</strong> (<em>ssapy.Accel</em>) – Accel object containing the acceleration model by which to propagate.</p></li>
+<li><p><strong>h</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Step size in seconds.  ~70s yields accuracy of ~1e-6 meters at GEO over
+a couple of days.  ~20s yields accuracy of ~1e-5 meters at LEO over a
+few hours.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Attributes Summary</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssapy.propagator.RK8Propagator.a" title="ssapy.propagator.RK8Propagator.a"><code class="xref py py-obj docutils literal notranslate"><span class="pre">a</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssapy.propagator.RK8Propagator.b8" title="ssapy.propagator.RK8Propagator.b8"><code class="xref py py-obj docutils literal notranslate"><span class="pre">b8</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssapy.propagator.RK8Propagator.c" title="ssapy.propagator.RK8Propagator.c"><code class="xref py py-obj docutils literal notranslate"><span class="pre">c</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.propagator.RK8Propagator.a">
+<span class="sig-name descname"><span class="pre">a</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">array([[</span> <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[</span> <span class="pre">5.55555556e-02,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[</span> <span class="pre">2.08333333e-02,</span>&#160; <span class="pre">6.25000000e-02,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[</span> <span class="pre">3.12500000e-02,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">9.37500000e-02,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[</span> <span class="pre">3.12500000e-01,</span>&#160; <span class="pre">0.00000000e+00,</span> <span class="pre">-1.17187500e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">1.17187500e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[</span> <span class="pre">3.75000000e-02,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">1.87500000e-01,</span>&#160; <span class="pre">1.50000000e-01,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[</span> <span class="pre">4.79101371e-02,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">1.12248713e-01,</span> <span class="pre">-2.55056738e-02,</span>&#160; <span class="pre">1.28468239e-02,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[</span> <span class="pre">1.69179898e-02,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">3.87848278e-01,</span>&#160; <span class="pre">3.59773699e-02,</span>&#160; <span class="pre">1.96970214e-01,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">-1.72713852e-01,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[</span> <span class="pre">6.90957534e-02,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">-6.34247977e-01,</span> <span class="pre">-1.61197575e-01,</span>&#160; <span class="pre">1.38650309e-01,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">9.40928614e-01,</span>&#160; <span class="pre">2.11636326e-01,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[</span> <span class="pre">1.83556997e-01,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">-2.46876808e+00,</span> <span class="pre">-2.91286888e-01,</span> <span class="pre">-2.64730202e-02,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">2.84783876e+00,</span>&#160; <span class="pre">2.81387331e-01,</span>&#160; <span class="pre">1.23744900e-01,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[-1.21542482e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">1.66726087e+01,</span>&#160; <span class="pre">9.15741828e-01,</span> <span class="pre">-6.05660580e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">-1.60035736e+01,</span>&#160; <span class="pre">1.48493031e+01,</span> <span class="pre">-1.33715757e+01,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">5.13418265e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[</span> <span class="pre">2.58860916e-01,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">-4.77448579e+00,</span> <span class="pre">-4.35093014e-01,</span> <span class="pre">-3.04948333e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">5.57792004e+00,</span>&#160; <span class="pre">6.15583159e+00,</span> <span class="pre">-5.06210459e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">2.19392617e+00,</span>&#160; <span class="pre">1.34627999e-01,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00],</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[</span> <span class="pre">8.22427600e-01,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">-1.16586733e+01,</span> <span class="pre">-7.57622117e-01,</span>&#160; <span class="pre">7.13973588e-01,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">1.20757750e+01,</span> <span class="pre">-2.12765911e+00,</span>&#160; <span class="pre">1.99016621e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">-2.34286472e-01,</span>&#160; <span class="pre">1.75898578e-01,</span>&#160; <span class="pre">0.00000000e+00,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.00000000e+00]])</span></em><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/propagator.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.propagator.RK8Propagator.a" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.propagator.RK8Propagator.b8">
+<span class="sig-name descname"><span class="pre">b8</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">array([</span> <span class="pre">0.04174749,</span>&#160; <span class="pre">0.</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">,</span>&#160; <span class="pre">0.</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">,</span>&#160; <span class="pre">0.</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">,</span>&#160; <span class="pre">0.</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">-0.05545233,</span>&#160; <span class="pre">0.23931281,</span>&#160; <span class="pre">0.70351067,</span> <span class="pre">-0.75975961,</span>&#160; <span class="pre">0.66056303,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.15818748,</span> <span class="pre">-0.23810954,</span>&#160; <span class="pre">0.25</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">])</span></em><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/propagator.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.propagator.RK8Propagator.b8" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.propagator.RK8Propagator.c">
+<span class="sig-name descname"><span class="pre">c</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">array([0.</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">,</span> <span class="pre">0.05555556,</span> <span class="pre">0.08333333,</span> <span class="pre">0.125</span>&#160;&#160;&#160;&#160; <span class="pre">,</span> <span class="pre">0.3125</span>&#160;&#160;&#160; <span class="pre">,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.375</span>&#160;&#160;&#160;&#160; <span class="pre">,</span> <span class="pre">0.1475</span>&#160;&#160;&#160; <span class="pre">,</span> <span class="pre">0.465</span>&#160;&#160;&#160;&#160; <span class="pre">,</span> <span class="pre">0.56486545,</span> <span class="pre">0.65</span>&#160;&#160;&#160;&#160;&#160; <span class="pre">,</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">0.92465628,</span> <span class="pre">1.</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">,</span> <span class="pre">1.</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">])</span></em><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/propagator.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.propagator.RK8Propagator.c" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ssapy.propagator.RK78Propagator.html" class="btn btn-neutral float-left" title="RK78Propagator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ssapy.propagator.RKPropagator.html" class="btn btn-neutral float-right" title="RKPropagator" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

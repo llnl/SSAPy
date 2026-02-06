@@ -1,0 +1,17 @@
+CircVelocityPrior
+=================
+
+.. currentmodule:: ssapy.correlate_tracks
+
+.. autoclass:: CircVelocityPrior
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~CircVelocityPrior.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

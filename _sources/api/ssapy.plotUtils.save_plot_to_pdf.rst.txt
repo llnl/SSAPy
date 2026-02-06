@@ -1,0 +1,6 @@
+save_plot_to_pdf
+================
+
+.. currentmodule:: ssapy.plotUtils
+
+.. autofunction:: save_plot_to_pdf

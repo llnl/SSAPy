@@ -1,0 +1,6 @@
+earth_shine
+===========
+
+.. currentmodule:: ssapy.compute
+
+.. autofunction:: earth_shine

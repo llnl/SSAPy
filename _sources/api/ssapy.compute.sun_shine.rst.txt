@@ -1,0 +1,6 @@
+sun_shine
+=========
+
+.. currentmodule:: ssapy.compute
+
+.. autofunction:: sun_shine

@@ -1,0 +1,5 @@
+ssapy.simple
+============
+
+.. automodapi:: ssapy.simple
+    :no-heading:

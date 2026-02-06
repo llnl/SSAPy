@@ -1,0 +1,213 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ssapy.body &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="get_body" href="../api/ssapy.body.get_body.html" />
+    <link rel="prev" title="AccelSum" href="../api/ssapy.accel.AccelSum.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ssapy.body</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#functions">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.body.get_body.html">get_body</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#classes">Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.body.Body.html">Body</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.body.EarthOrientation.html">EarthOrientation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.body.MoonOrientation.html">MoonOrientation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.body.MoonPosition.html">MoonPosition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.body.PlanetPosition.html">PlanetPosition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.body.SunPosition.html">SunPosition</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+      <li class="breadcrumb-item active">ssapy.body</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/ssapy.body.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-ssapy.body">
+<span id="ssapy-body"></span><h1>ssapy.body<a class="headerlink" href="#module-ssapy.body" title="Permalink to this heading"></a></h1>
+<p>Classes representing celestial bodies.</p>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.body.get_body.html#ssapy.body.get_body" title="ssapy.body.get_body"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_body</span></code></a>(name[, model])</p></td>
+<td><p>Get a Body object for a named body.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iers_interp</span></code>(t)</p></td>
+<td><p>Interpolate IERS values</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.body.Body.html#ssapy.body.Body" title="ssapy.body.Body"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Body</span></code></a>(mu, radius[, position, orientation, ...])</p></td>
+<td><p>A celestial body.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.body.EarthOrientation.html#ssapy.body.EarthOrientation" title="ssapy.body.EarthOrientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EarthOrientation</span></code></a>([recalc_threshold])</p></td>
+<td><p>Orientation of earth in GCRF.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">HarmonicCoefficients</span></code>()</p></td>
+<td><p>Class to hold coefficients for a spherical harmonic expansion of a gravitational potential.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.body.MoonOrientation.html#ssapy.body.MoonOrientation" title="ssapy.body.MoonOrientation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MoonOrientation</span></code></a>()</p></td>
+<td><p>Orientation of moon in GCRF.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.body.MoonPosition.html#ssapy.body.MoonPosition" title="ssapy.body.MoonPosition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MoonPosition</span></code></a>()</p></td>
+<td><p>Position of moon in GCRF.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.body.PlanetPosition.html#ssapy.body.PlanetPosition" title="ssapy.body.PlanetPosition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PlanetPosition</span></code></a>(planet_index)</p></td>
+<td><p>Position of a planet in GCRF.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.body.SunPosition.html#ssapy.body.SunPosition" title="ssapy.body.SunPosition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SunPosition</span></code></a>()</p></td>
+<td><p>Position of sun in GCRF.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="class-inheritance-diagram">
+<h2>Class Inheritance Diagram<a class="headerlink" href="#class-inheritance-diagram" title="Permalink to this heading"></a></h2>
+<div class="graphviz"><img src="../_images/inheritance-24621de5677e294542d33474bc8e564caa70d4ce.png" alt="Inheritance diagram of ssapy.body.Body, ssapy.body.EarthOrientation, ssapy.body.MoonOrientation, ssapy.body.MoonPosition, ssapy.body.PlanetPosition, ssapy.body.SunPosition" usemap="#inheritance3ba1478d81" class="inheritance graphviz" /></div>
+<map id="inheritance3ba1478d81" name="inheritance3ba1478d81">
+<area shape="rect" id="node1" href="../api/ssapy.body.Body.html#ssapy.body.Body" target="_top" title="A celestial body." alt="" coords="35,252,107,277"/>
+<area shape="rect" id="node2" href="../api/ssapy.body.EarthOrientation.html#ssapy.body.EarthOrientation" target="_top" title="Orientation of earth in GCRF. &#160;This is a callable class that returns the" alt="" coords="6,203,135,228"/>
+<area shape="rect" id="node3" href="../api/ssapy.body.MoonOrientation.html#ssapy.body.MoonOrientation" target="_top" title="Orientation of moon in GCRF. &#160;This is a callable class that returns the" alt="" coords="5,153,136,179"/>
+<area shape="rect" id="node4" href="../api/ssapy.body.MoonPosition.html#ssapy.body.MoonPosition" target="_top" title="Position of moon in GCRF. &#160;This is a callable class that returns the" alt="" coords="15,104,126,129"/>
+<area shape="rect" id="node5" href="../api/ssapy.body.PlanetPosition.html#ssapy.body.PlanetPosition" target="_top" title="Position of a planet in GCRF. &#160;This is a callable class that returns the" alt="" coords="13,55,128,80"/>
+<area shape="rect" id="node6" href="../api/ssapy.body.SunPosition.html#ssapy.body.SunPosition" target="_top" title="Position of sun in GCRF. &#160;This is a callable class that returns the" alt="" coords="21,5,120,31"/>
+</map></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../api/ssapy.accel.AccelSum.html" class="btn btn-neutral float-left" title="AccelSum" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../api/ssapy.body.get_body.html" class="btn btn-neutral float-right" title="get_body" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

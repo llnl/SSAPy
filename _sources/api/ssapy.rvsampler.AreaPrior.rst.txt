@@ -1,0 +1,17 @@
+AreaPrior
+=========
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: AreaPrior
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~AreaPrior.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

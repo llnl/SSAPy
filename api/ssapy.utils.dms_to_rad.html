@@ -1,0 +1,282 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dms_to_rad &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ecliptic_to_equatorial" href="ssapy.utils.ecliptic_to_equatorial.html" />
+    <link rel="prev" title="dms_to_deg" href="ssapy.utils.dms_to_deg.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../modules/ssapy.utils.html">ssapy.utils</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../modules/ssapy.utils.html#functions">Functions</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.altitude_to_zenithangle.html">altitude_to_zenithangle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.angle_between_vectors.html">angle_between_vectors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.cart2sph_deg.html">cart2sph_deg</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.cart_to_cyl.html">cart_to_cyl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.catalog_to_apparent.html">catalog_to_apparent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.check_lunar_collision.html">check_lunar_collision</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.cluster_emcee_walkers.html">cluster_emcee_walkers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.continueClass.html">continueClass</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.dd_to_dms.html">dd_to_dms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.dd_to_hms.html">dd_to_hms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.deg0to360.html">deg0to360</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.deg0to360array.html">deg0to360array</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.deg90to90.html">deg90to90</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.deg90to90array.html">deg90to90array</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.dms_to_dd.html">dms_to_dd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.dms_to_deg.html">dms_to_deg</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">dms_to_rad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.ecliptic_to_equatorial.html">ecliptic_to_equatorial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.ecliptic_xyz_to_equatorial.html">ecliptic_xyz_to_equatorial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.ecliptic_xyz_to_equatorial_xyz.html">ecliptic_xyz_to_equatorial_xyz</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.einsum_norm.html">einsum_norm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.equatorial_to_ecliptic.html">equatorial_to_ecliptic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.equatorial_to_horizontal.html">equatorial_to_horizontal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.equatorial_xyz_to_ecliptic_xyz.html">equatorial_xyz_to_ecliptic_xyz</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.find_all_zeros.html">find_all_zeros</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.find_extrema_brackets.html">find_extrema_brackets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.find_file.html">find_file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.find_nearest_indices.html">find_nearest_indices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.find_smallest_bounding_cube.html">find_smallest_bounding_cube</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.gcrf_to_ecef_bad.html">gcrf_to_ecef_bad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.gcrf_to_itrf.html">gcrf_to_itrf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.gcrf_to_itrf_astropy.html">gcrf_to_itrf_astropy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.gcrf_to_lat_lon.html">gcrf_to_lat_lon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.gcrf_to_lunar.html">gcrf_to_lunar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.gcrf_to_lunar_fixed.html">gcrf_to_lunar_fixed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.gcrf_to_radec.html">gcrf_to_radec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.gcrf_to_sim_geo.html">gcrf_to_sim_geo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.gcrf_to_teme.html">gcrf_to_teme</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.get_angle.html">get_angle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.get_kernel_cov.html">get_kernel_cov</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.get_normed_weights.html">get_normed_weights</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.get_times.html">get_times</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.hms_to_dd.html">hms_to_dd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.horizontal_to_equatorial.html">horizontal_to_equatorial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.iers_interp.html">iers_interp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.inert2rot.html">inert2rot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.interpolate_points_between.html">interpolate_points_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.isAttributeSafeToTransfer.html">isAttributeSafeToTransfer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.lb_to_tan.html">lb_to_tan</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.lb_to_tp.html">lb_to_tp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.lb_to_unit.html">lb_to_unit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.lonlat_distance.html">lonlat_distance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.moonPos.html">moonPos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.newton_raphson.html">newton_raphson</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.norm.html">norm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.normSq.html">normSq</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.normed.html">normed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.ntw_to_r.html">ntw_to_r</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.num_wraps.html">num_wraps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.perpendicular_vectors.html">perpendicular_vectors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.points_on_circle.html">points_on_circle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.proper_motion_ra_dec.html">proper_motion_ra_dec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.ra_dec.html">ra_dec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.rad0to2pi.html">rad0to2pi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.regularize_default.html">regularize_default</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.resample.html">resample</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.rightascension_to_hourangle.html">rightascension_to_hourangle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.rotate_points_3d.html">rotate_points_3d</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.rotate_vector.html">rotate_vector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.rotation_matrix_from_vectors.html">rotation_matrix_from_vectors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.rv_to_ntw.html">rv_to_ntw</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.sample_points.html">sample_points</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.sigma_points.html">sigma_points</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.sim_lonlatrad.html">sim_lonlatrad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.subsample_high_lnprob.html">subsample_high_lnprob</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.sunPos.html">sunPos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.sun_ra_dec.html">sun_ra_dec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.tan_to_lb.html">tan_to_lb</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.teme_to_gcrf.html">teme_to_gcrf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.tp_to_lb.html">tp_to_lb</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.tp_to_unit.html">tp_to_unit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.unitAngle3.html">unitAngle3</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.unit_to_lb.html">unit_to_lb</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.unit_to_tp.html">unit_to_tp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.unit_vector.html">unit_vector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.unscented_transform_mean_covar.html">unscented_transform_mean_covar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.v_from_r.html">v_from_r</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.xyz_to_ecliptic.html">xyz_to_ecliptic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.xyz_to_equatorial.html">xyz_to_equatorial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.xyz_to_lb.html">xyz_to_lb</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.xyz_to_tp.html">xyz_to_tp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.utils.zenithangle_to_altitude.html">zenithangle_to_altitude</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../modules/ssapy.utils.html#classes">Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../modules/ssapy.utils.html#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+          <li class="breadcrumb-item"><a href="../modules/ssapy.utils.html">ssapy.utils</a></li>
+      <li class="breadcrumb-item active">dms_to_rad</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/ssapy.utils.dms_to_rad.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dms-to-rad">
+<h1>dms_to_rad<a class="headerlink" href="#dms-to-rad" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="ssapy.utils.dms_to_rad">
+<span class="sig-prename descclassname"><span class="pre">ssapy.utils.</span></span><span class="sig-name descname"><span class="pre">dms_to_rad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coords</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/utils.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/utils.html#dms_to_rad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.utils.dms_to_rad" title="Permalink to this definition"></a></dt>
+<dd><p>Convert coordinates from degrees, minutes, and seconds (DMS) format to radians.</p>
+<section id="parameters">
+<h2>Parameters:<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt>coords (str, list, or tuple):</dt><dd><ul class="simple">
+<li><p>A single DMS coordinate as a string (e.g., “12d34m56s”).</p></li>
+<li><p>A list or tuple of DMS coordinates as strings.</p></li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="returns">
+<h2>Returns:<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h2>
+<blockquote>
+<div><dl class="simple">
+<dt>float or list:</dt><dd><ul class="simple">
+<li><p>If a single coordinate is provided, returns its value in radians.</p></li>
+<li><p>If multiple coordinates are provided (list or tuple), returns a list
+of values in radians.</p></li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</section>
+<section id="example">
+<h2>Example:<a class="headerlink" href="#example" title="Permalink to this heading"></a></h2>
+<blockquote>
+<div><p>dms_to_rad(“12d34m56s”) -&gt; 0.219725
+dms_to_rad([“12d34m56s”, “45d67m89s”]) -&gt; [0.219725, 0.798488]</p>
+</div></blockquote>
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ssapy.utils.dms_to_deg.html" class="btn btn-neutral float-left" title="dms_to_deg" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ssapy.utils.ecliptic_to_equatorial.html" class="btn btn-neutral float-right" title="ecliptic_to_equatorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

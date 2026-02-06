@@ -1,0 +1,6 @@
+str_to_array
+============
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: str_to_array

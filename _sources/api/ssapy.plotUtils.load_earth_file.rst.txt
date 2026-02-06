@@ -1,0 +1,6 @@
+load_earth_file
+===============
+
+.. currentmodule:: ssapy.plotUtils
+
+.. autofunction:: load_earth_file

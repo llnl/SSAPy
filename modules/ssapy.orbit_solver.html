@@ -1,0 +1,205 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ssapy.orbit_solver &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="DanchickTwoPosOrbitSolver" href="../api/ssapy.orbit_solver.DanchickTwoPosOrbitSolver.html" />
+    <link rel="prev" title="ModelSelectorParams" href="../api/ssapy.linker.ModelSelectorParams.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ssapy.orbit_solver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#classes">Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.orbit_solver.DanchickTwoPosOrbitSolver.html">DanchickTwoPosOrbitSolver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.orbit_solver.GaussTwoPosOrbitSolver.html">GaussTwoPosOrbitSolver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.orbit_solver.SheferTwoPosOrbitSolver.html">SheferTwoPosOrbitSolver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.orbit_solver.ThreeAngleOrbitSolver.html">ThreeAngleOrbitSolver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.orbit_solver.TwoPosOrbitSolver.html">TwoPosOrbitSolver</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+      <li class="breadcrumb-item active">ssapy.orbit_solver</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/ssapy.orbit_solver.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-ssapy.orbit_solver">
+<span id="ssapy-orbit-solver"></span><h1>ssapy.orbit_solver<a class="headerlink" href="#module-ssapy.orbit_solver" title="Permalink to this heading"></a></h1>
+<p>Classes to solve for Keplerian orbital parameters from different initial inputs</p>
+<p>References:
+- Shefer, V. A. (2010). New method of orbit determination from two position vectors based on solving Gauss’s equations. Solar System Research, 44, 252-266.
+- Montenbruck, O., Gill, E., &amp; Lutze, F. H. (2002). Satellite orbits: models, methods, and applications. Appl. Mech. Rev., 55(2), B27-B28.</p>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.orbit_solver.DanchickTwoPosOrbitSolver.html#ssapy.orbit_solver.DanchickTwoPosOrbitSolver" title="ssapy.orbit_solver.DanchickTwoPosOrbitSolver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DanchickTwoPosOrbitSolver</span></code></a>(*args, **kwargs)</p></td>
+<td><p>A class for solving two-position orbit determination problems using the Danchick method.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.orbit_solver.GaussTwoPosOrbitSolver.html#ssapy.orbit_solver.GaussTwoPosOrbitSolver" title="ssapy.orbit_solver.GaussTwoPosOrbitSolver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GaussTwoPosOrbitSolver</span></code></a>(*args, **kwargs)</p></td>
+<td><p>A class for solving two-position orbit determination problems using the Gauss method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Orbit</span></code>(r, v, t[, mu, propkw])</p></td>
+<td><p>Orbital state of one or more objects.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.orbit_solver.SheferTwoPosOrbitSolver.html#ssapy.orbit_solver.SheferTwoPosOrbitSolver" title="ssapy.orbit_solver.SheferTwoPosOrbitSolver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SheferTwoPosOrbitSolver</span></code></a>(*args, **kwargs)</p></td>
+<td><p>A class for solving two-position orbit determination problems using Shefer's method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.orbit_solver.ThreeAngleOrbitSolver.html#ssapy.orbit_solver.ThreeAngleOrbitSolver" title="ssapy.orbit_solver.ThreeAngleOrbitSolver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ThreeAngleOrbitSolver</span></code></a>(e1, e2, e3, R1, R2, ...)</p></td>
+<td><p>Determine orbit of satellite for set of three angle-only observations.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Time</span></code>(val[, val2, format, scale, precision, ...])</p></td>
+<td><p>Represent and manipulate times and dates for astronomy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.orbit_solver.TwoPosOrbitSolver.html#ssapy.orbit_solver.TwoPosOrbitSolver" title="ssapy.orbit_solver.TwoPosOrbitSolver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TwoPosOrbitSolver</span></code></a>(r1, r2, t1, t2[, mu, ...])</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">param r1<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Positions at t1 and t2 in meters.</p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">lazy_property</span></code>(fget)</p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="class-inheritance-diagram">
+<h2>Class Inheritance Diagram<a class="headerlink" href="#class-inheritance-diagram" title="Permalink to this heading"></a></h2>
+<div class="graphviz"><img src="../_images/inheritance-ad9bfc3e2085d1bc287ed2ff8123f674790be1a2.png" alt="Inheritance diagram of ssapy.orbit_solver.DanchickTwoPosOrbitSolver, ssapy.orbit_solver.GaussTwoPosOrbitSolver, ssapy.orbit_solver.SheferTwoPosOrbitSolver, ssapy.orbit_solver.ThreeAngleOrbitSolver, ssapy.orbit_solver.TwoPosOrbitSolver" usemap="#inheritance315f952d9f" class="inheritance graphviz" /></div>
+<map id="inheritance315f952d9f" name="inheritance315f952d9f">
+<area shape="rect" id="node1" href="../api/ssapy.orbit_solver.DanchickTwoPosOrbitSolver.html#ssapy.orbit_solver.DanchickTwoPosOrbitSolver" target="_top" title="A class for solving two&#45;position orbit determination problems using " alt="" coords="223,5,425,31"/>
+<area shape="rect" id="node2" href="../api/ssapy.orbit_solver.TwoPosOrbitSolver.html#ssapy.orbit_solver.TwoPosOrbitSolver" target="_top" title="Parameters" alt="" coords="19,55,161,80"/>
+<area shape="rect" id="node3" href="../api/ssapy.orbit_solver.GaussTwoPosOrbitSolver.html#ssapy.orbit_solver.GaussTwoPosOrbitSolver" target="_top" title="A class for solving two&#45;position orbit determination problems using " alt="" coords="233,55,415,80"/>
+<area shape="rect" id="node4" href="../api/ssapy.orbit_solver.SheferTwoPosOrbitSolver.html#ssapy.orbit_solver.SheferTwoPosOrbitSolver" target="_top" title="A class for solving two&#45;position orbit determination problems using " alt="" coords="231,104,417,129"/>
+<area shape="rect" id="node5" href="../api/ssapy.orbit_solver.ThreeAngleOrbitSolver.html#ssapy.orbit_solver.ThreeAngleOrbitSolver" target="_top" title="Determine orbit of satellite for set of three angle&#45;only observations." alt="" coords="5,5,175,31"/>
+</map></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../api/ssapy.linker.ModelSelectorParams.html" class="btn btn-neutral float-left" title="ModelSelectorParams" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../api/ssapy.orbit_solver.DanchickTwoPosOrbitSolver.html" class="btn btn-neutral float-right" title="DanchickTwoPosOrbitSolver" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

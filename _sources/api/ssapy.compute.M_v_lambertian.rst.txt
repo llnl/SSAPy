@@ -1,0 +1,6 @@
+M_v_lambertian
+==============
+
+.. currentmodule:: ssapy.compute
+
+.. autofunction:: M_v_lambertian

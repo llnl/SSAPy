@@ -1,0 +1,349 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ssapy.io &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="append_csv" href="../api/ssapy.io.append_csv.html" />
+    <link rel="prev" title="HarmonicCoefficients" href="../api/ssapy.gravity.HarmonicCoefficients.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ssapy.io</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#functions">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.append_csv.html">append_csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.append_csv_on_disk.html">append_csv_on_disk</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.append_dict_to_csv.html">append_dict_to_csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.append_h5.html">append_h5</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.b3obs2pos.html">b3obs2pos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.combine_h5.html">combine_h5</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.exists.html">exists</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.exists_in_csv.html">exists_in_csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.exists_in_csv_old.html">exists_in_csv_old</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.file_exists_extension_agnostic.html">file_exists_extension_agnostic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.get_all_files_recursive.html">get_all_files_recursive</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.get_memory_usage.html">get_memory_usage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.get_tel_pos_itrf_to_gcrs.html">get_tel_pos_itrf_to_gcrs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.guess_csv_delimiter.html">guess_csv_delimiter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.h5_key_exists.html">h5_key_exists</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.h5_keys.html">h5_keys</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.h5_root_keys.html">h5_root_keys</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.listdir.html">listdir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.load_b3obs_file.html">load_b3obs_file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.load_np.html">load_np</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.load_pickle.html">load_pickle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.make_tle.html">make_tle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.makedf.html">makedf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.merge_dicts.html">merge_dicts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.mkdir.html">mkdir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.overwrite_h5.html">overwrite_h5</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.parseB3.html">parseB3</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.parseB3Line.html">parseB3Line</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.parse_overpunched.html">parse_overpunched</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.parse_tle.html">parse_tle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.pd_flatten.html">pd_flatten</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.pdstr_to_arrays.html">pdstr_to_arrays</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.read_csv.html">read_csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.read_csv_header.html">read_csv_header</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.read_h5.html">read_h5</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.read_h5_all.html">read_h5_all</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.read_tle.html">read_tle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.read_tle_catalog.html">read_tle_catalog</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.rmdir.html">rmdir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.rmfile.html">rmfile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.save_csv.html">save_csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.save_csv_array_to_line.html">save_csv_array_to_line</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.save_csv_header.html">save_csv_header</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.save_csv_line.html">save_csv_line</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.save_h5.html">save_h5</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.save_np.html">save_np</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.save_pickle.html">save_pickle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.io.str_to_array.html">str_to_array</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+      <li class="breadcrumb-item active">ssapy.io</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/ssapy.io.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-ssapy.io">
+<span id="ssapy-io"></span><h1>ssapy.io<a class="headerlink" href="#module-ssapy.io" title="Permalink to this heading"></a></h1>
+<p>Collection of functions to read from and write to various file formats.</p>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.append_csv.html#ssapy.io.append_csv" title="ssapy.io.append_csv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append_csv</span></code></a>(file_names[, save_path, sep, ...])</p></td>
+<td><p>Appends multiple CSV files into a single CSV file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.append_csv_on_disk.html#ssapy.io.append_csv_on_disk" title="ssapy.io.append_csv_on_disk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append_csv_on_disk</span></code></a>(csv_files, output_file)</p></td>
+<td><p>Append multiple CSV files into a single CSV file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.append_dict_to_csv.html#ssapy.io.append_dict_to_csv" title="ssapy.io.append_dict_to_csv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append_dict_to_csv</span></code></a>(file_name, data_dict[, ...])</p></td>
+<td><p>Append data from a dictionary to a CSV file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.append_h5.html#ssapy.io.append_h5" title="ssapy.io.append_h5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append_h5</span></code></a>(filename, pathname, append_data)</p></td>
+<td><p>Append data to key in HDF5 file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.b3obs2pos.html#ssapy.io.b3obs2pos" title="ssapy.io.b3obs2pos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">b3obs2pos</span></code></a>(b3line)</p></td>
+<td><p>Return an SGP4 Satellite imported from B3OBS data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.combine_h5.html#ssapy.io.combine_h5" title="ssapy.io.combine_h5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">combine_h5</span></code></a>(filename, files[, verbose, overwrite])</p></td>
+<td><p>Combine multiple HDF5 files into a single HDF5 file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.exists.html#ssapy.io.exists" title="ssapy.io.exists"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exists</span></code></a>(pathname)</p></td>
+<td><p>Check if a file or directory exists.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.exists_in_csv.html#ssapy.io.exists_in_csv" title="ssapy.io.exists_in_csv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exists_in_csv</span></code></a>(csv_file, column, number[, sep])</p></td>
+<td><p>Checks if a number exists in a specific column of a CSV file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.exists_in_csv_old.html#ssapy.io.exists_in_csv_old" title="ssapy.io.exists_in_csv_old"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exists_in_csv_old</span></code></a>(csv_file, column, number)</p></td>
+<td><p>Check if a specific value exists in a given column of a CSV file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.file_exists_extension_agnostic.html#ssapy.io.file_exists_extension_agnostic" title="ssapy.io.file_exists_extension_agnostic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">file_exists_extension_agnostic</span></code></a>(filename)</p></td>
+<td><p>Check if a file with the given name and any extension exists.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.get_all_files_recursive.html#ssapy.io.get_all_files_recursive" title="ssapy.io.get_all_files_recursive"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_all_files_recursive</span></code></a>([path_name])</p></td>
+<td><p>Recursively retrieve all file paths from a directory and its subdirectories.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.get_memory_usage.html#ssapy.io.get_memory_usage" title="ssapy.io.get_memory_usage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_memory_usage</span></code></a>()</p></td>
+<td><p>Print the memory usage of the current process.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.get_tel_pos_itrf_to_gcrs.html#ssapy.io.get_tel_pos_itrf_to_gcrs" title="ssapy.io.get_tel_pos_itrf_to_gcrs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_tel_pos_itrf_to_gcrs</span></code></a>(time[, tel_label])</p></td>
+<td><p>Convert telescope locations in ITRF (i.e., fixed to the earth) to GCRS (i.e., geocentric celestial frame)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.guess_csv_delimiter.html#ssapy.io.guess_csv_delimiter" title="ssapy.io.guess_csv_delimiter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">guess_csv_delimiter</span></code></a>(file_name)</p></td>
+<td><p>Guess the delimiter used in a CSV file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.h5_key_exists.html#ssapy.io.h5_key_exists" title="ssapy.io.h5_key_exists"><code class="xref py py-obj docutils literal notranslate"><span class="pre">h5_key_exists</span></code></a>(filename, key)</p></td>
+<td><p>Checks if a key exists in an HDF5 file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.h5_keys.html#ssapy.io.h5_keys" title="ssapy.io.h5_keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">h5_keys</span></code></a>(file_path)</p></td>
+<td><p>List all groups in HDF5 file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.h5_root_keys.html#ssapy.io.h5_root_keys" title="ssapy.io.h5_root_keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">h5_root_keys</span></code></a>(file_path)</p></td>
+<td><p>Retrieve the keys in the root group of an HDF5 file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.listdir.html#ssapy.io.listdir" title="ssapy.io.listdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listdir</span></code></a>([dir_path, files_only, exclude, ...])</p></td>
+<td><p>Lists files and directories in a specified path with optional filtering and sorting.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.load_b3obs_file.html#ssapy.io.load_b3obs_file" title="ssapy.io.load_b3obs_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_b3obs_file</span></code></a>(file_name)</p></td>
+<td><p>Convenience function to load all entries in a B3OBS file</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.load_np.html#ssapy.io.load_np" title="ssapy.io.load_np"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_np</span></code></a>(filename_)</p></td>
+<td><p>Load a NumPy array from a binary file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.load_pickle.html#ssapy.io.load_pickle" title="ssapy.io.load_pickle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_pickle</span></code></a>(filename_)</p></td>
+<td><p>Load data from a pickle file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.make_tle.html#ssapy.io.make_tle" title="ssapy.io.make_tle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">make_tle</span></code></a>(a, e, i, pa, raan, trueAnomaly, t)</p></td>
+<td><p>Create a TLE from Kozai mean orbital elements</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.makedf.html#ssapy.io.makedf" title="ssapy.io.makedf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">makedf</span></code></a>(df)</p></td>
+<td><p>Convert an input into a pandas DataFrame.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.merge_dicts.html#ssapy.io.merge_dicts" title="ssapy.io.merge_dicts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">merge_dicts</span></code></a>(file_names, save_path)</p></td>
+<td><p>Merge multiple dictionaries stored in pickle files into a single dictionary and save the result.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.mkdir.html#ssapy.io.mkdir" title="ssapy.io.mkdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mkdir</span></code></a>(pathname)</p></td>
+<td><p>Creates a directory if it does not exist.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.overwrite_h5.html#ssapy.io.overwrite_h5" title="ssapy.io.overwrite_h5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">overwrite_h5</span></code></a>(filename, pathname, new_data)</p></td>
+<td><p>Overwrite key in HDF5 file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.parseB3.html#ssapy.io.parseB3" title="ssapy.io.parseB3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parseB3</span></code></a>(filename)</p></td>
+<td><p>Load data from a B3 observation file</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.parseB3Line.html#ssapy.io.parseB3Line" title="ssapy.io.parseB3Line"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parseB3Line</span></code></a>(line)</p></td>
+<td><p>Read one line of a B3 file and parse into distinct catalog components</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.parse_overpunched.html#ssapy.io.parse_overpunched" title="ssapy.io.parse_overpunched"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_overpunched</span></code></a>(line)</p></td>
+<td><p>Parse and adjust a string containing overpunched numeric values.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.parse_tle.html#ssapy.io.parse_tle" title="ssapy.io.parse_tle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_tle</span></code></a>(tle)</p></td>
+<td><p>Parse a TLE returning Kozai mean orbital elements.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.pd_flatten.html#ssapy.io.pd_flatten" title="ssapy.io.pd_flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pd_flatten</span></code></a>(data[, factor])</p></td>
+<td><p>Flatten and process a list of data values.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.pdstr_to_arrays.html#ssapy.io.pdstr_to_arrays" title="ssapy.io.pdstr_to_arrays"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pdstr_to_arrays</span></code></a>(df)</p></td>
+<td><p>Convert a pandas Series or DataFrame with string representations of arrays into a NumPy array of actual arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.read_csv.html#ssapy.io.read_csv" title="ssapy.io.read_csv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_csv</span></code></a>(file_name[, sep, dtypes, col, ...])</p></td>
+<td><p>Read a CSV file with options.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.read_csv_header.html#ssapy.io.read_csv_header" title="ssapy.io.read_csv_header"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_csv_header</span></code></a>(file_name[, sep])</p></td>
+<td><p>Get the header of a CSV file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.read_h5.html#ssapy.io.read_h5" title="ssapy.io.read_h5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_h5</span></code></a>(filename, pathname)</p></td>
+<td><p>Load data from HDF5 file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.read_h5_all.html#ssapy.io.read_h5_all" title="ssapy.io.read_h5_all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_h5_all</span></code></a>(file_path)</p></td>
+<td><p>Read all datasets from an HDF5 file into a dictionary.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.read_tle.html#ssapy.io.read_tle" title="ssapy.io.read_tle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_tle</span></code></a>(sat_name, tle_filename)</p></td>
+<td><p>Get the TLE data from the file for the satellite with the given name</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.read_tle_catalog.html#ssapy.io.read_tle_catalog" title="ssapy.io.read_tle_catalog"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read_tle_catalog</span></code></a>(fname[, n_lines])</p></td>
+<td><p>Read in a TLE catalog file</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.rmdir.html#ssapy.io.rmdir" title="ssapy.io.rmdir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmdir</span></code></a>(source_)</p></td>
+<td><p>Deletes a directory and its contents if it exists.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.rmfile.html#ssapy.io.rmfile" title="ssapy.io.rmfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rmfile</span></code></a>(pathname)</p></td>
+<td><p>Deletes a file if it exists.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.save_csv.html#ssapy.io.save_csv" title="ssapy.io.save_csv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_csv</span></code></a>(file_name, df[, sep, dtypes])</p></td>
+<td><p>Save a Pandas DataFrame to a CSV file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.save_csv_array_to_line.html#ssapy.io.save_csv_array_to_line" title="ssapy.io.save_csv_array_to_line"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_csv_array_to_line</span></code></a>(filename, array[, ...])</p></td>
+<td><p>Appends a single row of data to a CSV file with a specified delimiter.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.save_csv_header.html#ssapy.io.save_csv_header" title="ssapy.io.save_csv_header"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_csv_header</span></code></a>(filename, header[, delimiter])</p></td>
+<td><p>Saves a header row to a CSV file with a specified delimiter.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.save_csv_line.html#ssapy.io.save_csv_line" title="ssapy.io.save_csv_line"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_csv_line</span></code></a>(file_name, df[, sep, dtypes])</p></td>
+<td><p>Save a Pandas DataFrame to a CSV file, appending the DataFrame to the file if it exists.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.save_h5.html#ssapy.io.save_h5" title="ssapy.io.save_h5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_h5</span></code></a>(filename, pathname, data)</p></td>
+<td><p>Save data to HDF5 file with recursive attempt in case of write errors.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.save_np.html#ssapy.io.save_np" title="ssapy.io.save_np"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_np</span></code></a>(filename_, data_)</p></td>
+<td><p>Save a NumPy array to a binary file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.io.save_pickle.html#ssapy.io.save_pickle" title="ssapy.io.save_pickle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_pickle</span></code></a>(filename_, data_)</p></td>
+<td><p>Save data to a pickle file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.io.str_to_array.html#ssapy.io.str_to_array" title="ssapy.io.str_to_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">str_to_array</span></code></a>(s)</p></td>
+<td><p>Convert a string representation of an array back into a NumPy array.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../api/ssapy.gravity.HarmonicCoefficients.html" class="btn btn-neutral float-left" title="HarmonicCoefficients" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../api/ssapy.io.append_csv.html" class="btn btn-neutral float-right" title="append_csv" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

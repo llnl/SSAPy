@@ -1,0 +1,17 @@
+AccelEarthRad
+=============
+
+.. currentmodule:: ssapy.accel
+
+.. autoclass:: AccelEarthRad
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~AccelEarthRad.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

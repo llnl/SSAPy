@@ -1,0 +1,6 @@
+get_similar_orbits
+==================
+
+.. currentmodule:: ssapy.simple
+
+.. autofunction:: get_similar_orbits

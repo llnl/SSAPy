@@ -1,0 +1,19 @@
+BinarySelectorParams
+====================
+
+.. currentmodule:: ssapy.linker
+
+.. autoclass:: BinarySelectorParams
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~BinarySelectorParams.get_linked_track_indices
+      ~BinarySelectorParams.get_unlinked_track_indices
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: get_linked_track_indices
+   .. automethod:: get_unlinked_track_indices

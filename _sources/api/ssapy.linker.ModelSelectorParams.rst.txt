@@ -1,0 +1,17 @@
+ModelSelectorParams
+===================
+
+.. currentmodule:: ssapy.linker
+
+.. autoclass:: ModelSelectorParams
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~ModelSelectorParams.normalize
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: normalize

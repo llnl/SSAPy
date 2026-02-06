@@ -1,0 +1,19 @@
+LeastSquaresOptimizer
+=====================
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: LeastSquaresOptimizer
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~LeastSquaresOptimizer.optimize
+      ~LeastSquaresOptimizer.resid
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: optimize
+   .. automethod:: resid

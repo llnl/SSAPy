@@ -1,0 +1,19 @@
+LRU_Cache
+=========
+
+.. currentmodule:: ssapy.utils
+
+.. autoclass:: LRU_Cache
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~LRU_Cache.__call__
+      ~LRU_Cache.resize
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__
+   .. automethod:: resize

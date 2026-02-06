@@ -1,0 +1,6 @@
+perpendicular_vectors
+=====================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: perpendicular_vectors

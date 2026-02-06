@@ -1,0 +1,17 @@
+EmceeSampler
+============
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: EmceeSampler
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~EmceeSampler.sample
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: sample

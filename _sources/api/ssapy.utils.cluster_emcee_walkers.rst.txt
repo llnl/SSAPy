@@ -1,0 +1,6 @@
+cluster_emcee_walkers
+=====================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: cluster_emcee_walkers

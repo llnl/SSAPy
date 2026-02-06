@@ -1,0 +1,6 @@
+zenithangle_to_altitude
+=======================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: zenithangle_to_altitude

@@ -1,0 +1,6 @@
+globe_plot
+==========
+
+.. currentmodule:: ssapy.plotUtils
+
+.. autofunction:: globe_plot

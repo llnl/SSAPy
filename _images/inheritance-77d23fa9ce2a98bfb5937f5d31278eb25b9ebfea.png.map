@@ -1,0 +1,11 @@
+<map id="inheritance528131318c" name="inheritance528131318c">
+<area shape="rect" id="node1" href="../api/ssapy.correlate_tracks.CircVelocityPrior.html#ssapy.correlate_tracks.CircVelocityPrior" target="_top" title="Gaussian prior that log(GM/r/v^2) = 0." alt="" coords="28,301,157,327"/>
+<area shape="rect" id="node2" href="../api/ssapy.correlate_tracks.GaussPrior.html#ssapy.correlate_tracks.GaussPrior" target="_top" title="Gaussian prior on parameters." alt="" coords="47,252,139,277"/>
+<area shape="rect" id="node3" href="../api/ssapy.correlate_tracks.Hypothesis.html#ssapy.correlate_tracks.Hypothesis" target="_top" title="Assignment of detections to multiple tracks." alt="" coords="45,203,140,228"/>
+<area shape="rect" id="node4" href="../api/ssapy.correlate_tracks.MHT.html#ssapy.correlate_tracks.MHT" target="_top" title="Multiple Hypothesis Tracking of many hypotheses explaining data." alt="" coords="57,153,129,179"/>
+<area shape="rect" id="node5" href="../api/ssapy.correlate_tracks.Track.html#ssapy.correlate_tracks.Track" target="_top" title="Set of observations to be fit as an object moving through space." alt="" coords="240,80,312,105"/>
+<area shape="rect" id="node6" href="../api/ssapy.correlate_tracks.TrackBase.html#ssapy.correlate_tracks.TrackBase" target="_top" title="Set of observations fit together as an orbital track." alt="" coords="49,104,137,129"/>
+<area shape="rect" id="node7" href="../api/ssapy.correlate_tracks.TrackGauss.html#ssapy.correlate_tracks.TrackGauss" target="_top" title="Set of observations to be fit as an object moving through space." alt="" coords="228,129,324,155"/>
+<area shape="rect" id="node8" href="../api/ssapy.correlate_tracks.VolumeDistancePrior.html#ssapy.correlate_tracks.VolumeDistancePrior" target="_top" title="Prior on range like r^2*exp(&#45;r/scale), preferring larger distances where" alt="" coords="13,55,172,80"/>
+<area shape="rect" id="node9" href="../api/ssapy.correlate_tracks.ZeroRadialVelocityPrior.html#ssapy.correlate_tracks.ZeroRadialVelocityPrior" target="_top" title="Gaussian prior that v_R = 0." alt="" coords="5,5,180,31"/>
+</map>

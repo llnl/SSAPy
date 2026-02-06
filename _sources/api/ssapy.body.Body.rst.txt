@@ -1,0 +1,7 @@
+Body
+====
+
+.. currentmodule:: ssapy.body
+
+.. autoclass:: Body
+   :show-inheritance:

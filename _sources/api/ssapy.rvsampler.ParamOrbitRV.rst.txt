@@ -1,0 +1,19 @@
+ParamOrbitRV
+============
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: ParamOrbitRV
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~ParamOrbitRV.orbit_to_param
+      ~ParamOrbitRV.param_to_orbit
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: orbit_to_param
+   .. automethod:: param_to_orbit

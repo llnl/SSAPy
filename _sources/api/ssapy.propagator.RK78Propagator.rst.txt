@@ -1,0 +1,17 @@
+RK78Propagator
+==============
+
+.. currentmodule:: ssapy.propagator
+
+.. autoclass:: RK78Propagator
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~RK78Propagator.b7
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: b7

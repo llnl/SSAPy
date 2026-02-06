@@ -1,0 +1,17 @@
+AccelProd
+=========
+
+.. currentmodule:: ssapy.accel
+
+.. autoclass:: AccelProd
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~AccelProd.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

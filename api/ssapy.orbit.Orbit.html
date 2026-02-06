@@ -1,0 +1,946 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orbit &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="OrbitalObserver" href="ssapy.orbit.OrbitalObserver.html" />
+    <link rel="prev" title="EarthObserver" href="ssapy.orbit.EarthObserver.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../modules/ssapy.orbit.html">ssapy.orbit</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../modules/ssapy.orbit.html#classes">Classes</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ssapy.orbit.EarthObserver.html">EarthObserver</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Orbit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.orbit.OrbitalObserver.html">OrbitalObserver</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../modules/ssapy.orbit.html#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+          <li class="breadcrumb-item"><a href="../modules/ssapy.orbit.html">ssapy.orbit</a></li>
+      <li class="breadcrumb-item active">Orbit</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/ssapy.orbit.Orbit.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="orbit">
+<h1>Orbit<a class="headerlink" href="#orbit" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssapy.orbit.</span></span><span class="sig-name descname"><span class="pre">Orbit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">398600441800000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">propkw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit.html#Orbit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Orbital state of one or more objects.</p>
+<p>This class represents one or more instantaneous (osculating) states of
+orbiting bodies.  Representations in Cartesian, Keplerian, and equinoctial
+elements are available.  The default initializer requires Cartesian
+elements, though class methods are also available to initialize with
+Keplerian or equinoctial elements.</p>
+<p>Note that generally this class can represent either a single scalar orbit,
+in which case attributes will generally be scalar floats, or a vector of
+orbits, in which case attributes will be ndarrays of floats.  For attributes
+that are intrinsically vectors even for a single orbit (position, velocity,
+…), a 2d array will be used for a “vector of orbits”, with the first
+dimension representing the different orbits.</p>
+<p>For simplicity, we will only indicate the “single scalar Orbit” dimensions
+in docstrings.  For a vector-Orbit, most scalar input arguments can be
+supplied as broadcastable arrays, and scalar attributes become array
+attributes.  When a multi-dimensional array is required, the first dimension
+is the one over different orbits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> (<em>(</em><em>3</em><em>,</em><em>) </em><em>array_like</em>) – Position of orbiting object in meters.</p></li>
+<li><p><strong>v</strong> (<em>(</em><em>3</em><em>,</em><em>) </em><em>array_like</em>) – Velocity of orbiting objects in meters per second.</p></li>
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>astropy.time.Time</em>) – If float or array of float, then should correspond to GPS seconds; i.e.,
+seconds since 1980-01-06 00:00:00 UTC</p></li>
+<li><p><strong>mu</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Gravitational constant of central body in m^3/s^2.  (Default: Earth’s
+gravitational constant in WGS84).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.r">
+<span class="sig-name descname"><span class="pre">r</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.r" title="Permalink to this definition"></a></dt>
+<dd><p>Position of orbiting object in meters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(3,) array_like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.v">
+<span class="sig-name descname"><span class="pre">v</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.v" title="Permalink to this definition"></a></dt>
+<dd><p>Velocity of orbiting object in meters per second.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(3,) array_like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.t">
+<span class="sig-name descname"><span class="pre">t</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.t" title="Permalink to this definition"></a></dt>
+<dd><p>GPS seconds; i.e., seconds since 1980-01-06 00:00:00 UTC</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.mu">
+<span class="sig-name descname"><span class="pre">mu</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.mu" title="Permalink to this definition"></a></dt>
+<dd><p>Gravitational constant of central body in m^3/s^2</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.a">
+<span class="sig-name descname"><span class="pre">a</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.a" title="Permalink to this definition"></a></dt>
+<dd><p>Semimajor axis in meters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">hx,</span> <span class="pre">hy</span></span></dt>
+<dd><p>Components of the equinoctial inclination vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">ex,</span> <span class="pre">ey</span></span></dt>
+<dd><p>Components of the equinoctial eccentricity vector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.lv">
+<span class="sig-name descname"><span class="pre">lv</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.lv" title="Permalink to this definition"></a></dt>
+<dd><p>True longitude in radians.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.lE">
+<span class="sig-name descname"><span class="pre">lE</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.lE" title="Permalink to this definition"></a></dt>
+<dd><p>Eccentric longitude in radians.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.lM">
+<span class="sig-name descname"><span class="pre">lM</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.lM" title="Permalink to this definition"></a></dt>
+<dd><p>Mean longitude in radians.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.e">
+<span class="sig-name descname"><span class="pre">e</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.e" title="Permalink to this definition"></a></dt>
+<dd><p>Keplerian eccentricity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.i">
+<span class="sig-name descname"><span class="pre">i</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.i" title="Permalink to this definition"></a></dt>
+<dd><p>Keplerian inclination in radians.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.pa">
+<span class="sig-name descname"><span class="pre">pa</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.pa" title="Permalink to this definition"></a></dt>
+<dd><p>Keplerian periapsis argument in radians.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.raan">
+<span class="sig-name descname"><span class="pre">raan</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.raan" title="Permalink to this definition"></a></dt>
+<dd><p>Keplerian right ascension of the ascending node in radians.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.trueAnomaly">
+<span class="sig-name descname"><span class="pre">trueAnomaly</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.trueAnomaly" title="Permalink to this definition"></a></dt>
+<dd><p>Keplerian true anomaly in radians.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.eccentricAnomaly">
+<span class="sig-name descname"><span class="pre">eccentricAnomaly</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.eccentricAnomaly" title="Permalink to this definition"></a></dt>
+<dd><p>Keplerian eccentric anomaly in radians.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.meanAnomaly">
+<span class="sig-name descname"><span class="pre">meanAnomaly</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.meanAnomaly" title="Permalink to this definition"></a></dt>
+<dd><p>Keplerian mean anomaly in radians.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.period">
+<span class="sig-name descname"><span class="pre">period</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.period" title="Permalink to this definition"></a></dt>
+<dd><p>Orbital period in seconds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.meanMotion">
+<span class="sig-name descname"><span class="pre">meanMotion</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.meanMotion" title="Permalink to this definition"></a></dt>
+<dd><p>Keplerian mean motion in radians per second.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.p">
+<span class="sig-name descname"><span class="pre">p</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.p" title="Permalink to this definition"></a></dt>
+<dd><p>Semi-latus rectum in meters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.angularMomentum">
+<span class="sig-name descname"><span class="pre">angularMomentum</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.angularMomentum" title="Permalink to this definition"></a></dt>
+<dd><p>(Specific) angular momentum in m^2/s.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(3,) array_like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.energy">
+<span class="sig-name descname"><span class="pre">energy</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.energy" title="Permalink to this definition"></a></dt>
+<dd><p>(Specific) orbital energy in m^2/s^2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.LRL">
+<span class="sig-name descname"><span class="pre">LRL</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.LRL" title="Permalink to this definition"></a></dt>
+<dd><p>Laplace-Runge-Lenz vector in m^3/s^2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(3,) array_like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.periapsis">
+<span class="sig-name descname"><span class="pre">periapsis</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.periapsis" title="Permalink to this definition"></a></dt>
+<dd><p>Periapsis coordinate of orbit in meters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(3,) array_like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.apoapsis">
+<span class="sig-name descname"><span class="pre">apoapsis</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.apoapsis" title="Permalink to this definition"></a></dt>
+<dd><p>Apoapsis coordinate of orbit in meters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(3,) array_like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.equinoctialElements">
+<span class="sig-name descname"><span class="pre">equinoctialElements</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.equinoctialElements" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.keplerianElements">
+<span class="sig-name descname"><span class="pre">keplerianElements</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.keplerianElements" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.fromKeplerianElements">
+<span class="sig-name descname"><span class="pre">fromKeplerianElements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trueAnomaly</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit.html#Orbit.fromKeplerianElements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.fromKeplerianElements" title="Permalink to this definition"></a></dt>
+<dd><p>Construct an <cite>Orbit</cite> from Keplerian elements.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.fromEquinoctialElements">
+<span class="sig-name descname"><span class="pre">fromEquinoctialElements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ey</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit.html#Orbit.fromEquinoctialElements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.fromEquinoctialElements" title="Permalink to this definition"></a></dt>
+<dd><p>Construct an <cite>Orbit</cite> from Equinoctial elements.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.at">
+<span class="sig-name descname"><span class="pre">at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">propagator</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit.html#Orbit.at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.at" title="Permalink to this definition"></a></dt>
+<dd><p>Propagate orbit to time t and return new Orbit.</p>
+</dd></dl>
+
+<p class="rubric">Notes</p>
+<p>Although much of the Orbit class here is agnostic with respect to the
+coordinate reference frame, we strongly recommend that positions and
+velocities be specified in the GCRF frame.  Some other classes in this
+module <em>do</em> insist on this frame, (e.g., EarthObserver).  We will try to
+indicate where the GCRF frame is required, but make no guarantees that we
+don’t miss any such instances.</p>
+<p class="rubric">Attributes Summary</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="ssapy.orbit.Orbit.LRL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LRL</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id1" title="ssapy.orbit.Orbit.a"><code class="xref py py-obj docutils literal notranslate"><span class="pre">a</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id2" title="ssapy.orbit.Orbit.angularMomentum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">angularMomentum</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id3" title="ssapy.orbit.Orbit.apoapsis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apoapsis</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id4" title="ssapy.orbit.Orbit.e"><code class="xref py py-obj docutils literal notranslate"><span class="pre">e</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id5" title="ssapy.orbit.Orbit.eccentricAnomaly"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eccentricAnomaly</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id6" title="ssapy.orbit.Orbit.energy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">energy</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id7" title="ssapy.orbit.Orbit.equinoctialElements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equinoctialElements</span></code></a></p></td>
+<td><p>Equinoctial elements (a, hx, hy, ex, ey, lv).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssapy.orbit.Orbit.ex" title="ssapy.orbit.Orbit.ex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ex</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssapy.orbit.Orbit.ey" title="ssapy.orbit.Orbit.ey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ey</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssapy.orbit.Orbit.hx" title="ssapy.orbit.Orbit.hx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hx</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssapy.orbit.Orbit.hy" title="ssapy.orbit.Orbit.hy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hy</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id8" title="ssapy.orbit.Orbit.i"><code class="xref py py-obj docutils literal notranslate"><span class="pre">i</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id9" title="ssapy.orbit.Orbit.keplerianElements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keplerianElements</span></code></a></p></td>
+<td><p>Keplerian elements (a, e, i, pa, raan, trueAnomaly).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssapy.orbit.Orbit.kozaiMeanKeplerianElements" title="ssapy.orbit.Orbit.kozaiMeanKeplerianElements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">kozaiMeanKeplerianElements</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id10" title="ssapy.orbit.Orbit.lE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lE</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id11" title="ssapy.orbit.Orbit.lM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lM</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssapy.orbit.Orbit.lonPa" title="ssapy.orbit.Orbit.lonPa"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lonPa</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id12" title="ssapy.orbit.Orbit.lv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lv</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id13" title="ssapy.orbit.Orbit.meanAnomaly"><code class="xref py py-obj docutils literal notranslate"><span class="pre">meanAnomaly</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id14" title="ssapy.orbit.Orbit.meanMotion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">meanMotion</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id15" title="ssapy.orbit.Orbit.p"><code class="xref py py-obj docutils literal notranslate"><span class="pre">p</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id16" title="ssapy.orbit.Orbit.pa"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pa</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id17" title="ssapy.orbit.Orbit.periapsis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">periapsis</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id18" title="ssapy.orbit.Orbit.period"><code class="xref py py-obj docutils literal notranslate"><span class="pre">period</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id19" title="ssapy.orbit.Orbit.raan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">raan</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssapy.orbit.Orbit.tle" title="ssapy.orbit.Orbit.tle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tle</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id20" title="ssapy.orbit.Orbit.trueAnomaly"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trueAnomaly</span></code></a></p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id21" title="ssapy.orbit.Orbit.at"><code class="xref py py-obj docutils literal notranslate"><span class="pre">at</span></code></a>(t[, propagator])</p></td>
+<td><p>Propagate this orbit to time t.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id22" title="ssapy.orbit.Orbit.fromEquinoctialElements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromEquinoctialElements</span></code></a>(a, hx, hy, ex, ey, lv, t)</p></td>
+<td><p>Construct an Orbit from equinoctial elements.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id23" title="ssapy.orbit.Orbit.fromKeplerianElements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromKeplerianElements</span></code></a>(a, e, i, pa, raan, ...)</p></td>
+<td><p>Construct an Orbit from Keplerian elements.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssapy.orbit.Orbit.fromKozaiMeanKeplerianElements" title="ssapy.orbit.Orbit.fromKozaiMeanKeplerianElements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromKozaiMeanKeplerianElements</span></code></a>(a, e, i, pa, ...)</p></td>
+<td><p>Construct an Orbit from Kozai mean Keplerian elements.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssapy.orbit.Orbit.fromTLE" title="ssapy.orbit.Orbit.fromTLE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromTLE</span></code></a>(sat_name, tle_filename[, propkw])</p></td>
+<td><p>Construct an Orbit from a TLE file</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssapy.orbit.Orbit.fromTLETuple" title="ssapy.orbit.Orbit.fromTLETuple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fromTLETuple</span></code></a>(tle[, propkw])</p></td>
+<td><p>Construct an Orbit from a TLE tuple</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">LRL</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">a</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">angularMomentum</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">apoapsis</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id3" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">e</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id4" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">eccentricAnomaly</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id5" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">energy</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id6" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">equinoctialElements</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id7" title="Permalink to this definition"></a></dt>
+<dd><p>Equinoctial elements (a, hx, hy, ex, ey, lv).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.ex">
+<span class="sig-name descname"><span class="pre">ex</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.ex" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.ey">
+<span class="sig-name descname"><span class="pre">ey</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.ey" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.hx">
+<span class="sig-name descname"><span class="pre">hx</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.hx" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.hy">
+<span class="sig-name descname"><span class="pre">hy</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.hy" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">i</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id8" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">keplerianElements</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id9" title="Permalink to this definition"></a></dt>
+<dd><p>Keplerian elements (a, e, i, pa, raan, trueAnomaly).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.kozaiMeanKeplerianElements">
+<span class="sig-name descname"><span class="pre">kozaiMeanKeplerianElements</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.kozaiMeanKeplerianElements" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">lE</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id10" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">lM</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id11" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.lonPa">
+<span class="sig-name descname"><span class="pre">lonPa</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.lonPa" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">lv</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id12" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id13">
+<span class="sig-name descname"><span class="pre">meanAnomaly</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id13" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id14">
+<span class="sig-name descname"><span class="pre">meanMotion</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id14" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id15">
+<span class="sig-name descname"><span class="pre">p</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id15" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id16">
+<span class="sig-name descname"><span class="pre">pa</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id16" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id17">
+<span class="sig-name descname"><span class="pre">periapsis</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id17" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id18">
+<span class="sig-name descname"><span class="pre">period</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id18" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id19">
+<span class="sig-name descname"><span class="pre">raan</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id19" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.tle">
+<span class="sig-name descname"><span class="pre">tle</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.tle" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id20">
+<span class="sig-name descname"><span class="pre">trueAnomaly</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id20" title="Permalink to this definition"></a></dt>
+<dd><p>meant to be used for lazy evaluation of an object attribute.
+property should represent non-mutable data, as it replaces itself.</p>
+</dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="id21">
+<span class="sig-name descname"><span class="pre">at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">propagator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">KeplerianPropagator()</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit.html#Orbit.at"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id21" title="Permalink to this definition"></a></dt>
+<dd><p>Propagate this orbit to time t.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>astropy.time.Time</em>) – If float, then should correspond to GPS seconds; i.e., seconds since
+1980-01-06 00:00:00 UTC</p></li>
+<li><p><strong>propagator</strong> (<a class="reference internal" href="ssapy.propagator.Propagator.html#ssapy.propagator.Propagator" title="ssapy.propagator.Propagator"><em>Propagator</em></a><em>, </em><em>optional</em>) – The propagator instance to use.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Propagated Orbit.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#ssapy.orbit.Orbit" title="ssapy.orbit.Orbit">Orbit</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id22">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fromEquinoctialElements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ey</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">398600441800000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">propkw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit.html#Orbit.fromEquinoctialElements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id22" title="Permalink to this definition"></a></dt>
+<dd><p>Construct an Orbit from equinoctial elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Semimajor axis in meters.</p></li>
+<li><p><strong>hx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Components of the equinoctial inclination vector.</p></li>
+<li><p><strong>hy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Components of the equinoctial inclination vector.</p></li>
+<li><p><strong>ex</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Components of the equinoctial eccentricity vector.</p></li>
+<li><p><strong>ey</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Components of the equinoctial eccentricity vector.</p></li>
+<li><p><strong>lv</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – True longitude in radians.</p></li>
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>astropy.time.Time</em>) – If float, then should correspond to GPS seconds; i.e., seconds since
+1980-01-06 00:00:00 UTC</p></li>
+<li><p><strong>mu</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Gravitational constant of central body in m^3/s^2.  (Default:
+Earth’s gravitational constant in WGS84).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Orbit with given parameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#ssapy.orbit.Orbit" title="ssapy.orbit.Orbit">Orbit</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id23">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fromKeplerianElements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trueAnomaly</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">398600441800000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">propkw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit.html#Orbit.fromKeplerianElements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id23" title="Permalink to this definition"></a></dt>
+<dd><p>Construct an Orbit from Keplerian elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Semimajor axis in meters.</p></li>
+<li><p><strong>e</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Keplerian eccentricity.</p></li>
+<li><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Keplerian inclination in radians.</p></li>
+<li><p><strong>pa</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Keplerian periapsis argument in radians.</p></li>
+<li><p><strong>raan</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Keplerian right ascension of the ascending node in radians.</p></li>
+<li><p><strong>trueAnomaly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Keplerian true anomaly in radians.</p></li>
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>astropy.time.Time</em>) – If float, then should correspond to GPS seconds; i.e., seconds since
+1980-01-06 00:00:00 UTC</p></li>
+<li><p><strong>mu</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Gravitational constant of central body in m^3/s^2.  (Default:
+Earth’s gravitational constant in WGS84).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Orbit with given parameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#ssapy.orbit.Orbit" title="ssapy.orbit.Orbit">Orbit</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.fromKozaiMeanKeplerianElements">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fromKozaiMeanKeplerianElements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pa</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trueAnomaly</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">398600441800000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_useTEME</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">propkw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit.html#Orbit.fromKozaiMeanKeplerianElements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.fromKozaiMeanKeplerianElements" title="Permalink to this definition"></a></dt>
+<dd><p>Construct an Orbit from Kozai mean Keplerian elements.  By default,
+this method also converts from the TEME reference frame to the GCRF
+frame.  This is mainly to support TLEs and SGP4, so the default
+gravitational parameter is WGS84.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Semimajor axis in meters.</p></li>
+<li><p><strong>e</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Keplerian eccentricity.</p></li>
+<li><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Keplerian inclination in radians.</p></li>
+<li><p><strong>pa</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Keplerian periapsis argument in radians.</p></li>
+<li><p><strong>raan</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Keplerian right ascension of the ascending node in radians.</p></li>
+<li><p><strong>trueAnomaly</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Keplerian true anomaly in radians.</p></li>
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>astropy.time.Time</em>) – If float, then should correspond to GPS seconds; i.e., seconds since
+1980-01-06 00:00:00 UTC</p></li>
+<li><p><strong>mu</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Gravitational constant of central body in m^3/s^2.  (Default:
+Earth’s gravitational constant in WGS84).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Orbit with given parameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#ssapy.orbit.Orbit" title="ssapy.orbit.Orbit">Orbit</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.fromTLE">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fromTLE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sat_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tle_filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">propkw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit.html#Orbit.fromTLE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.fromTLE" title="Permalink to this definition"></a></dt>
+<dd><p>Construct an Orbit from a TLE file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sat_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – NORAD name of the satellite</p></li>
+<li><p><strong>tle_filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path and name of file where TLE is</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ssapy.orbit.Orbit" title="ssapy.orbit.Orbit">Orbit</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit.Orbit.fromTLETuple">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fromTLETuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">propkw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit.html#Orbit.fromTLETuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit.Orbit.fromTLETuple" title="Permalink to this definition"></a></dt>
+<dd><p>Construct an Orbit from a TLE tuple</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tle</strong> (<em>2-tuple</em><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Line1 and Line2 of TLE as strings</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#ssapy.orbit.Orbit" title="ssapy.orbit.Orbit">Orbit</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ssapy.orbit.EarthObserver.html" class="btn btn-neutral float-left" title="EarthObserver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ssapy.orbit.OrbitalObserver.html" class="btn btn-neutral float-right" title="OrbitalObserver" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

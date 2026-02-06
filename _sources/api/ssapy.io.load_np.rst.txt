@@ -1,0 +1,6 @@
+load_np
+=======
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: load_np

@@ -1,0 +1,6 @@
+parseB3
+=======
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: parseB3

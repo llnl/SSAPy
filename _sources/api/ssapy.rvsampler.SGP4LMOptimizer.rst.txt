@@ -1,0 +1,17 @@
+SGP4LMOptimizer
+===============
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: SGP4LMOptimizer
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~SGP4LMOptimizer.optimize
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: optimize

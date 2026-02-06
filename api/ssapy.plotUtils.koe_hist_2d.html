@@ -1,0 +1,214 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>koe_hist_2d &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="koe_plot" href="ssapy.plotUtils.koe_plot.html" />
+    <link rel="prev" title="ground_track_plot" href="ssapy.plotUtils.ground_track_plot.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../modules/ssapy.plotUtils.html">ssapy.plotUtils</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../modules/ssapy.plotUtils.html#functions">Functions</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.check_numpy_array.html">check_numpy_array</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.check_type.html">check_type</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.draw_dashed_circle.html">draw_dashed_circle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.draw_earth.html">draw_earth</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.draw_moon.html">draw_moon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.format_date_axis.html">format_date_axis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.globe_plot.html">globe_plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.groundTrackVideo.html">groundTrackVideo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.ground_track_plot.html">ground_track_plot</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">koe_hist_2d</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.koe_plot.html">koe_plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.load_earth_file.html">load_earth_file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.load_moon_file.html">load_moon_file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.orbit_divergence_plot.html">orbit_divergence_plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.orbit_plot.html">orbit_plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.save_animated_gif.html">save_animated_gif</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.save_plot.html">save_plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.save_plot_to_pdf.html">save_plot_to_pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.scatter_2d.html">scatter_2d</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.scatter_3d.html">scatter_3d</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.scatter_dot_colors_scaled.html">scatter_dot_colors_scaled</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.plotUtils.set_color_theme.html">set_color_theme</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+          <li class="breadcrumb-item"><a href="../modules/ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+      <li class="breadcrumb-item active">koe_hist_2d</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/ssapy.plotUtils.koe_hist_2d.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="koe-hist-2d">
+<h1>koe_hist_2d<a class="headerlink" href="#koe-hist-2d" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="ssapy.plotUtils.koe_hist_2d">
+<span class="sig-prename descclassname"><span class="pre">ssapy.plotUtils.</span></span><span class="sig-name descname"><span class="pre">koe_hist_2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stable_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Initial</span> <span class="pre">orbital</span> <span class="pre">elements</span> <span class="pre">of\n1</span> <span class="pre">year</span> <span class="pre">stable</span> <span class="pre">cislunar</span> <span class="pre">orbits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[1,</span> <span class="pre">50]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'coolwarm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/plotUtils.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/plotUtils.html#koe_hist_2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.plotUtils.koe_hist_2d" title="Permalink to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Create a 2D histogram plot for various Keplerian orbital elements of stable cislunar orbits.</p>
+<p>Parameters:
+- stable_data (object): An object with attributes <cite>a</cite>, <cite>e</cite>, <cite>i</cite>, and <cite>ta</cite>, which are arrays of semi-major axis, eccentricity, inclination, and true anomaly, respectively.
+- title (str, optional): Title of the figure. Default is “Initial orbital elements of</p>
+</div></blockquote>
+<dl>
+<dt>1 year stable cislunar orbits”.</dt><dd><ul class="simple">
+<li><p>limits (list, optional): Color scale limits for the histogram. Default is [1, 50].</p></li>
+<li><p>bins (int, optional): Number of bins for the 2D histograms. Default is 200.</p></li>
+<li><p>logscale (bool or str, optional): Whether to use logarithmic scaling for the color bar. Default is False. Can also be ‘log’ to apply logarithmic scaling.</p></li>
+<li><p>cmap (str, optional): Colormap to use for the histograms. Default is ‘coolwarm’.</p></li>
+<li><p>save_path (str, optional): Path to save the generated plot. If not provided, the plot will not be saved. Default is False.</p></li>
+</ul>
+<p>Returns:
+- fig (matplotlib.figure.Figure): The figure object containing the 2D histograms.</p>
+<p>This function creates a 3x3 grid of 2D histograms showing the relationships between various orbital elements, including semi-major axis, eccentricity, inclination, and true anomaly. The color scale of the histograms can be adjusted with a logarithmic or linear normalization. The plot is customized with labels and a color bar.</p>
+<p>Example usage:
+<a href="#id1"><span class="problematic" id="id2">``</span></a>`
+import numpy as np
+from your_module import koe_hist_2d</p>
+<p># Example data
+class StableData:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>def __init__(self):</dt><dd><p>self.a = np.random.uniform(1, 20, 1000)
+self.e = np.random.uniform(0, 1, 1000)
+self.i = np.radians(np.random.uniform(0, 90, 1000))
+self.ta = np.radians(np.random.uniform(0, 360, 1000))</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>stable_data = StableData()
+koe_hist_2d(stable_data, save_path=’orbit_histograms.pdf’)
+<a href="#id3"><span class="problematic" id="id4">``</span></a><a href="#id5"><span class="problematic" id="id6">`</span></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ssapy.plotUtils.ground_track_plot.html" class="btn btn-neutral float-left" title="ground_track_plot" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ssapy.plotUtils.koe_plot.html" class="btn btn-neutral float-right" title="koe_plot" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

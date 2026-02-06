@@ -1,0 +1,61 @@
+ThreeAngleOrbitSolver
+=====================
+
+.. currentmodule:: ssapy.orbit_solver
+
+.. autoclass:: ThreeAngleOrbitSolver
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~ThreeAngleOrbitSolver.D
+      ~ThreeAngleOrbitSolver.D11
+      ~ThreeAngleOrbitSolver.D12
+      ~ThreeAngleOrbitSolver.D13
+      ~ThreeAngleOrbitSolver.D21
+      ~ThreeAngleOrbitSolver.D22
+      ~ThreeAngleOrbitSolver.D23
+      ~ThreeAngleOrbitSolver.D31
+      ~ThreeAngleOrbitSolver.D32
+      ~ThreeAngleOrbitSolver.D33
+      ~ThreeAngleOrbitSolver.d1
+      ~ThreeAngleOrbitSolver.d2
+      ~ThreeAngleOrbitSolver.d3
+      ~ThreeAngleOrbitSolver.t21
+      ~ThreeAngleOrbitSolver.t2131
+      ~ThreeAngleOrbitSolver.t31
+      ~ThreeAngleOrbitSolver.t32
+      ~ThreeAngleOrbitSolver.t3231
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~ThreeAngleOrbitSolver.solve
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: D
+   .. autoattribute:: D11
+   .. autoattribute:: D12
+   .. autoattribute:: D13
+   .. autoattribute:: D21
+   .. autoattribute:: D22
+   .. autoattribute:: D23
+   .. autoattribute:: D31
+   .. autoattribute:: D32
+   .. autoattribute:: D33
+   .. autoattribute:: d1
+   .. autoattribute:: d2
+   .. autoattribute:: d3
+   .. autoattribute:: t21
+   .. autoattribute:: t2131
+   .. autoattribute:: t31
+   .. autoattribute:: t32
+   .. autoattribute:: t3231
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: solve

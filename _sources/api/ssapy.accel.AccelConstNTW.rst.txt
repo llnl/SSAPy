@@ -1,0 +1,17 @@
+AccelConstNTW
+=============
+
+.. currentmodule:: ssapy.accel
+
+.. autoclass:: AccelConstNTW
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~AccelConstNTW.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

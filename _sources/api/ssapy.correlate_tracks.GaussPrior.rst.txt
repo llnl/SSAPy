@@ -1,0 +1,17 @@
+GaussPrior
+==========
+
+.. currentmodule:: ssapy.correlate_tracks
+
+.. autoclass:: GaussPrior
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~GaussPrior.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

@@ -1,0 +1,6 @@
+threebody_prop
+==============
+
+.. currentmodule:: ssapy.simple
+
+.. autofunction:: threebody_prop

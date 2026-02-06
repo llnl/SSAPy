@@ -1,0 +1,17 @@
+DirectInitializer
+=================
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: DirectInitializer
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~DirectInitializer.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

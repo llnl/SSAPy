@@ -1,0 +1,6 @@
+file_exists_extension_agnostic
+==============================
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: file_exists_extension_agnostic

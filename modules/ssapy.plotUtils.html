@@ -1,0 +1,291 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ssapy.plotUtils &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="check_numpy_array" href="../api/ssapy.plotUtils.check_numpy_array.html" />
+    <link rel="prev" title="Particles" href="../api/ssapy.particles.Particles.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ssapy.plotUtils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#functions">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.check_numpy_array.html">check_numpy_array</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.check_type.html">check_type</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.draw_dashed_circle.html">draw_dashed_circle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.draw_earth.html">draw_earth</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.draw_moon.html">draw_moon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.format_date_axis.html">format_date_axis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.globe_plot.html">globe_plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.groundTrackVideo.html">groundTrackVideo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.ground_track_plot.html">ground_track_plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.koe_hist_2d.html">koe_hist_2d</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.koe_plot.html">koe_plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.load_earth_file.html">load_earth_file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.load_moon_file.html">load_moon_file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.orbit_divergence_plot.html">orbit_divergence_plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.orbit_plot.html">orbit_plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.save_animated_gif.html">save_animated_gif</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.save_plot.html">save_plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.save_plot_to_pdf.html">save_plot_to_pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.scatter_2d.html">scatter_2d</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.scatter_3d.html">scatter_3d</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.scatter_dot_colors_scaled.html">scatter_dot_colors_scaled</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.plotUtils.set_color_theme.html">set_color_theme</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+      <li class="breadcrumb-item active">ssapy.plotUtils</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/ssapy.plotUtils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-ssapy.plotUtils">
+<span id="ssapy-plotutils"></span><h1>ssapy.plotUtils<a class="headerlink" href="#module-ssapy.plotUtils" title="Permalink to this heading"></a></h1>
+<p>Utility functions for plotting.</p>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_orbital_elements</span></code>(r_, v_[, ...])</p></td>
+<td><p>Calculate the Keplerian orbital elements from position and velocity vectors.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.check_numpy_array.html#ssapy.plotUtils.check_numpy_array" title="ssapy.plotUtils.check_numpy_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_numpy_array</span></code></a>(variable)</p></td>
+<td><p>Checks if the input variable is a NumPy array, a list of NumPy arrays, or neither.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.check_type.html#ssapy.plotUtils.check_type" title="ssapy.plotUtils.check_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_type</span></code></a>(t)</p></td>
+<td><p>Determines the type of the input and provides a description based on its structure.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.draw_dashed_circle.html#ssapy.plotUtils.draw_dashed_circle" title="ssapy.plotUtils.draw_dashed_circle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_dashed_circle</span></code></a>(ax, normal_vector, ...[, ...])</p></td>
+<td><p>Draw a dashed circle on a 3D axis with a given normal vector.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.draw_earth.html#ssapy.plotUtils.draw_earth" title="ssapy.plotUtils.draw_earth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_earth</span></code></a>(time[, ngrid, R, rfactor])</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">param time<span class="colon">:</span></dt>
+<dd class="field-odd"><p>If float (array), then should correspond to GPS seconds;</p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.draw_moon.html#ssapy.plotUtils.draw_moon" title="ssapy.plotUtils.draw_moon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_moon</span></code></a>(time[, ngrid, R, rfactor])</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">param time<span class="colon">:</span></dt>
+<dd class="field-odd"><p>If float (array), then should correspond to GPS seconds;</p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_file</span></code>(filename[, ext])</p></td>
+<td><p>Find a file in the current directory or the ssapy datadir.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_smallest_bounding_cube</span></code>(r[, pad])</p></td>
+<td><p>Find the smallest bounding cube for a set of 3D coordinates, with optional padding.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.format_date_axis.html#ssapy.plotUtils.format_date_axis" title="ssapy.plotUtils.format_date_axis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">format_date_axis</span></code></a>(time_array, ax)</p></td>
+<td><p>Format the x-axis of a plot with time-based labels depending on the span of the time array.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcrf_to_itrf</span></code>(r_gcrf, t[, v])</p></td>
+<td><p>Converts a position vector in the GCRF (Geocentric Celestial Reference Frame) to the ITRF (International Terrestrial Reference Frame) in Cartesian coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcrf_to_lunar</span></code>(r, t[, v])</p></td>
+<td><p>Transform position and velocity vectors from the GCRF (Geocentric Celestial Reference Frame) to a lunar-centric frame.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcrf_to_lunar_fixed</span></code>(r, t[, v])</p></td>
+<td><p>Transform position and velocity vectors from the GCRF (Geocentric Celestial Reference Frame) to a Moon-fixed (lunar-centric) frame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_body</span></code>(name[, model])</p></td>
+<td><p>Get a Body object for a named body.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.globe_plot.html#ssapy.plotUtils.globe_plot" title="ssapy.plotUtils.globe_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">globe_plot</span></code></a>(r, t[, limits, title, figsize, ...])</p></td>
+<td><p>Plot a 3D scatter plot of position vectors on a globe representation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">groundTrack</span></code>(orbit, time[, propagator, format])</p></td>
+<td><p>Calculate satellite ground track on the outer product of all supplied times and state vectors or orbits.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.groundTrackVideo.html#ssapy.plotUtils.groundTrackVideo" title="ssapy.plotUtils.groundTrackVideo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">groundTrackVideo</span></code></a>(r, time)</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">param r<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Position of orbiting object in meters.</p>
+</dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.ground_track_plot.html#ssapy.plotUtils.ground_track_plot" title="ssapy.plotUtils.ground_track_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ground_track_plot</span></code></a>(r, t[, ground_stations, ...])</p></td>
+<td><p><dl class="field-list simple">
+<dt class="field-odd">param r<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.koe_hist_2d.html#ssapy.plotUtils.koe_hist_2d" title="ssapy.plotUtils.koe_hist_2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">koe_hist_2d</span></code></a>(stable_data[, title, limits, ...])</p></td>
+<td><p>Create a 2D histogram plot for various Keplerian orbital elements of stable cislunar orbits.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.koe_plot.html#ssapy.plotUtils.koe_plot" title="ssapy.plotUtils.koe_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">koe_plot</span></code></a>(r, v[, t, elements, save_path, body])</p></td>
+<td><p>Plot Keplerian orbital elements over time for a given trajectory.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">lagrange_points_lunar_frame</span></code>()</p></td>
+<td><p>Calculate the positions of the lunar Lagrange points in the lunar frame, This frame is defined by the coordinate transformation in utils.py gcrf_to_lunar().</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.load_earth_file.html#ssapy.plotUtils.load_earth_file" title="ssapy.plotUtils.load_earth_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_earth_file</span></code></a>()</p></td>
+<td><p>Loads and resizes an image of the Earth.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.load_moon_file.html#ssapy.plotUtils.load_moon_file" title="ssapy.plotUtils.load_moon_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_moon_file</span></code></a>()</p></td>
+<td><p>Loads and resizes an image of the Moon.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.orbit_divergence_plot.html#ssapy.plotUtils.orbit_divergence_plot" title="ssapy.plotUtils.orbit_divergence_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">orbit_divergence_plot</span></code></a>(rs[, r_moon, t, ...])</p></td>
+<td><p>Plot multiple cislunar orbits in the GCRF frame with respect to the Earth and Moon.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.orbit_plot.html#ssapy.plotUtils.orbit_plot" title="ssapy.plotUtils.orbit_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">orbit_plot</span></code></a>(r[, t, title, figsize, ...])</p></td>
+<td><p>Plots the trajectory of one or more orbits in various views and coordinate frames.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.save_animated_gif.html#ssapy.plotUtils.save_animated_gif" title="ssapy.plotUtils.save_animated_gif"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_animated_gif</span></code></a>(gif_name, frames[, fps])</p></td>
+<td><p>Create a GIF from a sequence of image frames.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.save_plot.html#ssapy.plotUtils.save_plot" title="ssapy.plotUtils.save_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_plot</span></code></a>(figure, save_path[, dpi])</p></td>
+<td><p>Save a Python figure as a PNG/JPG/PDF/ect.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.save_plot_to_pdf.html#ssapy.plotUtils.save_plot_to_pdf" title="ssapy.plotUtils.save_plot_to_pdf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_plot_to_pdf</span></code></a>(figure, pdf_path)</p></td>
+<td><p>Save a Matplotlib figure to a PDF file, with support for merging with existing PDFs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.scatter_2d.html#ssapy.plotUtils.scatter_2d" title="ssapy.plotUtils.scatter_2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scatter_2d</span></code></a>(x, y, cs[, xlabel, ylabel, ...])</p></td>
+<td><p>Create a 2D scatter plot with optional color mapping.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.scatter_3d.html#ssapy.plotUtils.scatter_3d" title="ssapy.plotUtils.scatter_3d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scatter_3d</span></code></a>(x[, y, z, cs, xlabel, ylabel, ...])</p></td>
+<td><p>Create a 3D scatter plot with optional color mapping.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.scatter_dot_colors_scaled.html#ssapy.plotUtils.scatter_dot_colors_scaled" title="ssapy.plotUtils.scatter_dot_colors_scaled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">scatter_dot_colors_scaled</span></code></a>(num_colors)</p></td>
+<td><p>Generates a scaled array of colors using the rainbow colormap.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.plotUtils.set_color_theme.html#ssapy.plotUtils.set_color_theme" title="ssapy.plotUtils.set_color_theme"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_color_theme</span></code></a>(fig, *axes, theme)</p></td>
+<td><p>Set the color theme of the figure and axes to white or black and the text color to white or black.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../api/ssapy.particles.Particles.html" class="btn btn-neutral float-left" title="Particles" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../api/ssapy.plotUtils.check_numpy_array.html" class="btn btn-neutral float-right" title="check_numpy_array" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

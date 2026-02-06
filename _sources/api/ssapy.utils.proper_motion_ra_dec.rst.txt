@@ -1,0 +1,6 @@
+proper_motion_ra_dec
+====================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: proper_motion_ra_dec

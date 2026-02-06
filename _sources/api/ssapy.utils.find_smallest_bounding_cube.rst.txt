@@ -1,0 +1,6 @@
+find_smallest_bounding_cube
+===========================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: find_smallest_bounding_cube

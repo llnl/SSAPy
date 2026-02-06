@@ -1,0 +1,6 @@
+scatter_dot_colors_scaled
+=========================
+
+.. currentmodule:: ssapy.plotUtils
+
+.. autofunction:: scatter_dot_colors_scaled

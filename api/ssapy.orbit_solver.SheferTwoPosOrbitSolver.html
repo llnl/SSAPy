@@ -1,0 +1,548 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SheferTwoPosOrbitSolver &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ThreeAngleOrbitSolver" href="ssapy.orbit_solver.ThreeAngleOrbitSolver.html" />
+    <link rel="prev" title="GaussTwoPosOrbitSolver" href="ssapy.orbit_solver.GaussTwoPosOrbitSolver.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../modules/ssapy.orbit_solver.html">ssapy.orbit_solver</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../modules/ssapy.orbit_solver.html#classes">Classes</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ssapy.orbit_solver.DanchickTwoPosOrbitSolver.html">DanchickTwoPosOrbitSolver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.orbit_solver.GaussTwoPosOrbitSolver.html">GaussTwoPosOrbitSolver</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">SheferTwoPosOrbitSolver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.orbit_solver.ThreeAngleOrbitSolver.html">ThreeAngleOrbitSolver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.orbit_solver.TwoPosOrbitSolver.html">TwoPosOrbitSolver</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../modules/ssapy.orbit_solver.html#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+          <li class="breadcrumb-item"><a href="../modules/ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+      <li class="breadcrumb-item active">SheferTwoPosOrbitSolver</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/ssapy.orbit_solver.SheferTwoPosOrbitSolver.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="shefertwoposorbitsolver">
+<h1>SheferTwoPosOrbitSolver<a class="headerlink" href="#shefertwoposorbitsolver" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssapy.orbit_solver.</span></span><span class="sig-name descname"><span class="pre">SheferTwoPosOrbitSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ssapy.orbit_solver.TwoPosOrbitSolver.html#ssapy.orbit_solver.TwoPosOrbitSolver" title="ssapy.orbit_solver.TwoPosOrbitSolver"><code class="xref py py-class docutils literal notranslate"><span class="pre">TwoPosOrbitSolver</span></code></a></p>
+<p>A class for solving two-position orbit determination problems using
+Shefer’s method. This class extends the <cite>TwoPosOrbitSolver</cite> base class
+and implements a robust algorithm for determining the orbital parameter
+<cite>p</cite> (semi-latus rectum) and auxiliary values based on Shefer’s equations.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.robust">
+<span class="sig-name descname"><span class="pre">robust</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.robust" title="Permalink to this definition"></a></dt>
+<dd><p>If True, enables a robust solution method that examines
+all possible solutions when the initial guess fails.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.nExam">
+<span class="sig-name descname"><span class="pre">nExam</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.nExam" title="Permalink to this definition"></a></dt>
+<dd><p>Number of points to examine when searching for zeros of
+the function F(x) during the robust solution process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.eps">
+<span class="sig-name descname"><span class="pre">eps</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.eps" title="Permalink to this definition"></a></dt>
+<dd><p>Convergence tolerance for iterative calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.maxiter">
+<span class="sig-name descname"><span class="pre">maxiter</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.maxiter" title="Permalink to this definition"></a></dt>
+<dd><p>Maximum number of iterations allowed for convergence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.m">
+<span class="sig-name descname"><span class="pre">m</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.m" title="Permalink to this definition"></a></dt>
+<dd><p>A parameter related to the orbit determination problem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.ell">
+<span class="sig-name descname"><span class="pre">ell</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.ell" title="Permalink to this definition"></a></dt>
+<dd><p>A parameter related to the orbit determination problem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.kappa">
+<span class="sig-name descname"><span class="pre">kappa</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.kappa" title="Permalink to this definition"></a></dt>
+<dd><p>A constant used in orbital calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.sigma">
+<span class="sig-name descname"><span class="pre">sigma</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.sigma" title="Permalink to this definition"></a></dt>
+<dd><p>A constant used in orbital calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.tau">
+<span class="sig-name descname"><span class="pre">tau</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.tau" title="Permalink to this definition"></a></dt>
+<dd><p>A constant used in orbital calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.mu">
+<span class="sig-name descname"><span class="pre">mu</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.mu" title="Permalink to this definition"></a></dt>
+<dd><p>Standard gravitational parameter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.lam">
+<span class="sig-name descname"><span class="pre">lam</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.lam" title="Permalink to this definition"></a></dt>
+<dd><p>A parameter related to Shefer’s equations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.rbar">
+<span class="sig-name descname"><span class="pre">rbar</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.rbar" title="Permalink to this definition"></a></dt>
+<dd><p>A normalized radial distance used in Shefer’s calculations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.alpha">
+<span class="sig-name descname"><span class="pre">alpha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.alpha"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.alpha" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the alpha(x) function and its derivative based on Shefer’s
+equation (18).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.beta">
+<span class="sig-name descname"><span class="pre">beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xi</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.beta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.beta" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the beta(xi) function and its derivative based on Shefer’s
+equations (A.4) and (A.9).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.Y">
+<span class="sig-name descname"><span class="pre">Y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.Y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.Y" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the Y(x) function and its derivative based on Shefer’s
+equation (17).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.Yxi">
+<span class="sig-name descname"><span class="pre">Yxi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xi</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.Yxi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.Yxi" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the Y(xi) function using Shefer’s equation (A.15).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.X">
+<span class="sig-name descname"><span class="pre">X</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.X"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.X" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the X(x) function and its derivative for elliptical orbits
+(Shefer 19) and hyperbolic orbits (Shefer 20). Handles special
+cases for small values of x.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.Z">
+<span class="sig-name descname"><span class="pre">Z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xi</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.Z"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.Z" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the Z(xi) function and its derivative based on Shefer’s
+equation (A.5).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.D">
+<span class="sig-name descname"><span class="pre">D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.D" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the D(x) function and its derivative based on Shefer’s
+equation (43).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.semiMajorAxis">
+<span class="sig-name descname"><span class="pre">semiMajorAxis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.semiMajorAxis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.semiMajorAxis" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the semi-major axis a(x) and its derivative based on
+Shefer’s equation (42).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.Flam0">
+<span class="sig-name descname"><span class="pre">Flam0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.Flam0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.Flam0" title="Permalink to this definition"></a></dt>
+<dd><p>Compute Flam0(x) and its derivative based on Shefer’s equations
+(21) and (22).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.F">
+<span class="sig-name descname"><span class="pre">F</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.F"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.F" title="Permalink to this definition"></a></dt>
+<dd><p>Compute F(x) and its derivative based on Shefer’s equations (40)
+and (41).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.G">
+<span class="sig-name descname"><span class="pre">G</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xi</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.G"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.G" title="Permalink to this definition"></a></dt>
+<dd><p>Compute G(xi) and its derivative based on Shefer’s equations (A.7)
+and (A.8).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.yPoly">
+<span class="sig-name descname"><span class="pre">yPoly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.yPoly"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.yPoly" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the polynomial for y and its derivative based on Shefer’s
+equations (44) and (38).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver._getInitialXGuess">
+<span class="sig-name descname"><span class="pre">_getInitialXGuess</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver._getInitialXGuess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver._getInitialXGuess" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the initial guess for x using Shefer’s step B. Handles
+both cases where lam is zero and non-zero.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver._getInitialXiGuess">
+<span class="sig-name descname"><span class="pre">_getInitialXiGuess</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver._getInitialXiGuess"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver._getInitialXiGuess" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the initial guess for xi using Shefer’s equation (A.16).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver._getP">
+<span class="sig-name descname"><span class="pre">_getP</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver._getP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver._getP" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the semi-latus rectum (p) using Shefer’s algorithm. This
+is the main result of the orbit determination process.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver._getAllP">
+<span class="sig-name descname"><span class="pre">_getAllP</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver._getAllP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver._getAllP" title="Permalink to this definition"></a></dt>
+<dd><p>Compute all possible values of p by finding zeros of the function
+F(x) within a given range.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver._getEta">
+<span class="sig-name descname"><span class="pre">_getEta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver._getEta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver._getEta" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the auxiliary value eta defined in Shefer’s equation (2).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.orbit_solver.SheferTwoPosOrbitSolver.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.orbit_solver.SheferTwoPosOrbitSolver.solve" title="Permalink to this definition"></a></dt>
+<dd><p>Solve the orbit determination problem. First attempts to find a
+solution using Shefer’s initial guess. If the solution fails,
+employs a robust method to examine all possible zeros of F(x)
+and determine a valid orbit.</p>
+</dd></dl>
+
+<p class="rubric">Methods Summary</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="ssapy.orbit_solver.SheferTwoPosOrbitSolver.D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">D</span></code></a>(x)</p></td>
+<td><p>Compute D(x) and its derivative, dD(x)/dx, from Shefer (43).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id1" title="ssapy.orbit_solver.SheferTwoPosOrbitSolver.F"><code class="xref py py-obj docutils literal notranslate"><span class="pre">F</span></code></a>(x)</p></td>
+<td><p>Compute F(x) and dF(x)/dx from Shefer (40) and (41).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id2" title="ssapy.orbit_solver.SheferTwoPosOrbitSolver.Flam0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Flam0</span></code></a>(x)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id3" title="ssapy.orbit_solver.SheferTwoPosOrbitSolver.G"><code class="xref py py-obj docutils literal notranslate"><span class="pre">G</span></code></a>(xi)</p></td>
+<td><p>Compute G(xi) and its derivative from Shefer (A.7) and (A.8).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id4" title="ssapy.orbit_solver.SheferTwoPosOrbitSolver.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a>(x)</p></td>
+<td><p>Evaluate X(x) function from Shefer (19) for elliptical orbits and (20) for hyperbolic orbits.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id5" title="ssapy.orbit_solver.SheferTwoPosOrbitSolver.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y</span></code></a>(x)</p></td>
+<td><p>Evaluate Y(x) and dY(x)/dx from Shefer (17).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id6" title="ssapy.orbit_solver.SheferTwoPosOrbitSolver.Yxi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Yxi</span></code></a>(xi)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id7" title="ssapy.orbit_solver.SheferTwoPosOrbitSolver.Z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z</span></code></a>(xi)</p></td>
+<td><p>Compute Z(xi) function from Shefer (A.5).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id8" title="ssapy.orbit_solver.SheferTwoPosOrbitSolver.alpha"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alpha</span></code></a>(x)</p></td>
+<td><p>Evaluate alpha(x) from Shefer (18).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id9" title="ssapy.orbit_solver.SheferTwoPosOrbitSolver.beta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">beta</span></code></a>(xi)</p></td>
+<td><p>Evaluate beta(xi) and its derivative from Shefer (A.4) and (A.9).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id10" title="ssapy.orbit_solver.SheferTwoPosOrbitSolver.semiMajorAxis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">semiMajorAxis</span></code></a>(x)</p></td>
+<td><p>Compute semi-major axis a(x) and its derivative, da(x)/dx, from Shefer (42).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id11" title="ssapy.orbit_solver.SheferTwoPosOrbitSolver.solve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id12" title="ssapy.orbit_solver.SheferTwoPosOrbitSolver.yPoly"><code class="xref py py-obj docutils literal notranslate"><span class="pre">yPoly</span></code></a>(y)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<dd><p>Compute D(x) and its derivative, dD(x)/dx, from Shefer (43).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">F</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.F"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
+<dd><p>Compute F(x) and dF(x)/dx from Shefer (40) and (41).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">Flam0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.Flam0"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">G</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xi</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.G"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id3" title="Permalink to this definition"></a></dt>
+<dd><p>Compute G(xi) and its derivative from Shefer (A.7) and (A.8).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id4">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">X</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.X"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id4" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate X(x) function from Shefer (19) for elliptical orbits
+and (20) for hyperbolic orbits. The derivative of X(x) is given in
+(23).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">Y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.Y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id5" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate Y(x) and dY(x)/dx from Shefer (17).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">Yxi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xi</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.Yxi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id6" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id7">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xi</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.Z"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id7" title="Permalink to this definition"></a></dt>
+<dd><p>Compute Z(xi) function from Shefer (A.5).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">alpha</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.alpha"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id8" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate alpha(x) from Shefer (18).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">beta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xi</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.beta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id9" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate beta(xi) and its derivative from Shefer (A.4) and (A.9).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">semiMajorAxis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.semiMajorAxis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id10" title="Permalink to this definition"></a></dt>
+<dd><p>Compute semi-major axis a(x) and its derivative, da(x)/dx, from
+Shefer (42).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id11" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">yPoly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/orbit_solver.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/orbit_solver.html#SheferTwoPosOrbitSolver.yPoly"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id12" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ssapy.orbit_solver.GaussTwoPosOrbitSolver.html" class="btn btn-neutral float-left" title="GaussTwoPosOrbitSolver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ssapy.orbit_solver.ThreeAngleOrbitSolver.html" class="btn btn-neutral float-right" title="ThreeAngleOrbitSolver" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+moon_shine
+==========
+
+.. currentmodule:: ssapy.compute
+
+.. autofunction:: moon_shine

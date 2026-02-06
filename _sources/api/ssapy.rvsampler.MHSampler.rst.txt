@@ -1,0 +1,29 @@
+MHSampler
+=========
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: MHSampler
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~MHSampler.acceptanceRatio
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~MHSampler.reset
+      ~MHSampler.sample
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: acceptanceRatio
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: reset
+   .. automethod:: sample

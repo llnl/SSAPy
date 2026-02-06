@@ -1,0 +1,12 @@
+<map id="inheritancef7cbe4f50d" name="inheritancef7cbe4f50d">
+<area shape="rect" id="node1" title="Helper class that provides a standard way to create an ABC using" alt="" coords="5,79,77,104"/>
+<area shape="rect" id="node3" href="../api/ssapy.propagator.Propagator.html#ssapy.propagator.Propagator" target="_top" title="Abstract base class for orbit propagators." alt="" coords="125,104,219,129"/>
+<area shape="rect" id="node5" href="../api/ssapy.propagator.RKPropagator.html#ssapy.propagator.RKPropagator" target="_top" title="Abstract base class for Runge&#45;Kutta&#45;based orbit propagators." alt="" coords="289,29,399,55"/>
+<area shape="rect" id="node2" href="../api/ssapy.propagator.KeplerianPropagator.html#ssapy.propagator.KeplerianPropagator" target="_top" title="A basic Keplerian propagator for finding the position and velocity of an" alt="" coords="267,79,421,104"/>
+<area shape="rect" id="node8" href="../api/ssapy.propagator.SGP4Propagator.html#ssapy.propagator.SGP4Propagator" target="_top" title="Propagate using simplified perturbation model SGP4." alt="" coords="281,128,407,153"/>
+<area shape="rect" id="node9" href="../api/ssapy.propagator.SciPyPropagator.html#ssapy.propagator.SciPyPropagator" target="_top" title="Propagate using the scipy.integrate.solve_ivp ODE solver." alt="" coords="280,177,408,203"/>
+<area shape="rect" id="node10" href="../api/ssapy.propagator.SeriesPropagator.html#ssapy.propagator.SeriesPropagator" target="_top" title="Propagate using Taylor series expansion of Keplerian motion. &#160;This is" alt="" coords="277,227,411,252"/>
+<area shape="rect" id="node4" href="../api/ssapy.propagator.RK4Propagator.html#ssapy.propagator.RK4Propagator" target="_top" title="Runge&#45;Kutta 4th order numerical integrator." alt="" coords="469,5,588,31"/>
+<area shape="rect" id="node7" href="../api/ssapy.propagator.RK8Propagator.html#ssapy.propagator.RK8Propagator" target="_top" title="Runge&#45;Kutta 8th order numerical integrator." alt="" coords="469,55,588,80"/>
+<area shape="rect" id="node6" href="../api/ssapy.propagator.RK78Propagator.html#ssapy.propagator.RK78Propagator" target="_top" title="Runge&#45;Kutta 8th order numerical integrator with adaptive step size" alt="" coords="636,55,763,80"/>
+</map>

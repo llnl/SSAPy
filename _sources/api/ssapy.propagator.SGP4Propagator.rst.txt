@@ -1,0 +1,7 @@
+SGP4Propagator
+==============
+
+.. currentmodule:: ssapy.propagator
+
+.. autoclass:: SGP4Propagator
+   :show-inheritance:

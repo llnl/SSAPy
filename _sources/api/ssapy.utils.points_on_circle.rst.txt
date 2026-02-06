@@ -1,0 +1,6 @@
+points_on_circle
+================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: points_on_circle

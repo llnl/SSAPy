@@ -1,0 +1,8 @@
+<map id="inheritance3ba1478d81" name="inheritance3ba1478d81">
+<area shape="rect" id="node1" href="../api/ssapy.body.Body.html#ssapy.body.Body" target="_top" title="A celestial body." alt="" coords="35,252,107,277"/>
+<area shape="rect" id="node2" href="../api/ssapy.body.EarthOrientation.html#ssapy.body.EarthOrientation" target="_top" title="Orientation of earth in GCRF. &#160;This is a callable class that returns the" alt="" coords="6,203,135,228"/>
+<area shape="rect" id="node3" href="../api/ssapy.body.MoonOrientation.html#ssapy.body.MoonOrientation" target="_top" title="Orientation of moon in GCRF. &#160;This is a callable class that returns the" alt="" coords="5,153,136,179"/>
+<area shape="rect" id="node4" href="../api/ssapy.body.MoonPosition.html#ssapy.body.MoonPosition" target="_top" title="Position of moon in GCRF. &#160;This is a callable class that returns the" alt="" coords="15,104,126,129"/>
+<area shape="rect" id="node5" href="../api/ssapy.body.PlanetPosition.html#ssapy.body.PlanetPosition" target="_top" title="Position of a planet in GCRF. &#160;This is a callable class that returns the" alt="" coords="13,55,128,80"/>
+<area shape="rect" id="node6" href="../api/ssapy.body.SunPosition.html#ssapy.body.SunPosition" target="_top" title="Position of sun in GCRF. &#160;This is a callable class that returns the" alt="" coords="21,5,120,31"/>
+</map>

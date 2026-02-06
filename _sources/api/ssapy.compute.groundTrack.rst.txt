@@ -1,0 +1,6 @@
+groundTrack
+===========
+
+.. currentmodule:: ssapy.compute
+
+.. autofunction:: groundTrack

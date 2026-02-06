@@ -1,0 +1,27 @@
+MHT
+===
+
+.. currentmodule:: ssapy.correlate_tracks
+
+.. autoclass:: MHT
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~MHT.add_tracklet
+      ~MHT.flag_inconsistency
+      ~MHT.prune
+      ~MHT.prune_stale_hypotheses
+      ~MHT.prune_tracks
+      ~MHT.run
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: add_tracklet
+   .. automethod:: flag_inconsistency
+   .. automethod:: prune
+   .. automethod:: prune_stale_hypotheses
+   .. automethod:: prune_tracks
+   .. automethod:: run

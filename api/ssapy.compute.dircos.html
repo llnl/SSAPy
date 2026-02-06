@@ -1,0 +1,228 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dircos &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="earthShadowCoords" href="ssapy.compute.earthShadowCoords.html" />
+    <link rel="prev" title="calculate_orbital_elements" href="ssapy.compute.calculate_orbital_elements.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../modules/ssapy.compute.html">ssapy.compute</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../modules/ssapy.compute.html#functions">Functions</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.M_v_lambertian.html">M_v_lambertian</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.altaz.html">altaz</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.calc_M_v.html">calc_M_v</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.calc_gamma.html">calc_gamma</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.calculate_orbital_elements.html">calculate_orbital_elements</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">dircos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.earthShadowCoords.html">earthShadowCoords</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.earth_shine.html">earth_shine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.find_passes.html">find_passes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.groundTrack.html">groundTrack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.lagrange_points_lunar_frame.html">lagrange_points_lunar_frame</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.lunar_lagrange_points.html">lunar_lagrange_points</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.lunar_lagrange_points_circular.html">lunar_lagrange_points_circular</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.moon_normal_vector.html">moon_normal_vector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.moon_shine.html">moon_shine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.nby3shape.html">nby3shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.quickAltAz.html">quickAltAz</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.radec.html">radec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.radecRate.html">radecRate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.radecRateObsToRV.html">radecRateObsToRV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.refine_pass.html">refine_pass</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.rv.html">rv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.rvObsToRaDecRate.html">rvObsToRaDecRate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.sun_shine.html">sun_shine</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../modules/ssapy.compute.html#classes">Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../modules/ssapy.compute.html#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+          <li class="breadcrumb-item"><a href="../modules/ssapy.compute.html">ssapy.compute</a></li>
+      <li class="breadcrumb-item active">dircos</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/ssapy.compute.dircos.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dircos">
+<h1>dircos<a class="headerlink" href="#dircos" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="ssapy.compute.dircos">
+<span class="sig-prename descclassname"><span class="pre">ssapy.compute.</span></span><span class="sig-name descname"><span class="pre">dircos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsPos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsVel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">propagator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">KeplerianPropagator()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obsAngleCorrection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/compute.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/compute.html#dircos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.compute.dircos" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate observed direction-cosines of orbiting objects as viewed at
+specified times and positions.</p>
+<p>The direction cosines are the cosines of the angles between the vector
+pointing towards the orbiting object and the x, y, z axes.  An equivalent
+description is that they are the components of the unit vector pointing
+towards the orbiting object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>orbit</strong> (<a class="reference internal" href="ssapy.orbit.Orbit.html#ssapy.orbit.Orbit" title="ssapy.orbit.Orbit"><em>Orbit</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference internal" href="ssapy.orbit.Orbit.html#ssapy.orbit.Orbit" title="ssapy.orbit.Orbit"><em>Orbit</em></a><em> (</em><em>n</em><em>,</em><em>)</em>) – Orbit(s) for which to calculate direction cosines.</p></li>
+<li><p><strong>time</strong> (<em>array_like</em><em> or </em><em>astropy.time.Time</em><em> (</em><em>m</em><em>,</em><em>)</em>) – If float (array), then should correspond to GPS seconds; i.e., seconds
+since 1980-01-06 00:00:00 UTC</p></li>
+<li><p><strong>obsPos</strong> (<em>array_like</em><em> (</em><em>m</em><em>, </em><em>3</em><em>)</em><em>, </em><em>optional</em>) – Position of observer at given time.</p></li>
+<li><p><strong>obsVel</strong> (<em>array_like</em><em> (</em><em>m</em><em>, </em><em>3</em><em>)</em><em>, </em><em>optional</em>) – Velocity of observer at given time.  Only required if correcting for
+diurnal aberration.</p></li>
+<li><p><strong>observer</strong> (<em>Observer</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>Observers</em><em> (</em><em>m</em><em>,</em><em>)</em><em>, </em><em>optional</em>) – Observer(s) used to calculate obsPos and obsVel.</p></li>
+<li><p><strong>propagator</strong> (<a class="reference internal" href="ssapy.propagator.Propagator.html#ssapy.propagator.Propagator" title="ssapy.propagator.Propagator"><em>Propagator</em></a><em>, </em><em>optional</em>) – The propagator instance to use.</p></li>
+<li><p><strong>obsAngleCorrection</strong> (<em>{None</em><em>, </em><em>&quot;linear&quot;</em><em>, </em><em>&quot;exact&quot;}</em><em>, </em><em>optional</em>) – Correct actual angle to observed angle, meaning account for light-time
+delay, and aberration due to the observer’s velocity.  None means don’t
+do any correction.  “linear” means do an aberration correction and first
+order light-time correction.  “exact” means do an aberration correction
+and iteratively solve for the exact light-time correction.  (The
+“linear” correction is almost always sufficiently accurate).</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Exactly 1 of <cite>obsPos</cite> and <cite>observer</cite> must be supplied.  <cite>observer</cite> and
+<cite>obsPos</cite> follow similar broadcasting rules as detailed below explicitly only
+for <cite>obsPos</cite>.</p>
+<p>The length of <cite>time</cite> and <cite>obsPos</cite> must match or be broadcastable to match.
+If <cite>orbit</cite> is scalar-valued (an Orbit instead of a list of Orbit), then that
+dimension will be squeezed out in the return value.  Likewise, if both
+<cite>time</cite> and <cite>obsPos</cite> are scalar, that dimension will be squeezed out.</p>
+<p>For Keplerian orbit propagation it is more efficient to use a “vector Orbit”
+instead of a list of single scalar Orbits.</p>
+<p>When doing light time corrections, the time argument is the arrival time of
+the photons at the observer, as opposed to the emission time at the
+satellite.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dircos</strong> – Direction cosines on the outer product of orbit(s) and time/obsPos.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>array_like (n, m, 3)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ssapy.compute.calculate_orbital_elements.html" class="btn btn-neutral float-left" title="calculate_orbital_elements" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ssapy.compute.earthShadowCoords.html" class="btn btn-neutral float-right" title="earthShadowCoords" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

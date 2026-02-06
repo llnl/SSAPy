@@ -1,0 +1,228 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>save_np &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="save_pickle" href="ssapy.io.save_pickle.html" />
+    <link rel="prev" title="save_h5" href="ssapy.io.save_h5.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../modules/ssapy.io.html">ssapy.io</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../modules/ssapy.io.html#functions">Functions</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.append_csv.html">append_csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.append_csv_on_disk.html">append_csv_on_disk</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.append_dict_to_csv.html">append_dict_to_csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.append_h5.html">append_h5</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.b3obs2pos.html">b3obs2pos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.combine_h5.html">combine_h5</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.exists.html">exists</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.exists_in_csv.html">exists_in_csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.exists_in_csv_old.html">exists_in_csv_old</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.file_exists_extension_agnostic.html">file_exists_extension_agnostic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.get_all_files_recursive.html">get_all_files_recursive</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.get_memory_usage.html">get_memory_usage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.get_tel_pos_itrf_to_gcrs.html">get_tel_pos_itrf_to_gcrs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.guess_csv_delimiter.html">guess_csv_delimiter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.h5_key_exists.html">h5_key_exists</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.h5_keys.html">h5_keys</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.h5_root_keys.html">h5_root_keys</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.listdir.html">listdir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.load_b3obs_file.html">load_b3obs_file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.load_np.html">load_np</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.load_pickle.html">load_pickle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.make_tle.html">make_tle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.makedf.html">makedf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.merge_dicts.html">merge_dicts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.mkdir.html">mkdir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.overwrite_h5.html">overwrite_h5</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.parseB3.html">parseB3</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.parseB3Line.html">parseB3Line</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.parse_overpunched.html">parse_overpunched</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.parse_tle.html">parse_tle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.pd_flatten.html">pd_flatten</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.pdstr_to_arrays.html">pdstr_to_arrays</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.read_csv.html">read_csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.read_csv_header.html">read_csv_header</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.read_h5.html">read_h5</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.read_h5_all.html">read_h5_all</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.read_tle.html">read_tle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.read_tle_catalog.html">read_tle_catalog</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.rmdir.html">rmdir</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.rmfile.html">rmfile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.save_csv.html">save_csv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.save_csv_array_to_line.html">save_csv_array_to_line</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.save_csv_header.html">save_csv_header</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.save_csv_line.html">save_csv_line</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.save_h5.html">save_h5</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">save_np</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.save_pickle.html">save_pickle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.io.str_to_array.html">str_to_array</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+          <li class="breadcrumb-item"><a href="../modules/ssapy.io.html">ssapy.io</a></li>
+      <li class="breadcrumb-item active">save_np</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/ssapy.io.save_np.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="save-np">
+<h1>save_np<a class="headerlink" href="#save-np" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="ssapy.io.save_np">
+<span class="sig-prename descclassname"><span class="pre">ssapy.io.</span></span><span class="sig-name descname"><span class="pre">save_np</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/io.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/io.html#save_np"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.io.save_np" title="Permalink to this definition"></a></dt>
+<dd><p>Save a NumPy array to a binary file.</p>
+<p>This function saves a NumPy array to a file in .npy format. If the file cannot be created or written to, it handles common exceptions and prints an error message.</p>
+<section id="parameters">
+<h2>Parameters:<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt><a href="#id1"><span class="problematic" id="id2">filename_</span></a><span class="classifier">str</span></dt><dd><p>The path to the file where the NumPy array will be saved.</p>
+</dd>
+<dt><a href="#id3"><span class="problematic" id="id4">data_</span></a><span class="classifier">numpy.ndarray</span></dt><dd><p>The NumPy array to be saved.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h2>Returns:<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>None</dt><dd><p>The function does not return any value. It handles exceptions internally and prints error messages if any issues occur.</p>
+</dd>
+</dl>
+</section>
+<section id="examples">
+<h2>Examples:<a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">save_np</span><span class="p">(</span><span class="s1">&#39;array.npy&#39;</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ssapy.io.save_h5.html" class="btn btn-neutral float-left" title="save_h5" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ssapy.io.save_pickle.html" class="btn btn-neutral float-right" title="save_pickle" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

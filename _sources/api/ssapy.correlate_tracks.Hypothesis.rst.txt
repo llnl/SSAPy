@@ -1,0 +1,23 @@
+Hypothesis
+==========
+
+.. currentmodule:: ssapy.correlate_tracks
+
+.. autoclass:: Hypothesis
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~Hypothesis.addto
+      ~Hypothesis.difference
+      ~Hypothesis.ntracklet
+      ~Hypothesis.summarize
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: addto
+   .. automethod:: difference
+   .. automethod:: ntracklet
+   .. automethod:: summarize

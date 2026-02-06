@@ -1,0 +1,17 @@
+EquinoctialExEyPrior
+====================
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: EquinoctialExEyPrior
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~EquinoctialExEyPrior.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

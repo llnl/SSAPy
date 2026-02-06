@@ -1,0 +1,6 @@
+sample_points
+=============
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: sample_points

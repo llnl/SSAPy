@@ -1,0 +1,444 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ssapy.linker &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../../_static/ssapy_logo.ico"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ssapy.linker</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ssapy.linker</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for Monte Carlo-based orbit track linking and model selection.</span>
+
+<span class="sd">References:</span>
+<span class="sd">- Carlin &amp; Chib (1995): Bayesian model choice via MCMC methods.</span>
+<span class="sd">- Godsill (2001): MCMC methods for model uncertainty.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.particles</span><span class="w"> </span><span class="kn">import</span> <span class="n">Particles</span>
+
+
+<div class="viewcode-block" id="ModelSelectorParams"><a class="viewcode-back" href="../../api/ssapy.linker.ModelSelectorParams.html#ssapy.linker.ModelSelectorParams">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">ModelSelectorParams</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Container to hold model selection parameters or hyperparameters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_tracks</span><span class="p">,</span> <span class="n">num_orbits</span><span class="p">,</span> <span class="n">init_val</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_tracks</span> <span class="o">=</span> <span class="n">num_tracks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_orbits</span> <span class="o">=</span> <span class="n">num_orbits</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_params</span><span class="p">(</span><span class="n">init_val</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{:4.3f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">row</span><span class="p">])</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">track_ndx</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">track_ndx</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">((</span><span class="n">track_ndx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_orbits</span><span class="p">))]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">track_ndx</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">track_ndx</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">((</span><span class="n">track_ndx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_orbits</span><span class="p">))]</span> <span class="o">=</span> <span class="n">val</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize parameters with the common value &#39;val&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_tracks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_orbits</span><span class="p">),</span>
+                      <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span> <span class="o">*</span> <span class="n">val</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tril</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">obj</span>
+
+<div class="viewcode-block" id="ModelSelectorParams.normalize"><a class="viewcode-back" href="../../api/ssapy.linker.ModelSelectorParams.html#ssapy.linker.ModelSelectorParams.normalize">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">track_ndx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_tracks</span><span class="p">):</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">track_ndx</span><span class="p">]</span>
+            <span class="n">vals</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">track_ndx</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span></div></div>
+
+
+<div class="viewcode-block" id="BinarySelectorParams"><a class="viewcode-back" href="../../api/ssapy.linker.BinarySelectorParams.html#ssapy.linker.BinarySelectorParams">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">BinarySelectorParams</span><span class="p">(</span><span class="n">ModelSelectorParams</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Special methods for the binary model selection variables</span>
+
+<span class="sd">    TODO: Use a masked array here?</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_tracks</span><span class="p">,</span> <span class="n">num_orbits</span><span class="p">,</span> <span class="n">init_value</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">BinarySelectorParams</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">num_tracks</span><span class="p">,</span> <span class="n">num_orbits</span><span class="p">,</span>
+                                                   <span class="n">init_value</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">{:d}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span> <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">row</span><span class="p">])</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">])</span>
+
+<div class="viewcode-block" id="BinarySelectorParams.get_linked_track_indices"><a class="viewcode-back" href="../../api/ssapy.linker.BinarySelectorParams.html#ssapy.linker.BinarySelectorParams.get_linked_track_indices">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_linked_track_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Select those tracks that are linked to the given model_index</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[:,</span> <span class="n">model_index</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="BinarySelectorParams.get_unlinked_track_indices"><a class="viewcode-back" href="../../api/ssapy.linker.BinarySelectorParams.html#ssapy.linker.BinarySelectorParams.get_unlinked_track_indices">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_unlinked_track_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Select those models that are not linked to any tracks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div></div>
+
+
+<div class="viewcode-block" id="Linker"><a class="viewcode-back" href="../../api/ssapy.linker.Linker.html#ssapy.linker.Linker">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Linker</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Monte Carlo linking of uncorrelated orbit tracks</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    iods : list</span>
+<span class="sd">        List of Particles class instances summarizing initial orbit determinations (iods)</span>
+<span class="sd">    num_orbits : int, optional</span>
+<span class="sd">        Number of orbit models to fit. If not specified, set num_orbits = num_tracks</span>
+<span class="sd">    a_orbit : float, optional</span>
+<span class="sd">        Clustering hyperparameter in the Dirichlet prior on P_orbit (Default: 0.01)</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    iods : list</span>
+<span class="sd">        List of Particles class instances summarizing initial orbit determinations (iods)</span>
+<span class="sd">    num_tracks : int</span>
+<span class="sd">        Number of observed tracks. Equal to the length of the iods list.</span>
+<span class="sd">    num_orbits : int, optional</span>
+<span class="sd">        Number of orbit models to fit. If not specified, set num_orbits = num_tracks</span>
+<span class="sd">    orbit_selectors : BinarySelectorParams</span>
+<span class="sd">        The orbit selector parameters</span>
+<span class="sd">    p_orbit : ModelSelectorParams</span>
+<span class="sd">        The prior parameters on the orbit selectors</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    sample_Porbit_conditional_dist(track_ndx)</span>
+<span class="sd">        Sample from the conditional distribution for p_orbit at track_index</span>
+<span class="sd">    sample_orbit_selectors_from_data_conditional(track_ndx)</span>
+<span class="sd">        Sample from the conditional distribution for orbit_selector at track_index</span>
+<span class="sd">    update_orbit_parameters()</span>
+<span class="sd">        Find the groups of linked tracks and update all particles across linked groups</span>
+<span class="sd">    update_params_using_carlin_chib()</span>
+<span class="sd">        Perform MCMC step using algorithm of Carlin &amp; Chib (1995).</span>
+<span class="sd">    save_step(outfile_head)</span>
+<span class="sd">        Save MCMC step to file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iods</span><span class="p">,</span> <span class="n">num_orbits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">a_orbit</span><span class="o">=</span><span class="mf">1.e-2</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iods</span> <span class="o">=</span> <span class="n">iods</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_tracks</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">iods</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num_orbits</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">num_orbits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_tracks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_orbits</span> <span class="o">=</span> <span class="n">num_orbits</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">orbit_selectors</span> <span class="o">=</span> <span class="n">BinarySelectorParams</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_tracks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_orbits</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_orbit</span> <span class="o">=</span> <span class="n">ModelSelectorParams</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_tracks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_orbits</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_orbit</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_a_orbit</span> <span class="o">=</span> <span class="n">ModelSelectorParams</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_tracks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_orbits</span><span class="p">,</span> <span class="mf">1.e-2</span><span class="p">)</span>
+
+        <span class="c1"># Initialize all tracks to be assigned to the first orbit model</span>
+        <span class="c1"># (i.e., assume all tracks generated by one object)</span>
+        <span class="k">for</span> <span class="n">itrack</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_tracks</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">orbit_selectors</span><span class="p">[</span><span class="n">itrack</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Linker(num_tracks=</span><span class="si">{:d}</span><span class="s1">, num_orbits=</span><span class="si">{:d}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_tracks</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_orbits</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="s1">&#39;orbit_selectors:</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">orbit_selectors</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="s1">&#39;p_orbit:</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_orbit</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="s1">&#39;a_orbit:</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_a_orbit</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+<div class="viewcode-block" id="Linker.sample_Porbit_conditional_dist"><a class="viewcode-back" href="../../api/ssapy.linker.Linker.html#ssapy.linker.Linker.sample_Porbit_conditional_dist">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">sample_Porbit_conditional_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">track_ndx</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sample from the conditional distribution for p_orbit at track_index</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        track_index : int</span>
+<span class="sd">            The observation list index</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        p_orbit : array_like</span>
+<span class="sd">            Draw from the conditional distribution for the p.orbit parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_a_orbit</span><span class="p">[</span><span class="n">track_ndx</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">orbit_selectors</span><span class="p">[</span><span class="n">track_ndx</span><span class="p">]</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">track_ndx</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">p_orbit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">dirichlet</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="c1"># return np.ones(track_ndx+1, dtype=np.float64) * 0.5</span>
+        <span class="k">return</span> <span class="n">p_orbit</span></div>
+
+<div class="viewcode-block" id="Linker.sample_orbit_selectors_from_data_conditional"><a class="viewcode-back" href="../../api/ssapy.linker.Linker.html#ssapy.linker.Linker.sample_orbit_selectors_from_data_conditional">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">sample_orbit_selectors_from_data_conditional</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">track_ndx</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sample from the conditional distribution for orbit_selector at track_index ignoring the</span>
+<span class="sd">        dependence orbit selector dependence of the conditional priors for the orbital elements.</span>
+
+<span class="sd">        Draw from :math:P(y | k, theta_k) P(k | P_orbit):</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        track_index : int</span>
+<span class="sd">            The observation list index</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        orbit_selectors : array_like</span>
+<span class="sd">            Draw from the conditional distribution for the orbit_selectors parameters</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_orbits</span><span class="p">,</span> <span class="n">track_ndx</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="c1"># TODO: Is there a way to re-use likelihoods calculated in the orbit parameter update step?</span>
+        <span class="n">lnlike</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iods</span><span class="p">[</span><span class="n">track_ndx</span><span class="p">]</span><span class="o">.</span><span class="n">lnlike</span>
+
+        <span class="n">lnL</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="c1"># FIXME: Add prior on orbit model parameters here?</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iods</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">draw_orbit</span><span class="p">()</span>
+            <span class="n">lnL</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">lnlike</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;lnL:&quot;</span><span class="p">,</span> <span class="n">lnL</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">lnL</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">500.</span><span class="p">):</span>  <span class="c1"># Likelihoods are all small - reset to equal linking probabilities</span>
+            <span class="n">prob_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prob_k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">lnL</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_orbit</span><span class="p">[</span><span class="n">track_ndx</span><span class="p">]))</span>
+        <span class="n">prob_k</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">prob_k</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;prob_k:&quot;</span><span class="p">,</span> <span class="n">prob_k</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">pvals</span><span class="o">=</span><span class="n">prob_k</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Linker.update_orbit_parameters"><a class="viewcode-back" href="../../api/ssapy.linker.Linker.html#ssapy.linker.Linker.update_orbit_parameters">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_orbit_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Find the groups of linked tracks and update all particles across linked groups</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">imodel</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_orbits</span><span class="p">):</span>
+            <span class="n">track_ndx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">orbit_selectors</span><span class="o">.</span><span class="n">get_linked_track_indices</span><span class="p">(</span><span class="n">imodel</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">indx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">track_ndx</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">indx</span> <span class="o">!=</span> <span class="n">imodel</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">iods</span><span class="p">[</span><span class="n">imodel</span><span class="p">]</span><span class="o">.</span><span class="n">fuse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iods</span><span class="p">[</span><span class="n">indx</span><span class="p">])</span>
+                <span class="c1"># for j, jndx in enumerate(track_ndx):</span>
+                <span class="c1">#     if i != j:</span>
+                <span class="c1">#         self.pods[indx].fuse(self.pods[jndx])</span>
+        <span class="c1"># Reset iods to original particles if not linked to any tracks</span>
+        <span class="n">model_ndx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">orbit_selectors</span><span class="o">.</span><span class="n">get_unlinked_track_indices</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">indx</span> <span class="ow">in</span> <span class="n">model_ndx</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">iods</span><span class="p">[</span><span class="n">indx</span><span class="p">]</span><span class="o">.</span><span class="n">reset_to_pseudo_prior</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Linker.update_params_using_carlin_chib"><a class="viewcode-back" href="../../api/ssapy.linker.Linker.html#ssapy.linker.Linker.update_params_using_carlin_chib">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_params_using_carlin_chib</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform MCMC step using algorithm of Carlin &amp; Chib (1995).</span>
+
+<span class="sd">        Sample the &quot;active&quot; orbit parameters from their conditional distribution</span>
+<span class="sd">        (in a Gibbs update), the &quot;inactive&quot; orbit parameters from the</span>
+<span class="sd">        pseudo-prior, and Gibbs updates for the orbit selectors and their prior</span>
+<span class="sd">        parameters.  This method is distinct from the Reversible Jump MCMC</span>
+<span class="sd">        (RJMCMC) updates that have no need of the pseudo-prior at the expense of</span>
+<span class="sd">        finding a suitable proposal distribution for the model updates.</span>
+
+<span class="sd">        The Gibbs updates for each class of parameters in turn defines a blocking</span>
+<span class="sd">        procedure that can, in principle, give more efficient sampling than the</span>
+<span class="sd">        joint updates in RJMCMC if a good proposal distribution for the orbit</span>
+<span class="sd">        selectors  is not known (see Godsill 2001).</span>
+
+<span class="sd">        Here the pseudo-prior for the &quot;inactive&quot; orbit parameters is not conjugate</span>
+<span class="sd">        to the orbit selector prior, so there is no direct method to perform Gibbs</span>
+<span class="sd">        samples of the orbit selectors.  Instead, this function performs an MH</span>
+<span class="sd">        update of orbit selectors with a proposal from the distribution determined</span>
+<span class="sd">        by the product of the orbit likelihoods and the orbit selector prior (which</span>
+<span class="sd">        would be the orbit selector conditional distribution if the orbit priors were</span>
+<span class="sd">        independent of the orbit selectors).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        lnP : float</span>
+<span class="sd">            Current log-posterior value</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Carlin, B., Chib, S., 1995. Bayesian model choice via Markov chain</span>
+<span class="sd">        Monte Carlo methods. Journal of the Royal Statistical Society.</span>
+<span class="sd">        Series B (Method- ological) 57 (3), 473?484.</span>
+
+<span class="sd">        Godsill, S., 2001. On the relationship between Markov chain Monte Carlo</span>
+<span class="sd">        methods for model uncertainty. Journal of Computational and Graphical</span>
+<span class="sd">        Statistics 10 (2), 230?248.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># ----- MH update of the orbit_selector parameters</span>
+        <span class="c1"># (This could be a Gibbs update, but the conditional pseudo-prior is not</span>
+        <span class="c1">#  conjugate)</span>
+        <span class="c1">#</span>
+        <span class="c1"># First propose orbit selectors from p(y | theta_k, k) p(k | P_orbit)</span>
+        <span class="c1">#</span>
+        <span class="k">for</span> <span class="n">itrack</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_tracks</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">orbit_selectors</span><span class="p">[</span><span class="n">itrack</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_orbit_selectors_from_data_conditional</span><span class="p">(</span><span class="n">itrack</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;orbit_selectors:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbit_selectors</span><span class="p">)</span>
+
+        <span class="c1"># Now accept with MH probability</span>
+        <span class="c1"># TODO: This step may not be necessary?</span>
+
+        <span class="c1">#</span>
+        <span class="c1"># ----- Gibbs update of P_orbit</span>
+        <span class="c1">#</span>
+        <span class="k">for</span> <span class="n">itrack</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_tracks</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">p_orbit</span><span class="p">[</span><span class="n">itrack</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_Porbit_conditional_dist</span><span class="p">(</span><span class="n">itrack</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;p_orbit:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_orbit</span><span class="p">)</span>
+
+        <span class="c1">#</span>
+        <span class="c1"># ----- Re-weight / resample orbit model parameter particles given</span>
+        <span class="c1">#       current track linkages.</span>
+        <span class="c1">#</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_orbit_parameters</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;orbit parameters:&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iods</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+
+        <span class="c1"># TODO: Return the current log-posterior value</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Linker.save_step"><a class="viewcode-back" href="../../api/ssapy.linker.Linker.html#ssapy.linker.Linker.save_step">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">save_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outfile_head</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Save MCMC step to file</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        outfile_head : str</span>
+<span class="sd">            Head (i.e., first part) of the output file name for chain steps</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Save orbit selector parameters</span>
+        <span class="n">orbit_selector_file</span> <span class="o">=</span> <span class="n">outfile_head</span> <span class="o">+</span> <span class="s2">&quot;_orbit_selectors.txt&quot;</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">orbit_selector_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">orbit_selectors</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="c1"># Save P_orbit parameters</span>
+        <span class="n">p_orbit_file</span> <span class="o">=</span> <span class="n">outfile_head</span> <span class="o">+</span> <span class="s2">&quot;_p_orbit.txt&quot;</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">p_orbit_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_orbit</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="c1"># Save orbit parameter particles</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">iod</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iods</span><span class="p">):</span>
+            <span class="n">particles_file</span> <span class="o">=</span> <span class="n">outfile_head</span> <span class="o">+</span> <span class="s2">&quot;_particles_</span><span class="si">{:d}</span><span class="s2">.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">particles_file</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">iod</span><span class="o">.</span><span class="n">particles</span><span class="p">,</span>
+                                                        <span class="n">iod</span><span class="o">.</span><span class="n">ln_wts</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="Linker.sample"><a class="viewcode-back" href="../../api/ssapy.linker.Linker.html#ssapy.linker.Linker.sample">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nStep</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">outfile_head</span><span class="o">=</span><span class="s2">&quot;linker&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run the top-level MCMC to link tracks and refine orbit parameters</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nStep : int</span>
+<span class="sd">            Number of MCMC steps</span>
+<span class="sd">        outfile_head : str, optional</span>
+<span class="sd">            Head (i.e., first part) of the output file name for chain steps</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">istep</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nStep</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_params_using_carlin_chib</span><span class="p">()</span>
+            <span class="c1"># self.save_step(outfile_head)</span>
+        <span class="k">return</span> <span class="kc">None</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

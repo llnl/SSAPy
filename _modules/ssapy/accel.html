@@ -1,0 +1,595 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ssapy.accel &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../../_static/ssapy_logo.ico"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ssapy.accel</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ssapy.accel</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Classes for modeling accelerations.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">EARTH_MU</span><span class="p">,</span> <span class="n">EARTH_RADIUS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span><span class="p">,</span> <span class="n">sunPos</span><span class="p">,</span> <span class="n">_gpsToTT</span><span class="p">,</span> <span class="n">ntw_to_r</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.ellipsoid</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ellipsoid</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">erfa</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="c1"># Let this raise</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">astropy._erfa</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">erfa</span>
+
+
+<span class="c1"># Some utility functions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lru_cache</span>
+
+
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_fac</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">factorial</span>
+    <span class="k">return</span> <span class="n">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+
+<span class="nd">@lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_invnorm</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">_fac</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">m</span><span class="p">)</span>
+    <span class="n">den</span> <span class="o">=</span> <span class="n">_fac</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">m</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">num</span> <span class="o">/</span> <span class="n">den</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Accel"><a class="viewcode-back" href="../../api/ssapy.accel.Accel.html#ssapy.accel.Accel">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Accel</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for accelerations.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_breakpoints</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">time_breakpoints</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time_breakpoints</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time_breakpoints</span> <span class="o">=</span> <span class="n">time_breakpoints</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">AccelSum</span><span class="p">((</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">AccelProd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">AccelSum</span><span class="p">([</span><span class="bp">self</span><span class="p">,</span> <span class="n">AccelProd</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)])</span></div>
+
+
+<div class="viewcode-block" id="AccelSum"><a class="viewcode-back" href="../../api/ssapy.accel.AccelSum.html#ssapy.accel.AccelSum">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">AccelSum</span><span class="p">(</span><span class="n">Accel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Acceleration defined as the sum of other accelerations.</span>
+
+<span class="sd">    Note, besides directly invoking this class, you can simply use the `+`</span>
+<span class="sd">    operator on any two `Accel` subclasses too.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    accels : list of Accel</span>
+<span class="sd">        Accelerations to add</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accels</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accels</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">accels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_breakpoints</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">time_breakpoints</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">accels</span><span class="p">]))</span>
+
+<div class="viewcode-block" id="AccelSum.__call__"><a class="viewcode-back" href="../../api/ssapy.accel.AccelSum.html#ssapy.accel.AccelSum.__call__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate acceleration at particular place/moment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        r : array_like, shape(3, )</span>
+<span class="sd">            Position in meters.</span>
+<span class="sd">        v : array_like, shape(3, )</span>
+<span class="sd">            Velocity in meters per second.</span>
+<span class="sd">        t : float</span>
+<span class="sd">            Time as GPS seconds</span>
+<span class="sd">        **kwargs : dict</span>
+<span class="sd">            Other arguments to pass on to individual terms of sum.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        accel : array_like, shape(3,)</span>
+<span class="sd">            Acceleration in meters per second^2</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">accels</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">accels</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="n">f</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="s2">&quot;AccelSum&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">accels</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">AccelSum</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accels</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">accels</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AccelProd"><a class="viewcode-back" href="../../api/ssapy.accel.AccelProd.html#ssapy.accel.AccelProd">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">AccelProd</span><span class="p">(</span><span class="n">Accel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Acceleration defined as the product of an acceleration with a constant factor.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accel</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accel</span> <span class="o">=</span> <span class="n">accel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="n">factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_breakpoints</span> <span class="o">=</span> <span class="n">accel</span><span class="o">.</span><span class="n">time_breakpoints</span>
+
+<div class="viewcode-block" id="AccelProd.__call__"><a class="viewcode-back" href="../../api/ssapy.accel.AccelProd.html#ssapy.accel.AccelProd.__call__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">accel</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="s2">&quot;AccelProd&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">accel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">AccelProd</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">accel</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">accel</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">factor</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AccelKepler"><a class="viewcode-back" href="../../api/ssapy.accel.AccelKepler.html#ssapy.accel.AccelKepler">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">AccelKepler</span><span class="p">(</span><span class="n">Accel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Keplerian acceleration.  I.e., force is proportional to 1/|r|^2.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mu : float, optional</span>
+<span class="sd">        Gravitational constant of central body in m^3/s^2.  (Default: Earth&#39;s</span>
+<span class="sd">        gravitational constant in WGS84).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">EARTH_MU</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>
+
+<div class="viewcode-block" id="AccelKepler.__call__"><a class="viewcode-back" href="../../api/ssapy.accel.AccelKepler.html#ssapy.accel.AccelKepler.__call__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate acceleration at particular place/moment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        r : array_like, shape(3, )</span>
+<span class="sd">            Position in meters.</span>
+<span class="sd">        v : array_like, shape(3, )</span>
+<span class="sd">            Velocity in meters per second.  Unused.</span>
+<span class="sd">        t : float</span>
+<span class="sd">            Time as GPS seconds.  Unused</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        accel : array_like, shape(3,)</span>
+<span class="sd">            Acceleration in meters per second^2</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">*</span> <span class="n">r</span> <span class="o">/</span> <span class="n">norm</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span></div>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="s2">&quot;AccelKepler&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">AccelKepler</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AccelSolRad"><a class="viewcode-back" href="../../api/ssapy.accel.AccelSolRad.html#ssapy.accel.AccelSolRad">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">AccelSolRad</span><span class="p">(</span><span class="n">Accel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Acceleration due to solar radiation pressure.</span>
+
+<span class="sd">    This is a relatively simple model in which the direction of the acceleration</span>
+<span class="sd">    is directly away from the sun and the magnitude is modulated by a single</span>
+<span class="sd">    solar radiation pressure coefficient `CR`.  The coefficient is 1.0 for</span>
+<span class="sd">    purely absorbed light, and 2.0 for purely reflected light.  Rough typical</span>
+<span class="sd">    values for a variety of different satellite components are</span>
+
+<span class="sd">        ~ 1.2  for solar panels</span>
+<span class="sd">        ~ 1.3  for a high gain antenna</span>
+<span class="sd">        ~ 1.9  for a aluminum coated mylar solar sail.</span>
+
+<span class="sd">    Additionally, this class models the Earth&#39;s shadow as a cylinder.  Either</span>
+<span class="sd">    the satellite is inside the cylinder, in which case the acceleration from</span>
+<span class="sd">    this term is 0, or the satellite is outside the cylinder, in which case the</span>
+<span class="sd">    full magnitude of the acceleration is computed.</span>
+
+<span class="sd">    More details can be found in Section 3.4 of Montenbruck and Gill.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    defaultkw : dict</span>
+<span class="sd">        default parameters for kwargs passed to __call__,</span>
+<span class="sd">        (area, mass, CR)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">defaultkw</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">defaultkw</span> <span class="o">=</span> <span class="n">defaultkw</span>
+
+<div class="viewcode-block" id="AccelSolRad.__call__"><a class="viewcode-back" href="../../api/ssapy.accel.AccelSolRad.html#ssapy.accel.AccelSolRad.__call__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate acceleration at particular place/moment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        r : array_like, shape(3, )</span>
+<span class="sd">            Position in meters in GCRF frame.</span>
+<span class="sd">        v : array_like, shape(3, )</span>
+<span class="sd">            Velocity in meters per second.  Unused.</span>
+<span class="sd">        t : float</span>
+<span class="sd">            Time as GPS seconds</span>
+<span class="sd">        area : float</span>
+<span class="sd">            Area in meters^2.</span>
+<span class="sd">        mass : flat</span>
+<span class="sd">            Mass in kg.</span>
+<span class="sd">        CR : float</span>
+<span class="sd">            Radiation pressure coefficient.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        accel : array_like, shape(3,)</span>
+<span class="sd">            Acceleration in meters per second^2</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">kw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">kw</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultkw</span><span class="p">)</span>
+        <span class="n">kw</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">rr</span> <span class="o">=</span> <span class="n">r</span> <span class="o">-</span> <span class="n">sunPos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">P0</span> <span class="o">=</span> <span class="mf">4.56e-6</span>  <span class="c1"># Solar rad pressure [N/m^2]   MG eqn (3.69)</span>
+        <span class="n">AU2</span> <span class="o">=</span> <span class="mf">2.2379522708536898e22</span>  <span class="c1"># 1 AU squared [m^2]</span>
+        <span class="c1"># MG (3.75)</span>
+        <span class="k">return</span> <span class="n">P0</span> <span class="o">*</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;CR&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;area&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">rr</span> <span class="o">/</span> <span class="n">norm</span><span class="p">(</span><span class="n">rr</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">AU2</span></div>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span>
+            <span class="s2">&quot;AccelSolRad&quot;</span><span class="p">,</span>
+            <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultkw</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">AccelSolRad</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultkw</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">defaultkw</span></div>
+
+
+<div class="viewcode-block" id="AccelEarthRad"><a class="viewcode-back" href="../../api/ssapy.accel.AccelEarthRad.html#ssapy.accel.AccelEarthRad">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">AccelEarthRad</span><span class="p">(</span><span class="n">Accel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Acceleration due to Earth radiation pressure.</span>
+
+<span class="sd">    This is a very simple model in which the direction of the acceleration</span>
+<span class="sd">    is directly away from the Earth and the magnitude is modulated by a single</span>
+<span class="sd">    solar radiation pressure coefficient `CR`.  The coefficient is 1.0 for</span>
+<span class="sd">    purely absorbed light, and 2.0 for purely reflected light.  Rough typical</span>
+<span class="sd">    values for a variety of different satellite components are</span>
+
+<span class="sd">        ~ 1.2  for solar panels</span>
+<span class="sd">        ~ 1.3  for a high gain antenna</span>
+<span class="sd">        ~ 1.9  for a aluminum coated mylar solar sail.</span>
+
+<span class="sd">    The radiation pressure at the Earth&#39;s surface is given as</span>
+<span class="sd">    (230 + 459*k) W/m^2, where 230 is from the thermal radiation of the</span>
+<span class="sd">    earth, and 459 is the reflected sunlight.  k is the illuminated</span>
+<span class="sd">    fraction of the earth as seen from the satellite,</span>
+<span class="sd">    assuming the earth is point-like (i.e., neglecting that the</span>
+<span class="sd">    satellite will see less than a full hemisphere for LEO objects).  The</span>
+<span class="sd">    radiation pressure goes down like 1/r^2 as an object moves away from the</span>
+<span class="sd">    earth.</span>
+
+<span class="sd">    This is a simplification of the more complex model presented in MG 3.7.1,</span>
+<span class="sd">    neglecting spatial variation in the emitted light and the different</span>
+<span class="sd">    angles to different parts of the earth.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    defaultkw : dict</span>
+<span class="sd">        default parameters for kwargs passed to __call__,</span>
+<span class="sd">        (area, mass, CR)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">defaultkw</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">defaultkw</span> <span class="o">=</span> <span class="n">defaultkw</span>
+
+<div class="viewcode-block" id="AccelEarthRad.__call__"><a class="viewcode-back" href="../../api/ssapy.accel.AccelEarthRad.html#ssapy.accel.AccelEarthRad.__call__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate acceleration at particular place/moment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        r : array_like, shape(3, )</span>
+<span class="sd">            Position in meters in GCRF frame.</span>
+<span class="sd">        v : array_like, shape(3, )</span>
+<span class="sd">            Velocity in meters per second.  Unused.</span>
+<span class="sd">        t : float</span>
+<span class="sd">            Time as GPS seconds</span>
+<span class="sd">        area : float</span>
+<span class="sd">            Area in meters^2.</span>
+<span class="sd">        mass : flat</span>
+<span class="sd">            Mass in kg.</span>
+<span class="sd">        CR : float</span>
+<span class="sd">            Radiation pressure coefficient.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        accel : array_like, shape(3,)</span>
+<span class="sd">            Acceleration in meters per second^2</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">kw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">kw</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultkw</span><span class="p">)</span>
+        <span class="n">kw</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">r_sun</span> <span class="o">=</span> <span class="n">sunPos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">d_sun</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">r_sun</span><span class="p">)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="n">normr</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">normr</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+            <span class="n">normr</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">normr</span> <span class="o">&lt;</span> <span class="n">EARTH_RADIUS</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">EARTH_RADIUS</span> <span class="o">/</span> <span class="n">normr</span>
+            <span class="n">normr</span> <span class="o">=</span> <span class="n">EARTH_RADIUS</span>
+        <span class="n">normsunsat</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">r_sun</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span>
+        <span class="n">cosi</span> <span class="o">=</span> <span class="p">((</span><span class="n">d_sun</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">normr</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">normsunsat</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">d_sun</span> <span class="o">*</span> <span class="n">normr</span><span class="p">))</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">cosi</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="c1"># Astronomical Algorithms, Chap 41, Jean Meeus.</span>
+        <span class="n">pressure</span> <span class="o">=</span> <span class="p">(</span><span class="mi">459</span> <span class="o">*</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">230</span><span class="p">)</span> <span class="o">/</span> <span class="mi">299792458</span> <span class="o">*</span> <span class="n">r</span> <span class="o">*</span> <span class="n">EARTH_RADIUS</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">normr</span><span class="o">**</span><span class="mi">3</span>
+        <span class="n">accel</span> <span class="o">=</span> <span class="n">pressure</span> <span class="o">*</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;CR&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;area&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">accel</span></div>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span>
+            <span class="s2">&quot;AccelEarthRad&quot;</span><span class="p">,</span>
+            <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultkw</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">AccelEarthRad</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultkw</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">defaultkw</span></div>
+
+
+<div class="viewcode-block" id="AccelDrag"><a class="viewcode-back" href="../../api/ssapy.accel.AccelDrag.html#ssapy.accel.AccelDrag">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">AccelDrag</span><span class="p">(</span><span class="n">Accel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Acceleration due to atmospheric drag.</span>
+
+<span class="sd">    This class uses the Harris-Priester density model, which includes diurnal</span>
+<span class="sd">    variation in the atmospheric bulge, but omits longer period seasonal</span>
+<span class="sd">    variations.</span>
+
+<span class="sd">    The acceleration also depends on a drag coefficient, which is hard to</span>
+<span class="sd">    determine a priori, but takes on typical values around ~2 to ~2.3 for most</span>
+<span class="sd">    satellites.</span>
+
+<span class="sd">    See Section 3.5 of Montenbruck and Gill for more details.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    recalc_threshold : float, optional</span>
+<span class="sd">        Number of seconds past which the code will recompute the</span>
+<span class="sd">        precession/nutation matrix.  Default: 86400*30  (30 days)</span>
+<span class="sd">    defaultkw : dict</span>
+<span class="sd">        default parameters for kwargs passed to __call__,</span>
+<span class="sd">        (area, mass, CR)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recalc_threshold</span><span class="o">=</span><span class="mi">86400</span> <span class="o">*</span> <span class="mi">30</span><span class="p">,</span> <span class="o">**</span><span class="n">defaultkw</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ssapy</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">recalc_threshold</span> <span class="o">=</span> <span class="n">recalc_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">defaultkw</span> <span class="o">=</span> <span class="n">defaultkw</span>
+        <span class="n">ellip</span> <span class="o">=</span> <span class="n">Ellipsoid</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atm</span> <span class="o">=</span> <span class="n">_ssapy</span><span class="o">.</span><span class="n">HarrisPriester</span><span class="p">(</span><span class="n">ellip</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mf">6.0</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AccelDrag.__call__"><a class="viewcode-back" href="../../api/ssapy.accel.AccelDrag.html#ssapy.accel.AccelDrag.__call__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">_T</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate acceleration at particular place/moment.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        r : array_like, shape(3, )</span>
+<span class="sd">            Position in meters in GCRF frame.</span>
+<span class="sd">        v : array_like, shape(3, )</span>
+<span class="sd">            Velocity in meters per second in GCRF frame.</span>
+<span class="sd">        t : float</span>
+<span class="sd">            Time as GPS seconds</span>
+<span class="sd">        area : float</span>
+<span class="sd">            Area in meters^2.</span>
+<span class="sd">        mass : flat</span>
+<span class="sd">            Mass in kg.</span>
+<span class="sd">        CD : float</span>
+<span class="sd">            Drag coefficient.  Typical values are ~ 2 - 2.3</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        accel : array_like, shape(3,)</span>
+<span class="sd">            Acceleration in meters per second^2</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">kw</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">kw</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultkw</span><span class="p">)</span>
+        <span class="n">kw</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">mjd_tt</span> <span class="o">=</span> <span class="n">_gpsToTT</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_T</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">recalc_threshold</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">=</span> <span class="n">t</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_T</span> <span class="o">=</span> <span class="n">erfa</span><span class="o">.</span><span class="n">pnm80</span><span class="p">(</span><span class="mf">2400000.5</span><span class="p">,</span> <span class="n">mjd_tt</span><span class="p">)</span>
+            <span class="n">_T</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T</span>
+        <span class="n">r_sun</span> <span class="o">=</span> <span class="n">sunPos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">r_tod</span> <span class="o">=</span> <span class="n">_T</span> <span class="o">@</span> <span class="n">r</span>
+        <span class="n">v_tod</span> <span class="o">=</span> <span class="n">_T</span> <span class="o">@</span> <span class="n">v</span>
+
+        <span class="n">v_rel</span> <span class="o">=</span> <span class="n">v_tod</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">7.2921159e-5</span><span class="p">],</span> <span class="n">r_tod</span><span class="p">)</span>  <span class="c1"># MG (3.98)</span>
+        <span class="n">ra_sun</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">r_sun</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">r_sun</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">dec_sun</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan</span><span class="p">(</span><span class="n">r_sun</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">r_sun</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">r_sun</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">density</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">atm</span><span class="o">.</span><span class="n">density</span><span class="p">(</span>
+            <span class="o">*</span><span class="n">r_tod</span><span class="p">,</span>
+            <span class="n">ra_sun</span><span class="p">,</span>
+            <span class="n">dec_sun</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">density</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;r_tod = </span><span class="si">{</span><span class="n">r_tod</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ra_sun = </span><span class="si">{</span><span class="n">ra_sun</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dec_sun = </span><span class="si">{</span><span class="n">dec_sun</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;non finite density&quot;</span><span class="p">)</span>
+        <span class="n">a_tod</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;CD&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;area&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">density</span> <span class="o">*</span> <span class="n">v_rel</span> <span class="o">*</span> <span class="n">norm</span><span class="p">(</span><span class="n">v_rel</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_T</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">a_tod</span></div>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span>
+            <span class="s2">&quot;AccelDrag&quot;</span><span class="p">,</span>
+            <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultkw</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">AccelDrag</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">defaultkw</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">defaultkw</span></div>
+
+
+<div class="viewcode-block" id="AccelConstNTW"><a class="viewcode-back" href="../../api/ssapy.accel.AccelConstNTW.html#ssapy.accel.AccelConstNTW">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">AccelConstNTW</span><span class="p">(</span><span class="n">Accel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Constant acceleration in NTW coordinates.</span>
+
+<span class="sd">    Intended to enable maneuvers.  Semimajor axis changes are often done by</span>
+<span class="sd">    accelerating in the in-track direction at perigee, while inclination</span>
+<span class="sd">    change maneuvers are done by accelerating in the cross-track direction.</span>
+<span class="sd">    So these maneuvers are both conveniently implemented in NTW space.</span>
+
+<span class="sd">    This class supports a constant acceleration burn in a fixed direction in</span>
+<span class="sd">    NTW space at a specified time and duration.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    accelntw : array_like, shape(3,)</span>
+<span class="sd">        Direction and magnitude of acceleration in NTW frame, m/s^2.</span>
+<span class="sd">    time_breakpoints : array_like</span>
+<span class="sd">        Times in GPS seconds when acceleration should be turned on and off.</span>
+<span class="sd">        These alternate; first time is on, second time is off, third time is</span>
+<span class="sd">        back on.  must be sorted.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accelntw</span><span class="p">,</span> <span class="n">time_breakpoints</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">time_breakpoints</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">time_breakpoints</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">time_breakpoints</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;acceleration times must be sorted!&#39;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">time_breakpoints</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accelntw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">accelntw</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AccelConstNTW.__call__"><a class="viewcode-back" href="../../api/ssapy.accel.AccelConstNTW.html#ssapy.accel.AccelConstNTW.__call__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_breakpoints</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">off</span> <span class="o">=</span> <span class="p">(</span><span class="n">ind</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">off</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ntw_to_r</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">accelntw</span><span class="p">,</span> <span class="n">relative</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span>
+            <span class="s2">&quot;AccelConstantNTW&quot;</span><span class="p">,</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_breakpoints</span><span class="p">),</span>
+            <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accelntw</span><span class="p">)</span>
+        <span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">AccelDrag</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accelntw</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">accelntw</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_breakpoints</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">time_breakpoints</span><span class="p">))</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+SeriesPropagator
+================
+
+.. currentmodule:: ssapy.propagator
+
+.. autoclass:: SeriesPropagator
+   :show-inheritance:

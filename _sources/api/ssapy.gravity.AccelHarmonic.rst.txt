@@ -1,0 +1,17 @@
+AccelHarmonic
+=============
+
+.. currentmodule:: ssapy.gravity
+
+.. autoclass:: AccelHarmonic
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~AccelHarmonic.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

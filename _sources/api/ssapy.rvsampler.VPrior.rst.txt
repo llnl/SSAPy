@@ -1,0 +1,17 @@
+VPrior
+======
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: VPrior
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~VPrior.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

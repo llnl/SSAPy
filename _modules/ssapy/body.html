@@ -1,0 +1,441 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ssapy.body &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../../_static/ssapy_logo.ico"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ssapy.body</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ssapy.body</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Classes representing celestial bodies.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">erfa</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">_gpsToTT</span><span class="p">,</span> <span class="n">iers_interp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">EARTH_MU</span><span class="p">,</span> <span class="n">EARTH_RADIUS</span><span class="p">,</span> <span class="n">MOON_MU</span><span class="p">,</span> <span class="n">SUN_MU</span><span class="p">,</span> <span class="n">MERCURY_MU</span><span class="p">,</span> <span class="n">VENUS_MU</span><span class="p">,</span> <span class="n">MARS_MU</span><span class="p">,</span> <span class="n">JUPITER_MU</span><span class="p">,</span> <span class="n">SATURN_MU</span><span class="p">,</span> <span class="n">URANUS_MU</span><span class="p">,</span> <span class="n">NEPTUNE_MU</span><span class="p">,</span> <span class="n">MERCURY_RADIUS</span><span class="p">,</span> <span class="n">VENUS_RADIUS</span><span class="p">,</span> <span class="n">MARS_RADIUS</span><span class="p">,</span> <span class="n">JUPITER_RADIUS</span><span class="p">,</span> <span class="n">SATURN_RADIUS</span><span class="p">,</span> <span class="n">URANUS_RADIUS</span><span class="p">,</span> <span class="n">NEPTUNE_RADIUS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.gravity</span><span class="w"> </span><span class="kn">import</span> <span class="n">HarmonicCoefficients</span>
+
+
+<div class="viewcode-block" id="EarthOrientation"><a class="viewcode-back" href="../../api/ssapy.body.EarthOrientation.html#ssapy.body.EarthOrientation">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">EarthOrientation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Orientation of earth in GCRF.  This is a callable class that returns the</span>
+<span class="sd">    orientation matrix at a given time.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    recalc_threshold : float</span>
+<span class="sd">        Threshold for recomputing the orientation matrix. Default is 30 days.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recalc_threshold</span><span class="o">=</span><span class="mi">86400</span> <span class="o">*</span> <span class="mi">30</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recalc_threshold</span> <span class="o">=</span> <span class="n">recalc_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="EarthOrientation.__call__"><a class="viewcode-back" href="../../api/ssapy.body.EarthOrientation.html#ssapy.body.EarthOrientation.__call__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">_E</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the orientation matrix at time t.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t : float</span>
+<span class="sd">            Time in GPS seconds.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        E : `numpy.ndarray`</span>
+<span class="sd">            Orientation matrix at time t.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">_E</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mjd_tt</span> <span class="o">=</span> <span class="n">_gpsToTT</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">recalc_threshold</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">=</span> <span class="n">t</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_dut1</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">iers_interp</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_T</span> <span class="o">=</span> <span class="n">erfa</span><span class="o">.</span><span class="n">pnm80</span><span class="p">(</span><span class="mf">2400000.5</span><span class="p">,</span> <span class="n">mjd_tt</span><span class="p">)</span>
+            <span class="n">gst</span> <span class="o">=</span> <span class="n">erfa</span><span class="o">.</span><span class="n">gst94</span><span class="p">(</span><span class="mf">2400000.5</span><span class="p">,</span> <span class="n">mjd_tt</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dut1</span><span class="p">)</span>
+            <span class="n">_E</span> <span class="o">=</span> <span class="n">erfa</span><span class="o">.</span><span class="n">rxr</span><span class="p">(</span><span class="n">erfa</span><span class="o">.</span><span class="n">rv2m</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">gst</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_T</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_E</span></div></div>
+
+
+<div class="viewcode-block" id="MoonOrientation"><a class="viewcode-back" href="../../api/ssapy.body.MoonOrientation.html#ssapy.body.MoonOrientation">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">MoonOrientation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Orientation of moon in GCRF.  This is a callable class that returns the</span>
+<span class="sd">    orientation matrix at a given time.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">jplephem.pck</span><span class="w"> </span><span class="kn">import</span> <span class="n">PCK</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">datadir</span>
+
+        <span class="n">fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span> <span class="s2">&quot;moon_pa_de440_200625.bpc&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="n">PCK</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MoonOrientation.__call__"><a class="viewcode-back" href="../../api/ssapy.body.MoonOrientation.html#ssapy.body.MoonOrientation.__call__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">_E</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the orientation matrix at time t.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t : float</span>
+<span class="sd">            Time in GPS seconds.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        E : `numpy.ndarray`</span>
+<span class="sd">            Orientation matrix at time t.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mjd_tt</span> <span class="o">=</span> <span class="n">_gpsToTT</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">value</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="mf">2400000.5</span><span class="p">,</span> <span class="n">mjd_tt</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_Rz</span><span class="p">(</span><span class="o">-</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Rx</span><span class="p">(</span><span class="o">-</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Rz</span><span class="p">(</span><span class="o">-</span><span class="n">value</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_Rx</span><span class="p">(</span><span class="n">alpha</span><span class="p">):</span>
+        <span class="n">ca</span><span class="p">,</span> <span class="n">sa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ca</span>
+        <span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">sa</span>
+        <span class="n">out</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">sa</span>
+        <span class="n">out</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">ca</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_Rz</span><span class="p">(</span><span class="n">alpha</span><span class="p">):</span>
+        <span class="n">ca</span><span class="p">,</span> <span class="n">sa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">alpha</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ca</span>
+        <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sa</span>
+        <span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">sa</span>
+        <span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ca</span>
+        <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="MoonPosition"><a class="viewcode-back" href="../../api/ssapy.body.MoonPosition.html#ssapy.body.MoonPosition">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">MoonPosition</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position of moon in GCRF.  This is a callable class that returns the</span>
+<span class="sd">    position vector at a given time.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">jplephem.spk</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPK</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">datadir</span>
+
+        <span class="n">fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span> <span class="s2">&quot;de430.bsp&quot;</span><span class="p">)</span>  <span class="c1"># https://naif.jpl.nasa.gov/pub/naif/LUCY/kernels/spk/de430s.bsp.lbl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="n">SPK</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MoonPosition.__call__"><a class="viewcode-back" href="../../api/ssapy.body.MoonPosition.html#ssapy.body.MoonPosition.__call__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the position vector at time t.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t : float</span>
+<span class="sd">            Time in GPS seconds.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pos : `numpy.ndarray`</span>
+<span class="sd">            Position vector at time t in meters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mjd_tt</span> <span class="o">=</span> <span class="n">_gpsToTT</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">301</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="mf">2400000.5</span><span class="p">,</span> <span class="n">mjd_tt</span><span class="p">)</span>  <span class="c1"># Earth-moon barycenter -&gt; moon</span>
+        <span class="n">pos</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">399</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="mf">2400000.5</span><span class="p">,</span> <span class="n">mjd_tt</span><span class="p">)</span>  <span class="c1"># Earth-moon barycenter -&gt; earth</span>
+        <span class="k">return</span> <span class="n">pos</span> <span class="o">*</span> <span class="mf">1e3</span></div></div>
+
+
+<div class="viewcode-block" id="SunPosition"><a class="viewcode-back" href="../../api/ssapy.body.SunPosition.html#ssapy.body.SunPosition">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">SunPosition</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position of sun in GCRF.  This is a callable class that returns the</span>
+<span class="sd">    position vector at a given time.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">jplephem.spk</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPK</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">datadir</span>
+
+        <span class="n">fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span> <span class="s2">&quot;de430.bsp&quot;</span><span class="p">)</span>  <span class="c1"># https://naif.jpl.nasa.gov/pub/naif/LUCY/kernels/spk/de430s.bsp.lbl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="n">SPK</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SunPosition.__call__"><a class="viewcode-back" href="../../api/ssapy.body.SunPosition.html#ssapy.body.SunPosition.__call__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the position vector at time t.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t : float</span>
+<span class="sd">            Time in GPS seconds.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pos : `numpy.ndarray`</span>
+<span class="sd">            Position vector at time t in meters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mjd_tt</span> <span class="o">=</span> <span class="n">_gpsToTT</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="mf">2400000.5</span><span class="p">,</span> <span class="n">mjd_tt</span><span class="p">)</span>  <span class="c1"># SS bary -&gt; sun</span>
+        <span class="n">pos</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="mf">2400000.5</span><span class="p">,</span> <span class="n">mjd_tt</span><span class="p">)</span>  <span class="c1"># SS bary -&gt; Earth-moon bary</span>
+        <span class="n">pos</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">399</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="mf">2400000.5</span><span class="p">,</span> <span class="n">mjd_tt</span><span class="p">)</span>  <span class="c1"># Earth-moon bary -&gt; Earth</span>
+        <span class="k">return</span> <span class="n">pos</span> <span class="o">*</span> <span class="mf">1e3</span></div></div>
+
+
+<div class="viewcode-block" id="PlanetPosition"><a class="viewcode-back" href="../../api/ssapy.body.PlanetPosition.html#ssapy.body.PlanetPosition">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">PlanetPosition</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Position of a planet in GCRF.  This is a callable class that returns the</span>
+<span class="sd">    position vector at a given time.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">planet_index</span><span class="p">):</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">jplephem.spk</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPK</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">datadir</span>
+
+        <span class="n">fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datadir</span><span class="p">,</span> <span class="s2">&quot;de430.bsp&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="n">SPK</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">planet_index</span> <span class="o">=</span> <span class="n">planet_index</span>
+
+<div class="viewcode-block" id="PlanetPosition.__call__"><a class="viewcode-back" href="../../api/ssapy.body.PlanetPosition.html#ssapy.body.PlanetPosition.__call__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the position vector at time t.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t : float</span>
+<span class="sd">            Time in GPS seconds.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pos : `numpy.ndarray`</span>
+<span class="sd">            Position vector at time t in meters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mjd_tt</span> <span class="o">=</span> <span class="n">_gpsToTT</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">planet_index</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="mf">2400000.5</span><span class="p">,</span> <span class="n">mjd_tt</span><span class="p">)</span>  <span class="c1"># SS bary -&gt; Jupiter</span>
+        <span class="n">pos</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="mf">2400000.5</span><span class="p">,</span> <span class="n">mjd_tt</span><span class="p">)</span>  <span class="c1"># SS bary -&gt; Earth-moon bary</span>
+        <span class="n">pos</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">399</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="mf">2400000.5</span><span class="p">,</span> <span class="n">mjd_tt</span><span class="p">)</span>  <span class="c1"># Earth-moon bary -&gt; Earth</span>
+        <span class="k">return</span> <span class="n">pos</span> <span class="o">*</span> <span class="mf">1e3</span></div></div>
+
+
+<div class="viewcode-block" id="Body"><a class="viewcode-back" href="../../api/ssapy.body.Body.html#ssapy.body.Body">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Body</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A celestial body.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mu : `float`</span>
+<span class="sd">        Gravitational parameter of the body in m^3/s^2.</span>
+<span class="sd">    radius : `float`</span>
+<span class="sd">        Radius of the body in meters.</span>
+<span class="sd">    position : callable, optional</span>
+<span class="sd">        A callable that returns the position vector of the body in GCRF at a</span>
+<span class="sd">        given time.  [default: zero vector]</span>
+<span class="sd">    orientation : callable, optional</span>
+<span class="sd">        A callable that returns the orientation matrix of the body in GCRF at a</span>
+<span class="sd">        given time.  [default: identity matrix]</span>
+<span class="sd">    harmonics : `HarmonicCoefficients`, optional</span>
+<span class="sd">        Harmonic coefficients for the body.  [default: None]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">mu</span><span class="p">,</span>
+        <span class="n">radius</span><span class="p">,</span>
+        <span class="n">position</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+        <span class="n">orientation</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span>
+        <span class="n">harmonics</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">position</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">orientation</span> <span class="o">=</span> <span class="n">orientation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">harmonics</span> <span class="o">=</span> <span class="n">harmonics</span></div>
+
+
+<div class="viewcode-block" id="get_body"><a class="viewcode-back" href="../../api/ssapy.body.get_body.html#ssapy.body.get_body">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_body</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a Body object for a named body.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of the body. Must be one of &quot;earth&quot;, &quot;moon&quot;, &quot;sun&quot;, or other supported planets.</span>
+<span class="sd">    model : str, optional only available for Earth</span>
+<span class="sd">        Name of the Earth harmonic model to use. Default is EGM84. options: EGM96, EGM2008.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    body : Body</span>
+<span class="sd">        Body object for the named body.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;earth&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Body</span><span class="p">(</span>
+                <span class="n">mu</span><span class="o">=</span><span class="n">EARTH_MU</span><span class="p">,</span>
+                <span class="n">radius</span><span class="o">=</span><span class="n">EARTH_RADIUS</span><span class="p">,</span>
+                <span class="n">orientation</span><span class="o">=</span><span class="n">EarthOrientation</span><span class="p">(),</span>
+                <span class="n">harmonics</span><span class="o">=</span><span class="n">HarmonicCoefficients</span><span class="o">.</span><span class="n">fromEGM</span><span class="p">(</span><span class="s2">&quot;EGM84&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;1984&quot;</span> <span class="ow">or</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;84&quot;</span><span class="p">:</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="s2">&quot;EGM84&quot;</span>
+            <span class="k">elif</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;1996&quot;</span> <span class="ow">or</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;96&quot;</span><span class="p">:</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="s2">&quot;EGM96&quot;</span>
+            <span class="k">elif</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;2008&quot;</span> <span class="ow">or</span> <span class="n">model</span> <span class="o">==</span> <span class="s2">&quot;08&quot;</span><span class="p">:</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="s2">&quot;EGM2008&quot;</span>
+            <span class="k">return</span> <span class="n">Body</span><span class="p">(</span>
+                <span class="n">mu</span><span class="o">=</span><span class="n">EARTH_MU</span><span class="p">,</span>
+                <span class="n">radius</span><span class="o">=</span><span class="n">EARTH_RADIUS</span><span class="p">,</span>
+                <span class="n">orientation</span><span class="o">=</span><span class="n">EarthOrientation</span><span class="p">(),</span>
+                <span class="n">harmonics</span><span class="o">=</span><span class="n">HarmonicCoefficients</span><span class="o">.</span><span class="n">fromEGM</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+            <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;moon&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Body</span><span class="p">(</span>
+            <span class="n">mu</span><span class="o">=</span><span class="n">MOON_MU</span><span class="p">,</span>
+            <span class="n">radius</span><span class="o">=</span><span class="mf">1737.4e3</span><span class="p">,</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">MoonPosition</span><span class="p">(),</span>
+            <span class="n">orientation</span><span class="o">=</span><span class="n">MoonOrientation</span><span class="p">(),</span>
+            <span class="n">harmonics</span><span class="o">=</span><span class="n">HarmonicCoefficients</span><span class="o">.</span><span class="n">fromTAB</span><span class="p">(</span><span class="s2">&quot;gggrx_1200a_sha.tab&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;sun&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Body</span><span class="p">(</span>
+            <span class="n">mu</span><span class="o">=</span><span class="n">SUN_MU</span><span class="p">,</span>
+            <span class="n">radius</span><span class="o">=</span><span class="mf">695700000.0</span><span class="p">,</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">SunPosition</span><span class="p">(),</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;mercury&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Body</span><span class="p">(</span>
+            <span class="n">mu</span><span class="o">=</span><span class="n">MERCURY_MU</span><span class="p">,</span>
+            <span class="n">radius</span><span class="o">=</span><span class="n">MERCURY_RADIUS</span><span class="p">,</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">PlanetPosition</span><span class="p">(</span><span class="n">planet_index</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;venus&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Body</span><span class="p">(</span>
+            <span class="n">mu</span><span class="o">=</span><span class="n">VENUS_MU</span><span class="p">,</span>
+            <span class="n">radius</span><span class="o">=</span><span class="n">VENUS_RADIUS</span><span class="p">,</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">PlanetPosition</span><span class="p">(</span><span class="n">planet_index</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;mars&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Body</span><span class="p">(</span>
+            <span class="n">mu</span><span class="o">=</span><span class="n">MARS_MU</span><span class="p">,</span>
+            <span class="n">radius</span><span class="o">=</span><span class="n">MARS_RADIUS</span><span class="p">,</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">PlanetPosition</span><span class="p">(</span><span class="n">planet_index</span><span class="o">=</span><span class="mi">4</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;jupiter&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Body</span><span class="p">(</span>
+            <span class="n">mu</span><span class="o">=</span><span class="n">JUPITER_MU</span><span class="p">,</span>
+            <span class="n">radius</span><span class="o">=</span><span class="n">JUPITER_RADIUS</span><span class="p">,</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">PlanetPosition</span><span class="p">(</span><span class="n">planet_index</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;saturn&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Body</span><span class="p">(</span>
+            <span class="n">mu</span><span class="o">=</span><span class="n">SATURN_MU</span><span class="p">,</span>
+            <span class="n">radius</span><span class="o">=</span><span class="n">SATURN_RADIUS</span><span class="p">,</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">PlanetPosition</span><span class="p">(</span><span class="n">planet_index</span><span class="o">=</span><span class="mi">6</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;uranus&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Body</span><span class="p">(</span>
+            <span class="n">mu</span><span class="o">=</span><span class="n">URANUS_MU</span><span class="p">,</span>
+            <span class="n">radius</span><span class="o">=</span><span class="n">URANUS_RADIUS</span><span class="p">,</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">PlanetPosition</span><span class="p">(</span><span class="n">planet_index</span><span class="o">=</span><span class="mi">7</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;neptune&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Body</span><span class="p">(</span>
+            <span class="n">mu</span><span class="o">=</span><span class="n">NEPTUNE_MU</span><span class="p">,</span>
+            <span class="n">radius</span><span class="o">=</span><span class="n">NEPTUNE_RADIUS</span><span class="p">,</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">PlanetPosition</span><span class="p">(</span><span class="n">planet_index</span><span class="o">=</span><span class="mi">8</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown body </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

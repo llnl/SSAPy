@@ -1,0 +1,17 @@
+EarthOrientation
+================
+
+.. currentmodule:: ssapy.body
+
+.. autoclass:: EarthOrientation
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~EarthOrientation.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

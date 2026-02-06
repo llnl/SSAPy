@@ -1,0 +1,6 @@
+mkdir
+=====
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: mkdir

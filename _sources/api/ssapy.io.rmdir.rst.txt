@@ -1,0 +1,6 @@
+rmdir
+=====
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: rmdir

@@ -1,0 +1,6 @@
+save_animated_gif
+=================
+
+.. currentmodule:: ssapy.plotUtils
+
+.. autofunction:: save_animated_gif

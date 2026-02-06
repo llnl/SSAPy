@@ -1,0 +1,6 @@
+rotate_points_3d
+================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: rotate_points_3d

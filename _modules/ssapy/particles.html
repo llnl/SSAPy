@@ -1,0 +1,393 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ssapy.particles &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../../_static/ssapy_logo.ico"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ssapy.particles</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ssapy.particles</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Classes for sampling orbit model parameters.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.orbit</span><span class="w"> </span><span class="kn">import</span> <span class="n">Orbit</span> <span class="k">as</span> <span class="n">_Orbit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.compute</span><span class="w"> </span><span class="kn">import</span> <span class="n">rv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+
+
+<div class="viewcode-block" id="Particles"><a class="viewcode-back" href="../../api/ssapy.particles.Particles.html#ssapy.particles.Particles">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Particles</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class for importance (re-)sampling orbit model parameter samples</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    particles : (num_particles, 6) array_like</span>
+<span class="sd">        Positions and velocities of orbiting object at epoch in meters and meters / second.</span>
+<span class="sd">        The &#39;chain&#39; part of the output from rvsampler.XXSampler.sample</span>
+<span class="sd">    rvprobability : class instance</span>
+<span class="sd">        An instance of an RVProbability for this epoch. The Particles class wraps the `lnlike`</span>
+<span class="sd">        method of the supplied RVProbability object.</span>
+<span class="sd">    ln_weights : (num_particles,) array_like, optional</span>
+<span class="sd">        Weights for each particle in the input particles</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    particles : (num_particles, ) array_like</span>
+<span class="sd">        Positions and velocities of orbiting object at epoch in meters and meters / second.</span>
+<span class="sd">        The &#39;chain&#39; part of the output from RVSampler.sample</span>
+<span class="sd">    rvprobability : class instance</span>
+<span class="sd">        An instance of an RVProbability for this epoch. The Particles class wraps the `lnlike`</span>
+<span class="sd">        method of the supplied RVProbability object.</span>
+<span class="sd">    ln_wts : (num_particles,) array_like</span>
+<span class="sd">        Log weights for each particle.</span>
+<span class="sd">    num_particles : int</span>
+<span class="sd">        Number of particles</span>
+<span class="sd">    initial_particles : (num_particles, 6) array_like</span>
+<span class="sd">        Copy of input particles to enable reset_to_pseudo_prior()</span>
+<span class="sd">    initial_ln_wts : (num_particles,) array_like</span>
+<span class="sd">        Copy of input log weights to enable reset_to_pseudo_prior()</span>
+<span class="sd">    epoch : float or astropy.time.Time</span>
+<span class="sd">        The time at which the model parameters (position and velocity) are specified. If float,</span>
+<span class="sd">        then should correspond to GPS seconds; i.e., seconds since 1980-01-06 00:00:00 UTC.</span>
+<span class="sd">    orbits : list</span>
+<span class="sd">        List of Orbit class instances derived from each particle</span>
+<span class="sd">    lnpriors : (num_particles,) array_like</span>
+<span class="sd">        Log prior probabilities for each particle. The priors are as set in the input RVProbability</span>
+<span class="sd">        object.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    reset_to_pseudo_prior()</span>
+<span class="sd">        Reset the particles and weights to their values at instantiation</span>
+<span class="sd">    move(epoch)</span>
+<span class="sd">        Move particles to the specified epoch</span>
+<span class="sd">    lnlike(epoch_particles)</span>
+<span class="sd">        Evaluate the log-likelihood of the input particles given internally stored measurements</span>
+<span class="sd">    reweight(epoch_particles)</span>
+<span class="sd">        Reweight particles using cross-epoch likelihoods</span>
+<span class="sd">    resample(num_particles)</span>
+<span class="sd">        Resample particles to achieve near-uniform weighting per particle</span>
+<span class="sd">    fuse(epoch_particles, verbose)</span>
+<span class="sd">        Fuse particles from a different epoch and fuse internal particles and weights</span>
+<span class="sd">    draw_orbit()</span>
+<span class="sd">        Draw a single orbit model from the internal list of particles</span>
+<span class="sd">    mean()</span>
+<span class="sd">        Evaluate the weighted mean of the particle values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">particles</span><span class="p">,</span>
+                 <span class="n">rvprobability</span><span class="p">,</span>
+                 <span class="n">lnpriors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">ln_weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_orbits</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lnpriors</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Check if we have 3D array of particles from RVSampler.</span>
+        <span class="c1"># If so, flatten into 2D array of (samples, parameters)</span>
+        <span class="k">if</span> <span class="n">particles</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">particles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">particles</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">lnpriors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">lnpriors</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Supplied lnpriors do not match expected shape from particles&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_lnpriors</span> <span class="o">=</span> <span class="n">lnpriors</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">particles</span> <span class="o">=</span> <span class="n">particles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rvprobability</span> <span class="o">=</span> <span class="n">rvprobability</span>
+        <span class="k">if</span> <span class="n">ln_weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># ln_weights = np.zeros(particles.shape[0], dtype=np.float64)</span>
+            <span class="c1"># Subtract the log-prior probabilities to approximate samples from the likelihood</span>
+            <span class="n">ln_weights</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">lnpriors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ln_wts</span> <span class="o">=</span> <span class="n">ln_weights</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">particles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1">#</span>
+        <span class="c1"># Save a copy of the particles and weights to enable resets to</span>
+        <span class="c1"># pseudo-prior</span>
+        <span class="c1">#</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_particles</span> <span class="o">=</span> <span class="n">particles</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_ln_wts</span> <span class="o">=</span> <span class="n">ln_weights</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pmean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;Particles(r=</span><span class="si">{!r}</span><span class="s2">, v=</span><span class="si">{!r}</span><span class="s2">, t=</span><span class="si">{!r}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pmean</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">pmean</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;)&quot;</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+<div class="viewcode-block" id="Particles.reset_to_pseudo_prior"><a class="viewcode-back" href="../../api/ssapy.particles.Particles.html#ssapy.particles.Particles.reset_to_pseudo_prior">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">reset_to_pseudo_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">particles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_particles</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ln_wts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_ln_wts</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the epoch time at which the particles (i.e., position and velocity) are defined</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rvprobability</span><span class="o">.</span><span class="n">epoch</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">orbits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get a list of orbits corresponding to each stored particle</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orbits</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_orbits</span> <span class="o">=</span> <span class="p">[</span><span class="n">_Orbit</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">particles</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_orbits</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lnpriors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Get an array of log prior probabilities for each particle</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lnpriors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lnpriors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">rvprobability</span><span class="o">.</span><span class="n">lnprior</span><span class="p">(</span><span class="n">orbit</span><span class="p">)</span> <span class="k">for</span> <span class="n">orbit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">orbits</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lnpriors</span>
+
+<div class="viewcode-block" id="Particles.move"><a class="viewcode-back" href="../../api/ssapy.particles.Particles.html#ssapy.particles.Particles.move">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Move particles to the given epoch</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        epoch : astropy.time.Time</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        particles : array (num_particles, 6)</span>
+<span class="sd">            Position and velocity for each particle at the new epoch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">rv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbits</span><span class="p">,</span> <span class="n">epoch</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Particles.lnlike"><a class="viewcode-back" href="../../api/ssapy.particles.Particles.html#ssapy.particles.Particles.lnlike">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">lnlike</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbits</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Evaluate this epoch likelihood given one or more particles</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        orbits : List of Orbit class instances</span>
+<span class="sd">            A list of the Orbit models for each particle, e.g., as generated by Particles.orbits</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        lnlike : array (num_particles, )</span>
+<span class="sd">            Array of log-likelihood values for each particle</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">rvprobability</span><span class="o">.</span><span class="n">lnlike</span><span class="p">(</span><span class="n">orbit</span><span class="p">)</span> <span class="k">for</span> <span class="n">orbit</span> <span class="ow">in</span> <span class="n">orbits</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Particles.reweight"><a class="viewcode-back" href="../../api/ssapy.particles.Particles.html#ssapy.particles.Particles.reweight">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">reweight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch_particles</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Reweight particles using cross-epoch likelihoods</span>
+
+<span class="sd">        The weights for the kth particle are,</span>
+<span class="sd">            w_k = log(Prod_i L_(d_i | theta_k) / L(d_j | theta_k))</span>
+<span class="sd">                = Sum_{i /= j} log(L(d_i | theta_k))</span>
+<span class="sd">        where j is the current epoch, theta are the particle parameters, and d_i is the data from</span>
+<span class="sd">        epoch i.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        epoch_particles : Particles</span>
+<span class="sd">            The particles object from another observation</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        status : bool</span>
+<span class="sd">            Status (True means success). Side effect is to update the internal particles state.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Update particle weights for the input epoch given this epoch likelihood</span>
+        <span class="n">epoch_ln_wts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lnlike</span><span class="p">(</span><span class="n">epoch_particles</span><span class="o">.</span><span class="n">orbits</span><span class="p">)</span> <span class="o">+</span> <span class="n">epoch_particles</span><span class="o">.</span><span class="n">lnpriors</span>
+        <span class="n">epoch_ln_wts</span> <span class="o">+=</span> <span class="n">epoch_particles</span><span class="o">.</span><span class="n">ln_wts</span>
+
+        <span class="c1"># Update particle weights for this epoch given input epoch likelihood</span>
+        <span class="n">ln_wts</span> <span class="o">=</span> <span class="n">epoch_particles</span><span class="o">.</span><span class="n">lnlike</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">orbits</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lnpriors</span>
+        <span class="n">ln_wts</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ln_wts</span>
+
+        <span class="c1"># Append particles and weights in anticipation of resampling / downsampling</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">particles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">row_stack</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">particles</span><span class="p">,</span> <span class="n">epoch_particles</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ln_wts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ln_wts</span><span class="p">,</span> <span class="n">epoch_ln_wts</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">logaddexp</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ln_wts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">100.</span><span class="p">:</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">status</span></div>
+
+<div class="viewcode-block" id="Particles.resample"><a class="viewcode-back" href="../../api/ssapy.particles.Particles.html#ssapy.particles.Particles.resample">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">resample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_particles</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Resample particles to achieve near-uniform weighting per particle</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        num_particles : int</span>
+<span class="sd">            The number of particles to keep</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            None. Side effect is to update the internal particles state.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Decide if resampling is really required here?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">particles</span><span class="p">,</span> <span class="n">wts</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">particles</span><span class="p">,</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">ln_wts</span><span class="p">,</span> <span class="n">pod</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ln_wts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">wts</span><span class="p">)</span>
+
+        <span class="c1"># Reset the stored log priors array</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lnpriors</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Reset the stored orbits array</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_orbits</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Down-sample (without replacement) from the current particle list if</span>
+        <span class="c1"># the requested number of particles does not match the current number.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">particles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">:</span>
+            <span class="n">ndx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">particles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">num_particles</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">particles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">particles</span><span class="p">[</span><span class="n">ndx</span><span class="p">,</span> <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ln_wts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ln_wts</span><span class="p">[</span><span class="n">ndx</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">particles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Requested more particles than we have&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Particles.fuse"><a class="viewcode-back" href="../../api/ssapy.particles.Particles.html#ssapy.particles.Particles.fuse">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">fuse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch_particles</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Add particles from a new epoch and fuse all epoch particles and weights accordingly</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        epoch_particles : Particles</span>
+<span class="sd">            The particles object from another observation</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Enable verbose output to stdout</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">            None. Side effect is to fuse the internal particles state.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_part_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span>
+        <span class="c1"># Update the weight values by &#39;cross-pollinating&#39; epoch likelihoods</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reweight</span><span class="p">(</span><span class="n">epoch_particles</span><span class="p">)</span>
+        <span class="c1"># Check that we have at least some non-zero weights for particles</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;All weights are negligible in Particles class&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">log-norm:&quot;</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">logaddexp</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ln_wts</span><span class="p">))</span>
+        <span class="c1"># Resample the weights to maintain only significant particles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="n">num_particles</span><span class="o">=</span><span class="n">num_part_out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Particles.draw_orbit"><a class="viewcode-back" href="../../api/ssapy.particles.Particles.html#ssapy.particles.Particles.draw_orbit">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">draw_orbit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Draw a single orbit model from the internal particle collection with probability</span>
+<span class="sd">        proportional to the internal weights.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        particle : array (1, 6)</span>
+<span class="sd">            Position and velocity for one particle</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_normed_weights</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ln_wts</span><span class="p">)</span>
+        <span class="n">particle_ndx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_particles</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">prob</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">particles</span><span class="p">[</span><span class="n">particle_ndx</span><span class="p">,</span> <span class="p">:][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">_Orbit</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="Particles.mean"><a class="viewcode-back" href="../../api/ssapy.particles.Particles.html#ssapy.particles.Particles.mean">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Evaluate the weighted mean of all particles</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        mean : (6,) array_like</span>
+<span class="sd">            Weighted mean of the particle values (3*m, 3*m/s)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">particles</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ln_wts</span><span class="p">))</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

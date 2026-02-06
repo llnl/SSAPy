@@ -1,0 +1,17 @@
+ZeroRadialVelocityPrior
+=======================
+
+.. currentmodule:: ssapy.correlate_tracks
+
+.. autoclass:: ZeroRadialVelocityPrior
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~ZeroRadialVelocityPrior.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

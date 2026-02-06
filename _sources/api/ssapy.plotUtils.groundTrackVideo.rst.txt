@@ -1,0 +1,6 @@
+groundTrackVideo
+================
+
+.. currentmodule:: ssapy.plotUtils
+
+.. autofunction:: groundTrackVideo

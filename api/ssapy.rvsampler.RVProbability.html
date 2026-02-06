@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RVProbability &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="RVSigmaProposal" href="ssapy.rvsampler.RVSigmaProposal.html" />
+    <link rel="prev" title="RPrior" href="ssapy.rvsampler.RPrior.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../modules/ssapy.rvsampler.html">ssapy.rvsampler</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../modules/ssapy.rvsampler.html#functions">Functions</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../modules/ssapy.rvsampler.html#classes">Classes</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.APrior.html">APrior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.AreaPrior.html">AreaPrior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.DirectInitializer.html">DirectInitializer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.DistanceProjectionInitializer.html">DistanceProjectionInitializer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.EPrior.html">EPrior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.EmceeSampler.html">EmceeSampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.EquinoctialExEyPrior.html">EquinoctialExEyPrior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.EquinoctialLMOptimizer.html">EquinoctialLMOptimizer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.GEOProjectionInitializer.html">GEOProjectionInitializer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.GaussianRVInitializer.html">GaussianRVInitializer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.LMOptimizer.html">LMOptimizer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.LMOptimizerAngular.html">LMOptimizerAngular</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.LeastSquaresOptimizer.html">LeastSquaresOptimizer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.Log10AreaPrior.html">Log10AreaPrior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.MHSampler.html">MHSampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.MVNormalProposal.html">MVNormalProposal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.ParamOrbitAngle.html">ParamOrbitAngle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.ParamOrbitEquinoctial.html">ParamOrbitEquinoctial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.ParamOrbitRV.html">ParamOrbitRV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.ParamOrbitTranslator.html">ParamOrbitTranslator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.RPrior.html">RPrior</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">RVProbability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.RVSigmaProposal.html">RVSigmaProposal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.SGP4LMOptimizer.html">SGP4LMOptimizer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.VPrior.html">VPrior</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../modules/ssapy.rvsampler.html#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+          <li class="breadcrumb-item"><a href="../modules/ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+      <li class="breadcrumb-item active">RVProbability</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/ssapy.rvsampler.RVProbability.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="rvprobability">
+<h1>RVProbability<a class="headerlink" href="#rvprobability" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ssapy.rvsampler.RVProbability">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssapy.rvsampler.</span></span><span class="sig-name descname"><span class="pre">RVProbability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">arc,</span> <span class="pre">epoch,</span> <span class="pre">priors=[&lt;ssapy.rvsampler.RPrior</span> <span class="pre">object&gt;,</span> <span class="pre">&lt;ssapy.rvsampler.APrior</span> <span class="pre">object&gt;],</span> <span class="pre">propagator=KeplerianPropagator(),</span> <span class="pre">meanpm=False,</span> <span class="pre">damp=-1</span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/rvsampler.html#RVProbability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.rvsampler.RVProbability" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A class to manage MCMC sampling of orbits (parameterized by position and
+velocity at a given epoch) given some angular observations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arc</strong> (<em>QTable with one row per observation and columns:</em>) – <blockquote>
+<div><dl class="simple">
+<dt>‘ra’, ‘dec’<span class="classifier">Angle</span></dt><dd><p>Observed angular position in ICRS (topocentric).</p>
+</dd>
+<dt>’rStation_GCRF’<span class="classifier">Quantity</span></dt><dd><p>Position of observer in GCRF.</p>
+</dd>
+<dt>’sigma’<span class="classifier">Quantity</span></dt><dd><p>Isotropic uncertainty in observed angular position.</p>
+</dd>
+<dt>’time’<span class="classifier">float or astropy.time.Time</span></dt><dd><p>Time of observation.  If float, then should correspond to GPS
+seconds; i.e., seconds since 1980-01-06 00:00:00 UTC</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>The arc is a linked set of observations assumed to be of the same
+object.</p>
+</p></li>
+<li><p><strong>epoch</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>astropy.time.Time</em>) – The time at which the model parameters (position and velocity) are
+specified.  It probably makes sense to make this the same as one of the
+observation times, but it’s not required to be.  If float, then should
+correspond to GPS seconds; i.e., seconds since 1980-01-06 00:00:00 UTC</p></li>
+<li><p><strong>priors</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>priors</em><em>, </em><em>optional</em>) – A list of class instances similar to RPrior() or APrior() to apply
+jointly to the posterior probability.</p></li>
+<li><p><strong>propagator</strong> (<em>class</em><em>, </em><em>optional</em>) – The propagator class to use.</p></li>
+<li><p><strong>meanpm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – fit model to mean positions and proper motions rather than to
+individual epochs along each streak.</p></li>
+<li><p><strong>damp</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – damp chi residuals with pseudo-Huber loss function.  Default -1: do
+not damp.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.rvsampler.RVProbability.arc">
+<span class="sig-name descname"><span class="pre">arc</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.rvsampler.RVProbability.arc" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.rvsampler.RVProbability.epoch">
+<span class="sig-name descname"><span class="pre">epoch</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.rvsampler.RVProbability.epoch" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.rvsampler.RVProbability.priors">
+<span class="sig-name descname"><span class="pre">priors</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.rvsampler.RVProbability.priors" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.rvsampler.RVProbability.propagator">
+<span class="sig-name descname"><span class="pre">propagator</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.rvsampler.RVProbability.propagator" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.rvsampler.RVProbability.lnlike">
+<span class="sig-name descname"><span class="pre">lnlike</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/rvsampler.html#RVProbability.lnlike"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.rvsampler.RVProbability.lnlike" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate log likelihood of observations given orbit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.rvsampler.RVProbability.lnprob">
+<span class="sig-name descname"><span class="pre">lnprob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/rvsampler.html#RVProbability.lnprob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.rvsampler.RVProbability.lnprob" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate log posterior probability of orbit parameters p given
+observations (up to a constant).  Parameters p are [x, y, z, vx, vy, vz]
+at epoch.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.rvsampler.RVProbability.__call__">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.rvsampler.RVProbability.__call__" title="Permalink to this definition"></a></dt>
+<dd><p>Alias for lnprob(p)</p>
+</dd></dl>
+
+<p class="rubric">Methods Summary</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="ssapy.rvsampler.RVProbability.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(p)</p></td>
+<td><p>Calculate the log posterior probability of parameters p given observations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssapy.rvsampler.RVProbability.chi" title="ssapy.rvsampler.RVProbability.chi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">chi</span></code></a>(orbit)</p></td>
+<td><p>Calculate chi residuals for use with lmfit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id1" title="ssapy.rvsampler.RVProbability.lnlike"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lnlike</span></code></a>(orbit)</p></td>
+<td><p>Calculate the log likelihood of the observations given an orbit.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssapy.rvsampler.RVProbability.lnprior" title="ssapy.rvsampler.RVProbability.lnprior"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lnprior</span></code></a>(orbit)</p></td>
+<td><p>Calculate the log prior probability of the observations given an orbit.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id2" title="ssapy.rvsampler.RVProbability.lnprob"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lnprob</span></code></a>(p)</p></td>
+<td><p>Calculate the log posterior probability of parameters p given observations.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the log posterior probability of parameters p given
+observations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>p</strong> (<em>array</em><em> (</em><em>6</em><em>,</em><em>)</em>) – Sampling parameters.  [x, y, z, vx, vy, vz] in meters and meters per
+second.  Understood to be the parameters at epoch.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>lnprob</strong> (<em>float</em>) – Log posterior probability.</p></li>
+<li><p><strong>lnprior</strong> (<em>float</em>) – Log prior probability.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.rvsampler.RVProbability.chi">
+<span class="sig-name descname"><span class="pre">chi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/rvsampler.html#RVProbability.chi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.rvsampler.RVProbability.chi" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate chi residuals for use with lmfit.</p>
+<p>This is essentially the input to a chi^2 statistic, just without the
+squaring and without the summing over observations.  I.e., it’s</p>
+<p>[(data_i - model_i)/err_i for i in 0..nobs]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>orbit</strong> (<a class="reference internal" href="ssapy.orbit.Orbit.html#ssapy.orbit.Orbit" title="ssapy.orbit.Orbit"><em>Orbit</em></a>) – Orbit in question.  The model.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>chilike</strong> (<em>array_like (nobs,)</em>) – chi residual array for likelihoods</p></li>
+<li><p><strong>chiprior</strong> (<em>array_like (nprior,)</em>) – chi residual array for priors</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">lnlike</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/rvsampler.html#RVProbability.lnlike"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the log likelihood of the observations given an orbit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>orbit</strong> (<a class="reference internal" href="ssapy.orbit.Orbit.html#ssapy.orbit.Orbit" title="ssapy.orbit.Orbit"><em>Orbit</em></a>) – Orbit in question.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>lnlike</strong> – Log likelihood.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.rvsampler.RVProbability.lnprior">
+<span class="sig-name descname"><span class="pre">lnprior</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/rvsampler.html#RVProbability.lnprior"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.rvsampler.RVProbability.lnprior" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the log prior probability of the observations given an
+orbit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>orbit</strong> (<a class="reference internal" href="ssapy.orbit.Orbit.html#ssapy.orbit.Orbit" title="ssapy.orbit.Orbit"><em>Orbit</em></a>) – Orbit in question.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>lnprior</strong> – Log prior probability.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">lnprob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/rvsampler.html#RVProbability.lnprob"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the log posterior probability of parameters p given
+observations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>p</strong> (<em>array</em><em> (</em><em>6</em><em>,</em><em>)</em>) – Sampling parameters.  [x, y, z, vx, vy, vz] in meters and meters per
+second.  Understood to be the parameters at epoch.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>lnprob</strong> (<em>float</em>) – Log posterior probability.</p></li>
+<li><p><strong>lnprior</strong> (<em>float</em>) – Log prior probability.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ssapy.rvsampler.RPrior.html" class="btn btn-neutral float-left" title="RPrior" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ssapy.rvsampler.RVSigmaProposal.html" class="btn btn-neutral float-right" title="RVSigmaProposal" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

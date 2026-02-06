@@ -1,0 +1,6 @@
+best_prop
+=========
+
+.. currentmodule:: ssapy.simple
+
+.. autofunction:: best_prop

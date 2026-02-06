@@ -1,0 +1,7 @@
+Accel
+=====
+
+.. currentmodule:: ssapy.accel
+
+.. autoclass:: Accel
+   :show-inheritance:

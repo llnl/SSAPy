@@ -1,0 +1,6 @@
+find_nearest_indices
+====================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: find_nearest_indices

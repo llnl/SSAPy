@@ -1,0 +1,19 @@
+ParamOrbitAngle
+===============
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: ParamOrbitAngle
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~ParamOrbitAngle.orbit_to_param
+      ~ParamOrbitAngle.param_to_orbit
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: orbit_to_param
+   .. automethod:: param_to_orbit

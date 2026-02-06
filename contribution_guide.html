@@ -1,0 +1,556 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contribution Guide &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="_static/ssapy_logo.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="References" href="references.html" />
+    <link rel="prev" title="SSAPy Concepts" href="concepts.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contribution Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#branches">Branches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#continuous-integration">Continuous Integration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#unit-tests">Unit Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#style-tests">Style Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#documentation-tests">Documentation Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#coverage">Coverage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#git-workflows">Git Workflows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#branching">Branching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cherry-picking">Cherry-Picking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rebasing">Rebasing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rebasing-with-cherry-pick">Rebasing with cherry-pick</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#re-writing-history">Re-writing History</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Contribution Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/contribution_guide.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="contribution-guide">
+<span id="id1"></span><h1>Contribution Guide<a class="headerlink" href="#contribution-guide" title="Permalink to this heading"></a></h1>
+<p>This guide is intended for developers or administrators who want to
+contribute a new feature or bugfix to SSAPy.
+It assumes that you have at least some familiarity with Git and GitHub.
+The guide will show a few examples of contributing workflows and discuss
+the granularity of pull-requests (PRs). It will also discuss the tests your
+PR must pass in order to be accepted into SSAPy.</p>
+<p>First, what is a PR? Quoting <a class="reference external" href="https://www.atlassian.com/git/tutorials/making-a-pull-request/">Bitbucket’s tutorials</a>:</p>
+<blockquote>
+<div><p>Pull requests are a mechanism for a developer to notify team members that
+they have <strong>completed a feature</strong>. The pull request is more than just a
+notification—it’s a dedicated forum for discussing the proposed feature.</p>
+</div></blockquote>
+<p>The emphasis is on a <strong>completed feature</strong>. The changes one proposes in a PR should
+correspond to one feature/bugfix/extension/etc. One can create PRs with
+changes relevant to different ideas, however reviewing such PRs becomes tedious
+and error prone. If possible, try to follow the <strong>one-PR-one-feature</strong> rule.</p>
+<section id="branches">
+<h2>Branches<a class="headerlink" href="#branches" title="Permalink to this heading"></a></h2>
+<p>SSAPy’s <code class="docutils literal notranslate"><span class="pre">main</span></code> branch has the latest contributions. Nearly all pull
+requests should start from <code class="docutils literal notranslate"><span class="pre">main</span></code> and target <code class="docutils literal notranslate"><span class="pre">main</span></code>.</p>
+<p>There is a branch for each major release series. Release branches
+originate from <code class="docutils literal notranslate"><span class="pre">main</span></code> and have tags for each point release in the
+series. For example, <code class="docutils literal notranslate"><span class="pre">releases/v0.14</span></code> might have tags for <code class="docutils literal notranslate"><span class="pre">0.14.0</span></code>,
+<code class="docutils literal notranslate"><span class="pre">0.14.1</span></code>, <code class="docutils literal notranslate"><span class="pre">0.14.2</span></code>, etc. versions of SSAPy. We backport important bug
+fixes to these branches, but we do not advance the package versions or
+make other changes that would change the way SSAPy concretizes
+dependencies. Currently, the maintainers manage these branches by
+cherry-picking from <code class="docutils literal notranslate"><span class="pre">main</span></code>. See <span class="xref std std-ref">releases</span> for more
+information.</p>
+</section>
+<section id="continuous-integration">
+<h2>Continuous Integration<a class="headerlink" href="#continuous-integration" title="Permalink to this heading"></a></h2>
+<p>SSAPy uses <a class="reference external" href="https://docs.github.com/en/actions">Github Actions</a> for Continuous Integration
+testing. This means that every time you submit a pull request, a series of tests will
+be run to make sure you didn’t accidentally introduce any bugs into SSAPy. <strong>Your PR
+will not be accepted until it passes all of these tests.</strong> While you can certainly wait
+for the results of these tests after submitting a PR, we recommend that you run them
+locally to speed up the review process.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Oftentimes, CI will fail for reasons other than a problem with your PR.
+For example, apt-get, pip, or homebrew will fail to download one of the
+dependencies for the test suite, or a transient bug will cause the unit tests
+to timeout. If any job fails, click the “Details” link and click on the test(s)
+that is failing. If it doesn’t look like it is failing for reasons related to
+your PR, you have two options. If you have write permissions for the SSAPy
+repository, you should see a “Restart workflow” button on the right-hand side. If
+not, you can close and reopen your PR to rerun all of the tests. If the same
+test keeps failing, there may be a problem with your PR. If you notice that
+every recent PR is failing with the same error message, it may be that an issue
+occurred with the CI infrastructure or one of SSAPy’s dependencies put out a
+new release that is causing problems. If this is the case, please file an issue.</p>
+</div>
+<p>We currently test against Python 3.10 on both macOS and Linux and
+perform 3 types of tests:</p>
+<section id="unit-tests">
+<span id="cmd-ssapy-unit-test"></span><h3>Unit Tests<a class="headerlink" href="#unit-tests" title="Permalink to this heading"></a></h3>
+<p>Unit tests ensure that core SSAPy features like fetching or spec resolution are
+working as expected. If your PR only adds new packages or modifies existing ones,
+there’s very little chance that your changes could cause the unit tests to fail.
+However, if you make changes to SSAPy’s core libraries, you should run the unit
+tests to make sure you didn’t break anything.</p>
+<p>Since they test things like fetching from VCS repos, the unit tests require
+<a class="reference external" href="https://git-scm.com/">git</a>, <a class="reference external" href="https://www.mercurial-scm.org/">mercurial</a>,
+and <a class="reference external" href="https://subversion.apache.org/">subversion</a> to run. Make sure these are
+installed on your system and can be found in your <code class="docutils literal notranslate"><span class="pre">PATH</span></code>. All of these can be
+installed with SSAPy or with your system package manager.</p>
+<p>To run <em>all</em> of the unit tests, use:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ssapy<span class="w"> </span>unit-test
+</pre></div>
+</div>
+<p>These tests may take several minutes to complete. If you know you are
+only modifying a single SSAPy feature, you can run subsets of tests at a
+time.  For example, this would run all the tests in
+<code class="docutils literal notranslate"><span class="pre">tests/*.py</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ssapy<span class="w"> </span>unit-test<span class="w"> </span>tests/*.py
+</pre></div>
+</div>
+<p>This allows you to develop iteratively: make a change, test that change,
+make another change, test that change, etc.  We use <a class="reference external" href="http://pytest.org/">pytest</a> as our tests framework, and these types of
+arguments are just passed to the <code class="docutils literal notranslate"><span class="pre">pytest</span></code> command underneath. See <a class="reference external" href="https://doc.pytest.org/en/latest/how-to/usage.html#specifying-which-tests-to-run">the
+pytest docs</a>
+for more details on test selection syntax.</p>
+<p>By default, <code class="docutils literal notranslate"><span class="pre">pytest</span></code> captures the output of all unit tests, and it will
+print any captured output for failed tests. Sometimes it’s helpful to see
+your output interactively, while the tests run (e.g., if you add print
+statements to a unit tests).  To see the output <em>live</em>, use the <code class="docutils literal notranslate"><span class="pre">-s</span></code>
+argument to <code class="docutils literal notranslate"><span class="pre">pytest</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ssapy<span class="w"> </span>unit-test<span class="w"> </span>-s<span class="w"> </span>--list-long<span class="w"> </span>tests/architecture.py::test_platform
+</pre></div>
+</div>
+<p>Unit tests are crucial to making sure bugs aren’t introduced into
+SSAPy. If you are modifying core SSAPy libraries or adding new
+functionality, please add new unit tests for your feature, and consider
+strengthening existing tests.  You will likely be asked to do this if you
+submit a pull request to the SSAPy project on GitHub.  Check out the
+<a class="reference external" href="http://pytest.org/">pytest docs</a> and feel free to ask for guidance on
+how to write tests!</p>
+</section>
+<section id="style-tests">
+<h3>Style Tests<a class="headerlink" href="#style-tests" title="Permalink to this heading"></a></h3>
+<p>SSAPy uses <a class="reference external" href="http://flake8.pycqa.org/en/latest/">Flake8</a> to test for
+<a class="reference external" href="https://www.python.org/dev/peps/pep-0008/">PEP 8</a> conformance and
+<cite>mypy &lt;https://mypy.readthedocs.io/en/stable/&gt;</cite> for type checking. PEP 8 is
+a series of style guides for Python that provide suggestions for everything
+from variable naming to indentation. In order to limit the number of PRs that
+were mostly style changes, we decided to enforce PEP 8 conformance. Your PR
+needs to comply with PEP 8 in order to be accepted, and if it modifies the
+ssapy library it needs to successfully type-check with mypy as well.</p>
+<p>Testing for compliance with ssapy’s style is easy. Simply run the <code class="docutils literal notranslate"><span class="pre">ssapy</span> <span class="pre">style</span></code>
+command:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>ssapy<span class="w"> </span>style
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">ssapy</span> <span class="pre">style</span></code> has a couple advantages over running the tools by hand:</p>
+<ol class="arabic simple">
+<li><p>It only tests files that you have modified since branching off of
+<code class="docutils literal notranslate"><span class="pre">main</span></code>.</p></li>
+<li><p>It works regardless of what directory you are in.</p></li>
+<li><p>It automatically adds approved exemptions from the <code class="docutils literal notranslate"><span class="pre">flake8</span></code>
+checks. For example, URLs are often longer than 80 characters, so we
+exempt them from line length checks. We also exempt lines that start
+with “homepage”, “url”, “version”, “variant”, “depends_on”, and
+“extends” in <code class="docutils literal notranslate"><span class="pre">package.py</span></code> files.  This is now also possible when directly
+running flake8 if you can use the <code class="docutils literal notranslate"><span class="pre">ssapy</span></code> formatter plugin included with
+ssapy.</p></li>
+</ol>
+<p>More approved flake8 exemptions can be found
+<a class="reference external" href="https://github.com/LLNL/SSAPy/blob/main/.flake8">here</a>.</p>
+<p>If all is well, you’ll see something like this:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>run-flake8-tests
+<span class="go">Dependencies found.</span>
+<span class="go">=======================================================</span>
+<span class="go">flake8: running flake8 code checks on SSAPy.</span>
+
+<span class="go">Modified files:</span>
+
+<span class="go">  var/ssapy/repos/builtin/packages/hdf5/package.py</span>
+<span class="go">  var/ssapy/repos/builtin/packages/hdf/package.py</span>
+<span class="go">  var/ssapy/repos/builtin/packages/netcdf/package.py</span>
+<span class="go">=======================================================</span>
+<span class="go">Flake8 checks were clean.</span>
+</pre></div>
+</div>
+<p>However, if you aren’t compliant with PEP 8, flake8 will complain:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">var/ssapy/repos/builtin/packages/netcdf/package.py:26: [F401] &#39;os&#39; imported but unused</span>
+<span class="go">var/ssapy/repos/builtin/packages/netcdf/package.py:61: [E303] too many blank lines (2)</span>
+<span class="go">var/ssapy/repos/builtin/packages/netcdf/package.py:106: [E501] line too long (92 &gt; 79 characters)</span>
+<span class="go">Flake8 found errors.</span>
+</pre></div>
+</div>
+<p>Most of the error messages are straightforward, but if you don’t understand what
+they mean, just ask questions about them when you submit your PR. The line numbers
+will change if you add or delete lines, so simply run <code class="docutils literal notranslate"><span class="pre">ssapy</span> <span class="pre">style</span></code> again
+to update them.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Try fixing flake8 errors in reverse order. This eliminates the need for
+multiple runs of <code class="docutils literal notranslate"><span class="pre">ssapy</span> <span class="pre">style</span></code> just to re-compute line numbers and
+makes it much easier to fix errors directly off of the CI output.</p>
+</div>
+</section>
+<section id="documentation-tests">
+<h3>Documentation Tests<a class="headerlink" href="#documentation-tests" title="Permalink to this heading"></a></h3>
+<p>SSAPy uses <a class="reference external" href="http://www.sphinx-doc.org/en/stable/">Sphinx</a> to build its
+documentation. In order to prevent things like broken links and missing imports,
+we added documentation tests that build the documentation and fail if there
+are any warning or error messages.</p>
+<p>Building the documentation requires several dependencies:</p>
+<ul class="simple">
+<li><p>docutils</p></li>
+<li><p>sphinx</p></li>
+<li><p>sphinx-rtd-theme</p></li>
+<li><p>sphinx-copybutton</p></li>
+<li><p>sphinx-autobuild</p></li>
+<li><p>sphinx-tabs</p></li>
+<li><p>sphinx-automodapi</p></li>
+<li><p>myst-parser</p></li>
+<li><p>graphviz</p></li>
+</ul>
+<p>All of these can be installed with Pip, e.g.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>python3<span class="w"> </span>-m<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>docutils<span class="w"> </span>sphinx,<span class="w"> </span>sphinx-rtd-theme<span class="w"> </span>sphinx-copybutton<span class="w"> </span>sphinx-autobuild<span class="w"> </span>sphinx-tabs<span class="w"> </span>sphinx-automodapi<span class="w"> </span>myst-parser<span class="w"> </span>graphviz
+</pre></div>
+</div>
+<p>Once all of the dependencies are installed, you can try building the documentation:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>path/to/ssapy/docs/
+<span class="gp">$ </span>make<span class="w"> </span>clean
+<span class="gp">$ </span>make
+</pre></div>
+</div>
+<p>If you see any warning or error messages, you will have to correct those before your PR
+is accepted. If you are editing the documentation, you should be running the
+documentation tests to make sure there are no errors. Documentation changes can result
+in some obfuscated warning messages. If you don’t understand what they mean, feel free
+to ask when you submit your PR.</p>
+</section>
+</section>
+<section id="coverage">
+<h2>Coverage<a class="headerlink" href="#coverage" title="Permalink to this heading"></a></h2>
+<p>SSAPy uses <a class="reference external" href="https://codecov.io/">Codecov</a> to generate and report unit test
+coverage. This helps us tell what percentage of lines of code in SSAPy are
+covered by unit tests. Although code covered by unit tests can still contain
+bugs, it is much less error prone than code that is not covered by unit tests.</p>
+<p>Codecov provides <a class="reference external" href="https://github.com/codecov/sourcegraph-codecov">browser extensions</a>
+for Google Chrome and Firefox. These extensions integrate with GitHub
+and allow you to see coverage line-by-line when viewing the SSAPy repository.
+If you are new to SSAPy, a great way to get started is to write unit tests to
+increase coverage!</p>
+<p>Unlike with CI on Github Actions Codecov tests are not required to pass in order for your
+PR to be merged. If you modify core SSAPy libraries, we would greatly
+appreciate unit tests that cover these changed lines. Otherwise, we have no
+way of knowing whether or not your changes introduce a bug. If you make
+substantial changes to the core, we may request unit tests to increase coverage.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You may notice that the Codecov tests fail even though
+you didn’t modify any core files. This means that SSAPy’s overall coverage
+has increased since you branched off of <code class="docutils literal notranslate"><span class="pre">main</span></code>. This is a good thing!
+If you really want to get the Codecov tests to pass, you can rebase off of
+the latest <code class="docutils literal notranslate"><span class="pre">main</span></code>, but again, this is not required.</p>
+</div>
+</section>
+<section id="git-workflows">
+<h2>Git Workflows<a class="headerlink" href="#git-workflows" title="Permalink to this heading"></a></h2>
+<p>SSAPy is still in the beta stages of development. Most of our users run off of
+the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch, and fixes and new features are constantly being merged. So
+how do you keep up-to-date with upstream while maintaining your own local
+differences and contributing PRs to SSAPy?</p>
+<section id="branching">
+<h3>Branching<a class="headerlink" href="#branching" title="Permalink to this heading"></a></h3>
+<p>The easiest way to contribute a pull request is to make all of your changes on
+new branches. Make sure your <code class="docutils literal notranslate"><span class="pre">main</span></code> is up-to-date and create a new branch
+off of it:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>pull<span class="w"> </span>upstream<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>branch<span class="w"> </span>&lt;descriptive_branch_name&gt;
+<span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>&lt;descriptive_branch_name&gt;
+</pre></div>
+</div>
+<p>Here we assume that the local <code class="docutils literal notranslate"><span class="pre">main</span></code> branch tracks the upstream <code class="docutils literal notranslate"><span class="pre">main</span></code>
+branch of SSAPy. This is not a requirement and you could also do the same with
+remote branches. But for some it is more convenient to have a local branch that
+tracks upstream.</p>
+<p>Normally we prefer that commits pertaining to a package <code class="docutils literal notranslate"><span class="pre">&lt;package-name&gt;</span></code> have
+a message <code class="docutils literal notranslate"><span class="pre">&lt;package-name&gt;:</span> <span class="pre">descriptive</span> <span class="pre">message</span></code>. It is important to add
+descriptive message so that others, who might be looking at your changes later
+(in a year or maybe two), would understand the rationale behind them.</p>
+<p>Now, you can make your changes while keeping the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch pure.
+Edit a few files and commit them by running:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>add<span class="w"> </span>&lt;files_to_be_part_of_the_commit&gt;
+<span class="gp">$ </span>git<span class="w"> </span>commit<span class="w"> </span>--message<span class="w"> </span>&lt;descriptive_message_of_this_particular_commit&gt;
+</pre></div>
+</div>
+<p>Next, push it to your remote fork and create a PR:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>&lt;descriptive_branch_name&gt;<span class="w"> </span>--set-upstream
+</pre></div>
+</div>
+<p>GitHub provides a <a class="reference external" href="https://help.github.com/articles/about-pull-requests/">tutorial</a>
+on how to file a pull request. When you send the request, make <code class="docutils literal notranslate"><span class="pre">main</span></code> the
+destination branch.</p>
+<p>If you need this change immediately and don’t have time to wait for your PR to
+be merged, you can always work on this branch. But if you have multiple PRs,
+another option is to maintain a Frankenstein branch that combines all of your
+other branches:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>branch<span class="w"> </span>&lt;your_modified_main_branch&gt;
+<span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>&lt;your_modified_main_branch&gt;
+<span class="gp">$ </span>git<span class="w"> </span>merge<span class="w"> </span>&lt;descriptive_branch_name&gt;
+</pre></div>
+</div>
+<p>This can be done with each new PR you submit. Just make sure to keep this local
+branch up-to-date with upstream <code class="docutils literal notranslate"><span class="pre">main</span></code> too.</p>
+</section>
+<section id="cherry-picking">
+<h3>Cherry-Picking<a class="headerlink" href="#cherry-picking" title="Permalink to this heading"></a></h3>
+<p>What if you made some changes to your local modified <code class="docutils literal notranslate"><span class="pre">main</span></code> branch and already
+committed them, but later decided to contribute them to SSAPy? You can use
+cherry-picking to create a new branch with only these commits.</p>
+<p>First, check out your local modified <code class="docutils literal notranslate"><span class="pre">main</span></code> branch:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>&lt;your_modified_main_branch&gt;
+</pre></div>
+</div>
+<p>Now, get the hashes of the commits you want from the output of:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>log
+</pre></div>
+</div>
+<p>Next, create a new branch off of upstream <code class="docutils literal notranslate"><span class="pre">main</span></code> and copy the commits
+that you want in your PR:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>pull<span class="w"> </span>upstream<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>branch<span class="w"> </span>&lt;descriptive_branch_name&gt;
+<span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>&lt;descriptive_branch_name&gt;
+<span class="gp">$ </span>git<span class="w"> </span>cherry-pick<span class="w"> </span>&lt;hash&gt;
+<span class="gp">$ </span>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>&lt;descriptive_branch_name&gt;<span class="w"> </span>--set-upstream
+</pre></div>
+</div>
+<p>Now you can create a PR from the web-interface of GitHub. The net result is as
+follows:</p>
+<ol class="arabic simple">
+<li><p>You patched your local version of SSAPy and can use it further.</p></li>
+<li><p>You “cherry-picked” these changes in a stand-alone branch and submitted it
+as a PR upstream.</p></li>
+</ol>
+<p>Should you have several commits to contribute, you could follow the same
+procedure by getting hashes of all of them and cherry-picking to the PR branch.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is important that whenever you change something that might be of
+importance upstream, create a pull request as soon as possible. Do not wait
+for weeks/months to do this, because:</p>
+<ol class="arabic simple">
+<li><p>you might forget why you modified certain files</p></li>
+<li><p>it could get difficult to isolate this change into a stand-alone clean PR.</p></li>
+</ol>
+</div>
+</section>
+<section id="rebasing">
+<h3>Rebasing<a class="headerlink" href="#rebasing" title="Permalink to this heading"></a></h3>
+<p>Other developers are constantly making contributions to SSAPy, possibly on the
+same files that your PR changed. If their PR is merged before yours, it can
+create a merge conflict. This means that your PR can no longer be automatically
+merged without a chance of breaking your changes. In this case, you will be
+asked to rebase on top of the latest upstream <code class="docutils literal notranslate"><span class="pre">main</span></code>.</p>
+<p>First, make sure your <code class="docutils literal notranslate"><span class="pre">main</span></code> branch is up-to-date:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>pull<span class="w"> </span>upstream<span class="w"> </span>main
+</pre></div>
+</div>
+<p>Now, we need to switch to the branch you submitted for your PR and rebase it
+on top of <code class="docutils literal notranslate"><span class="pre">main</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>&lt;descriptive_branch_name&gt;
+<span class="gp">$ </span>git<span class="w"> </span>rebase<span class="w"> </span>main
+</pre></div>
+</div>
+<p>Git will likely ask you to resolve conflicts. Edit the file that it says can’t
+be merged automatically and resolve the conflict. Then, run:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>add<span class="w"> </span>&lt;file_that_could_not_be_merged&gt;
+<span class="gp">$ </span>git<span class="w"> </span>rebase<span class="w"> </span>--continue
+</pre></div>
+</div>
+<p>You may have to repeat this process multiple times until all conflicts are resolved.
+Once this is done, simply force push your rebased branch to your remote fork:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>push<span class="w"> </span>--force<span class="w"> </span>origin<span class="w"> </span>&lt;descriptive_branch_name&gt;
+</pre></div>
+</div>
+</section>
+<section id="rebasing-with-cherry-pick">
+<h3>Rebasing with cherry-pick<a class="headerlink" href="#rebasing-with-cherry-pick" title="Permalink to this heading"></a></h3>
+<p>You can also perform a rebase using <code class="docutils literal notranslate"><span class="pre">cherry-pick</span></code>. First, create a temporary
+backup branch:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>&lt;descriptive_branch_name&gt;
+<span class="gp">$ </span>git<span class="w"> </span>branch<span class="w"> </span>tmp
+</pre></div>
+</div>
+<p>If anything goes wrong, you can always go back to your <code class="docutils literal notranslate"><span class="pre">tmp</span></code> branch.
+Now, look at the logs and save the hashes of any commits you would like to keep:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>log
+</pre></div>
+</div>
+<p>Next, go back to the original branch and reset it to <code class="docutils literal notranslate"><span class="pre">main</span></code>.
+Before doing so, make sure that you local <code class="docutils literal notranslate"><span class="pre">main</span></code> branch is up-to-date
+with upstream:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>pull<span class="w"> </span>upstream<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>&lt;descriptive_branch_name&gt;
+<span class="gp">$ </span>git<span class="w"> </span>reset<span class="w"> </span>--hard<span class="w"> </span>main
+</pre></div>
+</div>
+<p>Now you can cherry-pick relevant commits:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>cherry-pick<span class="w"> </span>&lt;hash1&gt;
+<span class="gp">$ </span>git<span class="w"> </span>cherry-pick<span class="w"> </span>&lt;hash2&gt;
+</pre></div>
+</div>
+<p>Push the modified branch to your fork:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>push<span class="w"> </span>--force<span class="w"> </span>origin<span class="w"> </span>&lt;descriptive_branch_name&gt;
+</pre></div>
+</div>
+<p>If everything looks good, delete the backup branch:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>branch<span class="w"> </span>--delete<span class="w"> </span>--force<span class="w"> </span>tmp
+</pre></div>
+</div>
+</section>
+<section id="re-writing-history">
+<h3>Re-writing History<a class="headerlink" href="#re-writing-history" title="Permalink to this heading"></a></h3>
+<p>Sometimes you may end up on a branch that has diverged so much from <code class="docutils literal notranslate"><span class="pre">main</span></code>
+that it cannot easily be rebased. If the current commits history is more of
+an experimental nature and only the net result is important, you may rewrite
+the history.</p>
+<p>First, merge upstream <code class="docutils literal notranslate"><span class="pre">main</span></code> and reset you branch to it. On the branch
+in question, run:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>merge<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>reset<span class="w"> </span>main
+</pre></div>
+</div>
+<p>At this point your branch will point to the same commit as <code class="docutils literal notranslate"><span class="pre">main</span></code> and
+thereby the two are indistinguishable. However, all the files that were
+previously modified will stay as such. In other words, you do not lose the
+changes you made. Changes can be reviewed by looking at diffs:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>status
+<span class="gp">$ </span>git<span class="w"> </span>diff
+</pre></div>
+</div>
+<p>The next step is to rewrite the history by adding files and creating commits:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>add<span class="w"> </span>&lt;files_to_be_part_of_commit&gt;
+<span class="gp">$ </span>git<span class="w"> </span>commit<span class="w"> </span>--message<span class="w"> </span>&lt;descriptive_message&gt;
+</pre></div>
+</div>
+<p>After all changed files are committed, you can push the branch to your fork
+and create a PR:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>--set-upstream
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="concepts.html" class="btn btn-neutral float-left" title="SSAPy Concepts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="references.html" class="btn btn-neutral float-right" title="References" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

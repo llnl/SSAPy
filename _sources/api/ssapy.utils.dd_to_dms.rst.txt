@@ -1,0 +1,6 @@
+dd_to_dms
+=========
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: dd_to_dms

@@ -1,0 +1,45 @@
+Particles
+=========
+
+.. currentmodule:: ssapy.particles
+
+.. autoclass:: Particles
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~Particles.epoch
+      ~Particles.lnpriors
+      ~Particles.orbits
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~Particles.draw_orbit
+      ~Particles.fuse
+      ~Particles.lnlike
+      ~Particles.mean
+      ~Particles.move
+      ~Particles.resample
+      ~Particles.reset_to_pseudo_prior
+      ~Particles.reweight
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: epoch
+   .. autoattribute:: lnpriors
+   .. autoattribute:: orbits
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: draw_orbit
+   .. automethod:: fuse
+   .. automethod:: lnlike
+   .. automethod:: mean
+   .. automethod:: move
+   .. automethod:: resample
+   .. automethod:: reset_to_pseudo_prior
+   .. automethod:: reweight

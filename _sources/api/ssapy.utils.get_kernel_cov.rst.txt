@@ -1,0 +1,6 @@
+get_kernel_cov
+==============
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: get_kernel_cov

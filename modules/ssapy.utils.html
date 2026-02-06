@@ -1,0 +1,554 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ssapy.utils &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="altitude_to_zenithangle" href="../api/ssapy.utils.altitude_to_zenithangle.html" />
+    <link rel="prev" title="threebody_prop" href="../api/ssapy.simple.threebody_prop.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ssapy.utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#functions">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.altitude_to_zenithangle.html">altitude_to_zenithangle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.angle_between_vectors.html">angle_between_vectors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.cart2sph_deg.html">cart2sph_deg</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.cart_to_cyl.html">cart_to_cyl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.catalog_to_apparent.html">catalog_to_apparent</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.check_lunar_collision.html">check_lunar_collision</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.cluster_emcee_walkers.html">cluster_emcee_walkers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.continueClass.html">continueClass</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.dd_to_dms.html">dd_to_dms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.dd_to_hms.html">dd_to_hms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.deg0to360.html">deg0to360</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.deg0to360array.html">deg0to360array</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.deg90to90.html">deg90to90</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.deg90to90array.html">deg90to90array</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.dms_to_dd.html">dms_to_dd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.dms_to_deg.html">dms_to_deg</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.dms_to_rad.html">dms_to_rad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.ecliptic_to_equatorial.html">ecliptic_to_equatorial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.ecliptic_xyz_to_equatorial.html">ecliptic_xyz_to_equatorial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.ecliptic_xyz_to_equatorial_xyz.html">ecliptic_xyz_to_equatorial_xyz</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.einsum_norm.html">einsum_norm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.equatorial_to_ecliptic.html">equatorial_to_ecliptic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.equatorial_to_horizontal.html">equatorial_to_horizontal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.equatorial_xyz_to_ecliptic_xyz.html">equatorial_xyz_to_ecliptic_xyz</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.find_all_zeros.html">find_all_zeros</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.find_extrema_brackets.html">find_extrema_brackets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.find_file.html">find_file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.find_nearest_indices.html">find_nearest_indices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.find_smallest_bounding_cube.html">find_smallest_bounding_cube</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.gcrf_to_ecef_bad.html">gcrf_to_ecef_bad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.gcrf_to_itrf.html">gcrf_to_itrf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.gcrf_to_itrf_astropy.html">gcrf_to_itrf_astropy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.gcrf_to_lat_lon.html">gcrf_to_lat_lon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.gcrf_to_lunar.html">gcrf_to_lunar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.gcrf_to_lunar_fixed.html">gcrf_to_lunar_fixed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.gcrf_to_radec.html">gcrf_to_radec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.gcrf_to_sim_geo.html">gcrf_to_sim_geo</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.gcrf_to_teme.html">gcrf_to_teme</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.get_angle.html">get_angle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.get_kernel_cov.html">get_kernel_cov</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.get_normed_weights.html">get_normed_weights</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.get_times.html">get_times</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.hms_to_dd.html">hms_to_dd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.horizontal_to_equatorial.html">horizontal_to_equatorial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.iers_interp.html">iers_interp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.inert2rot.html">inert2rot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.interpolate_points_between.html">interpolate_points_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.isAttributeSafeToTransfer.html">isAttributeSafeToTransfer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.lb_to_tan.html">lb_to_tan</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.lb_to_tp.html">lb_to_tp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.lb_to_unit.html">lb_to_unit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.lonlat_distance.html">lonlat_distance</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.moonPos.html">moonPos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.newton_raphson.html">newton_raphson</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.norm.html">norm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.normSq.html">normSq</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.normed.html">normed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.ntw_to_r.html">ntw_to_r</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.num_wraps.html">num_wraps</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.perpendicular_vectors.html">perpendicular_vectors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.points_on_circle.html">points_on_circle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.proper_motion_ra_dec.html">proper_motion_ra_dec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.ra_dec.html">ra_dec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.rad0to2pi.html">rad0to2pi</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.regularize_default.html">regularize_default</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.resample.html">resample</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.rightascension_to_hourangle.html">rightascension_to_hourangle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.rotate_points_3d.html">rotate_points_3d</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.rotate_vector.html">rotate_vector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.rotation_matrix_from_vectors.html">rotation_matrix_from_vectors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.rv_to_ntw.html">rv_to_ntw</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.sample_points.html">sample_points</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.sigma_points.html">sigma_points</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.sim_lonlatrad.html">sim_lonlatrad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.subsample_high_lnprob.html">subsample_high_lnprob</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.sunPos.html">sunPos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.sun_ra_dec.html">sun_ra_dec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.tan_to_lb.html">tan_to_lb</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.teme_to_gcrf.html">teme_to_gcrf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.tp_to_lb.html">tp_to_lb</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.tp_to_unit.html">tp_to_unit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.unitAngle3.html">unitAngle3</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.unit_to_lb.html">unit_to_lb</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.unit_to_tp.html">unit_to_tp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.unit_vector.html">unit_vector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.unscented_transform_mean_covar.html">unscented_transform_mean_covar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.v_from_r.html">v_from_r</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.xyz_to_ecliptic.html">xyz_to_ecliptic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.xyz_to_equatorial.html">xyz_to_equatorial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.xyz_to_lb.html">xyz_to_lb</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.xyz_to_tp.html">xyz_to_tp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.zenithangle_to_altitude.html">zenithangle_to_altitude</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#classes">Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.LRU_Cache.html">LRU_Cache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.utils.lazy_property.html">lazy_property</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+      <li class="breadcrumb-item active">ssapy.utils</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/ssapy.utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-ssapy.utils">
+<span id="ssapy-utils"></span><h1>ssapy.utils<a class="headerlink" href="#module-ssapy.utils" title="Permalink to this heading"></a></h1>
+<p>This module provides functions for coordinate transformations, vector operations, celestial mechanics, and mathematical utilities.</p>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.altitude_to_zenithangle.html#ssapy.utils.altitude_to_zenithangle" title="ssapy.utils.altitude_to_zenithangle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">altitude_to_zenithangle</span></code></a>(altitude[, deg])</p></td>
+<td><p>Convert altitude angle to zenith angle.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.angle_between_vectors.html#ssapy.utils.angle_between_vectors" title="ssapy.utils.angle_between_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">angle_between_vectors</span></code></a>(vector1, vector2)</p></td>
+<td><p>Calculates the angle (in radians) between two vectors.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.cart2sph_deg.html#ssapy.utils.cart2sph_deg" title="ssapy.utils.cart2sph_deg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cart2sph_deg</span></code></a>(x, y, z)</p></td>
+<td><p>Convert Cartesian coordinates to spherical coordinates in degrees.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.cart_to_cyl.html#ssapy.utils.cart_to_cyl" title="ssapy.utils.cart_to_cyl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cart_to_cyl</span></code></a>(x, y, z)</p></td>
+<td><p>Convert Cartesian coordinates to cylindrical coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.catalog_to_apparent.html#ssapy.utils.catalog_to_apparent" title="ssapy.utils.catalog_to_apparent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">catalog_to_apparent</span></code></a>(ra, dec, t[, observer, ...])</p></td>
+<td><p>Convert ra/dec of stars from catalog positions (J2000/ICRS) to apparent positions, correcting for proper motion, parallax, annual and diurnal aberration.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.check_lunar_collision.html#ssapy.utils.check_lunar_collision" title="ssapy.utils.check_lunar_collision"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_lunar_collision</span></code></a>(r, times[, m])</p></td>
+<td><p>Checks if the trajectory of a particle intersects with the Moon.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.cluster_emcee_walkers.html#ssapy.utils.cluster_emcee_walkers" title="ssapy.utils.cluster_emcee_walkers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cluster_emcee_walkers</span></code></a>(chain, lnprob, lnprior)</p></td>
+<td><p>Down-select emcee walkers to those with the largest posterior mean.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.continueClass.html#ssapy.utils.continueClass" title="ssapy.utils.continueClass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">continueClass</span></code></a>(cls)</p></td>
+<td><p>Re-open the decorated class, adding any new definitions into the original. For example: .. code-block:: python     class Foo:         pass     &#64;continueClass     class Foo:         def run(self):             return None is equivalent to: .. code-block:: python     class Foo:         def run(self):             return None .. warning::     Python's built-in <cite>super</cite> function does not behave properly in classes     decorated with <cite>continueClass</cite>. Base class methods must be invoked     directly using their explicit types instead.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.dd_to_dms.html#ssapy.utils.dd_to_dms" title="ssapy.utils.dd_to_dms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_to_dms</span></code></a>(degree_decimal)</p></td>
+<td><p>Converts a Decimal Degree (DD) value to Degree-Minute-Second (DMS) format.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.dd_to_hms.html#ssapy.utils.dd_to_hms" title="ssapy.utils.dd_to_hms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dd_to_hms</span></code></a>(degree_decimal)</p></td>
+<td><p>Converts Decimal Degrees (DD) to Hour-Minute-Second (HMS) format.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.deg0to360.html#ssapy.utils.deg0to360" title="ssapy.utils.deg0to360"><code class="xref py py-obj docutils literal notranslate"><span class="pre">deg0to360</span></code></a>(array_)</p></td>
+<td><p>Normalize angles in degrees to the range [0, 360].</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.deg0to360array.html#ssapy.utils.deg0to360array" title="ssapy.utils.deg0to360array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">deg0to360array</span></code></a>(array_)</p></td>
+<td><p>Normalize an array of angles in degrees to the range [0, 360].</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.deg90to90.html#ssapy.utils.deg90to90" title="ssapy.utils.deg90to90"><code class="xref py py-obj docutils literal notranslate"><span class="pre">deg90to90</span></code></a>(val_in)</p></td>
+<td><p>Normalize angles to the range [-90, 90].</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.deg90to90array.html#ssapy.utils.deg90to90array" title="ssapy.utils.deg90to90array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">deg90to90array</span></code></a>(array_)</p></td>
+<td><p>Normalize an array of angles to the range [0, 90].</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.dms_to_dd.html#ssapy.utils.dms_to_dd" title="ssapy.utils.dms_to_dd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dms_to_dd</span></code></a>(dms)</p></td>
+<td><p>Converts coordinates from Degree-Minute-Second (DMS) format to Decimal Degrees (DD).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.dms_to_deg.html#ssapy.utils.dms_to_deg" title="ssapy.utils.dms_to_deg"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dms_to_deg</span></code></a>(coords)</p></td>
+<td><p>Convert coordinates from degrees, minutes, and seconds (DMS) format to decimal degrees.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.dms_to_rad.html#ssapy.utils.dms_to_rad" title="ssapy.utils.dms_to_rad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dms_to_rad</span></code></a>(coords)</p></td>
+<td><p>Convert coordinates from degrees, minutes, and seconds (DMS) format to radians.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.ecliptic_to_equatorial.html#ssapy.utils.ecliptic_to_equatorial" title="ssapy.utils.ecliptic_to_equatorial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ecliptic_to_equatorial</span></code></a>(lon, lat[, degrees])</p></td>
+<td><p>Convert ecliptic coordinates (longitude, latitude) to equatorial right ascension (RA) and declination (DEC).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.ecliptic_xyz_to_equatorial.html#ssapy.utils.ecliptic_xyz_to_equatorial" title="ssapy.utils.ecliptic_xyz_to_equatorial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ecliptic_xyz_to_equatorial</span></code></a>(xc, yc, zc[, xe, ...])</p></td>
+<td><p>Convert ecliptic Cartesian coordinates (X, Y, Z) to equatorial right ascension (RA) and declination (DEC).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.ecliptic_xyz_to_equatorial_xyz.html#ssapy.utils.ecliptic_xyz_to_equatorial_xyz" title="ssapy.utils.ecliptic_xyz_to_equatorial_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ecliptic_xyz_to_equatorial_xyz</span></code></a>(xc, yc, zc)</p></td>
+<td><p>Convert ecliptic rectangular coordinates (X, Y, Z) to equatorial rectangular coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.einsum_norm.html#ssapy.utils.einsum_norm" title="ssapy.utils.einsum_norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">einsum_norm</span></code></a>(a[, indices])</p></td>
+<td><p>Compute the norm of an array using Einstein summation notation with customizable indices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.equatorial_to_ecliptic.html#ssapy.utils.equatorial_to_ecliptic" title="ssapy.utils.equatorial_to_ecliptic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equatorial_to_ecliptic</span></code></a>(right_ascension, ...)</p></td>
+<td><p>Convert equatorial coordinates (RA, DEC) to ecliptic longitude and latitude.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.equatorial_to_horizontal.html#ssapy.utils.equatorial_to_horizontal" title="ssapy.utils.equatorial_to_horizontal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equatorial_to_horizontal</span></code></a>(observer_latitude, ...)</p></td>
+<td><p>Convert equatorial coordinates (declination and either right ascension or hour angle) to horizontal coordinates (azimuth and altitude) for a given observer's latitude.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.equatorial_xyz_to_ecliptic_xyz.html#ssapy.utils.equatorial_xyz_to_ecliptic_xyz" title="ssapy.utils.equatorial_xyz_to_ecliptic_xyz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">equatorial_xyz_to_ecliptic_xyz</span></code></a>(xq, yq, zq)</p></td>
+<td><p>Convert equatorial rectangular coordinates (X, Y, Z) to ecliptic rectangular coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.find_all_zeros.html#ssapy.utils.find_all_zeros" title="ssapy.utils.find_all_zeros"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_all_zeros</span></code></a>(f, low, high[, n])</p></td>
+<td><p>Attempt to find all zeros of a function between given bounds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.find_extrema_brackets.html#ssapy.utils.find_extrema_brackets" title="ssapy.utils.find_extrema_brackets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_extrema_brackets</span></code></a>(fs)</p></td>
+<td><p>Find triplets bracketing extrema from an ordered set of function evaluations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.find_file.html#ssapy.utils.find_file" title="ssapy.utils.find_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_file</span></code></a>(filename[, ext])</p></td>
+<td><p>Find a file in the current directory or the ssapy datadir.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.find_nearest_indices.html#ssapy.utils.find_nearest_indices" title="ssapy.utils.find_nearest_indices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_nearest_indices</span></code></a>(A, B)</p></td>
+<td><p>Finds the indices of the nearest values in array <cite>A</cite> for each value in array <cite>B</cite>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.find_smallest_bounding_cube.html#ssapy.utils.find_smallest_bounding_cube" title="ssapy.utils.find_smallest_bounding_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_smallest_bounding_cube</span></code></a>(r[, pad])</p></td>
+<td><p>Find the smallest bounding cube for a set of 3D coordinates, with optional padding.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.gcrf_to_ecef_bad.html#ssapy.utils.gcrf_to_ecef_bad" title="ssapy.utils.gcrf_to_ecef_bad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcrf_to_ecef_bad</span></code></a>(r_gcrf, t)</p></td>
+<td><p>Convert position vectors from the GCRF (Geocentric Celestial Reference Frame) to the ECEF (Earth-Centered, Earth-Fixed) frame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.gcrf_to_itrf.html#ssapy.utils.gcrf_to_itrf" title="ssapy.utils.gcrf_to_itrf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcrf_to_itrf</span></code></a>(r_gcrf, t[, v])</p></td>
+<td><p>Converts a position vector in the GCRF (Geocentric Celestial Reference Frame) to the ITRF (International Terrestrial Reference Frame) in Cartesian coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.gcrf_to_itrf_astropy.html#ssapy.utils.gcrf_to_itrf_astropy" title="ssapy.utils.gcrf_to_itrf_astropy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcrf_to_itrf_astropy</span></code></a>(state_vectors, t)</p></td>
+<td><p>Converts position vectors from the GCRF (Geocentric Celestial Reference Frame) to the ITRF (International Terrestrial Reference Frame) using Astropy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.gcrf_to_lat_lon.html#ssapy.utils.gcrf_to_lat_lon" title="ssapy.utils.gcrf_to_lat_lon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcrf_to_lat_lon</span></code></a>(r, t)</p></td>
+<td><p>Converts a position vector in the GCRF (Geocentric Celestial Reference Frame) to latitude, longitude, and height coordinates on Earth.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.gcrf_to_lunar.html#ssapy.utils.gcrf_to_lunar" title="ssapy.utils.gcrf_to_lunar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcrf_to_lunar</span></code></a>(r, t[, v])</p></td>
+<td><p>Transform position and velocity vectors from the GCRF (Geocentric Celestial Reference Frame) to a lunar-centric frame.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.gcrf_to_lunar_fixed.html#ssapy.utils.gcrf_to_lunar_fixed" title="ssapy.utils.gcrf_to_lunar_fixed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcrf_to_lunar_fixed</span></code></a>(r, t[, v])</p></td>
+<td><p>Transform position and velocity vectors from the GCRF (Geocentric Celestial Reference Frame) to a Moon-fixed (lunar-centric) frame.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.gcrf_to_radec.html#ssapy.utils.gcrf_to_radec" title="ssapy.utils.gcrf_to_radec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcrf_to_radec</span></code></a>(gcrf_coords)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.gcrf_to_sim_geo.html#ssapy.utils.gcrf_to_sim_geo" title="ssapy.utils.gcrf_to_sim_geo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcrf_to_sim_geo</span></code></a>(r_gcrf, t[, h])</p></td>
+<td><p>Transforms a position vector in the GCRF (Geocentric Celestial Reference Frame) to a simplified geostationary-like coordinate system.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.gcrf_to_teme.html#ssapy.utils.gcrf_to_teme" title="ssapy.utils.gcrf_to_teme"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcrf_to_teme</span></code></a>(t)</p></td>
+<td><p>Return the rotation matrix that converts GCRS cartesian coordinates to TEME cartesian coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.get_angle.html#ssapy.utils.get_angle" title="ssapy.utils.get_angle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_angle</span></code></a>(a, b, c)</p></td>
+<td><p>Calculate the angle between two vectors where b is the vertex of the angle.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.get_kernel_cov.html#ssapy.utils.get_kernel_cov" title="ssapy.utils.get_kernel_cov"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_kernel_cov</span></code></a>(kernel_mat, weights)</p></td>
+<td><p>Get the covariance matrix of kernel_mat.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.get_normed_weights.html#ssapy.utils.get_normed_weights" title="ssapy.utils.get_normed_weights"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_normed_weights</span></code></a>(ln_weights)</p></td>
+<td><p>Computes normalized weights from log-weights.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.get_times.html#ssapy.utils.get_times" title="ssapy.utils.get_times"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_times</span></code></a>(duration, freq[, t0])</p></td>
+<td><p>Calculate a list of times spaced equally apart over a specified duration.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.hms_to_dd.html#ssapy.utils.hms_to_dd" title="ssapy.utils.hms_to_dd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hms_to_dd</span></code></a>(hms)</p></td>
+<td><p>Converts Hour-Minute-Second (HMS) format to Decimal Degrees (DD).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.horizontal_to_equatorial.html#ssapy.utils.horizontal_to_equatorial" title="ssapy.utils.horizontal_to_equatorial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">horizontal_to_equatorial</span></code></a>(observer_latitude, ...)</p></td>
+<td><p>Convert horizontal coordinates (azimuth and altitude) to equatorial coordinates (hour angle and declination).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.iers_interp.html#ssapy.utils.iers_interp" title="ssapy.utils.iers_interp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iers_interp</span></code></a>(t)</p></td>
+<td><p>Interpolate IERS values</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.inert2rot.html#ssapy.utils.inert2rot" title="ssapy.utils.inert2rot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inert2rot</span></code></a>(x, y, xe, ye[, xs, ys])</p></td>
+<td><p>Transform inertial coordinates to rotated coordinates relative to the Earth.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.interpolate_points_between.html#ssapy.utils.interpolate_points_between" title="ssapy.utils.interpolate_points_between"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interpolate_points_between</span></code></a>(r, m)</p></td>
+<td><p>Interpolates points between the given points.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.isAttributeSafeToTransfer.html#ssapy.utils.isAttributeSafeToTransfer" title="ssapy.utils.isAttributeSafeToTransfer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isAttributeSafeToTransfer</span></code></a>(name, value)</p></td>
+<td><p>Return True if an attribute is safe to monkeypatch-transfer to another class.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.lb_to_tan.html#ssapy.utils.lb_to_tan" title="ssapy.utils.lb_to_tan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lb_to_tan</span></code></a>(lb, b[, mul, mub, lcen, bcen])</p></td>
+<td><p>Convert lb-like coordinates &amp; proper motions to orthographic tangent plane.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.lb_to_tp.html#ssapy.utils.lb_to_tp" title="ssapy.utils.lb_to_tp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lb_to_tp</span></code></a>(lb, b)</p></td>
+<td><p>Convert lb-like coordinates to theta-phi like coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.lb_to_unit.html#ssapy.utils.lb_to_unit" title="ssapy.utils.lb_to_unit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lb_to_unit</span></code></a>(r, d)</p></td>
+<td><p>Convert lb-like coordinates to unit vectors.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.lonlat_distance.html#ssapy.utils.lonlat_distance" title="ssapy.utils.lonlat_distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lonlat_distance</span></code></a>(lat1, lat2, lon1, lon2)</p></td>
+<td><p>Calculate the great-circle distance between two points on Earth's surface using the Haversine formula.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.moonPos.html#ssapy.utils.moonPos" title="ssapy.utils.moonPos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moonPos</span></code></a>(t)</p></td>
+<td><p>Compute GCRF position of the moon.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.newton_raphson.html#ssapy.utils.newton_raphson" title="ssapy.utils.newton_raphson"><code class="xref py py-obj docutils literal notranslate"><span class="pre">newton_raphson</span></code></a>(guess, f[, fprime, eps, maxiter])</p></td>
+<td><p>Find a root of a univariate function with known gradient using Newton-Raphson iterations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.norm.html#ssapy.utils.norm" title="ssapy.utils.norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">norm</span></code></a>(arr)</p></td>
+<td><p>Compute the Euclidean norm of an array over the last axis while preserving leading axes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.normSq.html#ssapy.utils.normSq" title="ssapy.utils.normSq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normSq</span></code></a>(arr)</p></td>
+<td><p>Compute the squared norm of an array over the last axis while preserving leading axes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.normed.html#ssapy.utils.normed" title="ssapy.utils.normed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">normed</span></code></a>(arr)</p></td>
+<td><p>Normalize an array along the last axis to have unit length.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.ntw_to_r.html#ssapy.utils.ntw_to_r" title="ssapy.utils.ntw_to_r"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ntw_to_r</span></code></a>(r, v, ntw[, relative])</p></td>
+<td><p>Convert NTW coordinates to cartesian coordinates, using r, v to define NTW system.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.num_wraps.html#ssapy.utils.num_wraps" title="ssapy.utils.num_wraps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">num_wraps</span></code></a>(ang)</p></td>
+<td><p>Return number of times angle <cite>ang</cite> has wrapped around.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.perpendicular_vectors.html#ssapy.utils.perpendicular_vectors" title="ssapy.utils.perpendicular_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">perpendicular_vectors</span></code></a>(v)</p></td>
+<td><p>Returns two vectors that are perpendicular to v and each other.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.points_on_circle.html#ssapy.utils.points_on_circle" title="ssapy.utils.points_on_circle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">points_on_circle</span></code></a>(r, v, rad[, num_points])</p></td>
+<td><p>Generate points on a circle in 3D space.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.proper_motion_ra_dec.html#ssapy.utils.proper_motion_ra_dec" title="ssapy.utils.proper_motion_ra_dec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">proper_motion_ra_dec</span></code></a>([r, v, x, y, z, vx, ...])</p></td>
+<td><p>Calculate the proper motion in right ascension (RA) and declination (DEC) for celestial objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.ra_dec.html#ssapy.utils.ra_dec" title="ssapy.utils.ra_dec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ra_dec</span></code></a>([r, v, x, y, z, vx, vy, vz, r_earth, ...])</p></td>
+<td><p>Calculate the Right Ascension (RA) and Declination (Dec) of an object relative to Earth's position.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.rad0to2pi.html#ssapy.utils.rad0to2pi" title="ssapy.utils.rad0to2pi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rad0to2pi</span></code></a>(angles)</p></td>
+<td><p>Normalize angles in radians to the range [0, 2π].</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.regularize_default.html#ssapy.utils.regularize_default" title="ssapy.utils.regularize_default"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regularize_default</span></code></a>(particles, weights[, ...])</p></td>
+<td><p>Perform particle regularization.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.resample.html#ssapy.utils.resample" title="ssapy.utils.resample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample</span></code></a>(particles, ln_weights[, obs_times, pod])</p></td>
+<td><p>Resample particles to achieve more uniform weights.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.rightascension_to_hourangle.html#ssapy.utils.rightascension_to_hourangle" title="ssapy.utils.rightascension_to_hourangle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rightascension_to_hourangle</span></code></a>(right_ascension, ...)</p></td>
+<td><p>Convert right ascension to hour angle.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.rotate_points_3d.html#ssapy.utils.rotate_points_3d" title="ssapy.utils.rotate_points_3d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotate_points_3d</span></code></a>(points[, axis, theta])</p></td>
+<td><p>Rotate a set of 3D points about a 3D axis by an angle theta in radians.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.rotate_vector.html#ssapy.utils.rotate_vector" title="ssapy.utils.rotate_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotate_vector</span></code></a>(v_unit, theta, phi[, ...])</p></td>
+<td><p>Rotates a unit vector by specified angles and optionally plots the rotation path.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.rotation_matrix_from_vectors.html#ssapy.utils.rotation_matrix_from_vectors" title="ssapy.utils.rotation_matrix_from_vectors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotation_matrix_from_vectors</span></code></a>(vec1, vec2)</p></td>
+<td><p>Find the rotation matrix that aligns vec1 to vec2 :param vec1: A 3d &quot;source&quot; vector :param vec2: A 3d &quot;destination&quot; vector :return mat: A transform matrix (3x3) which when applied to vec1, aligns it with vec2.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.rv_to_ntw.html#ssapy.utils.rv_to_ntw" title="ssapy.utils.rv_to_ntw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rv_to_ntw</span></code></a>(r, v, rcoord)</p></td>
+<td><p>Convert coordinates to NTW coordinates, using r, v to define NTW system.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.sample_points.html#ssapy.utils.sample_points" title="ssapy.utils.sample_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_points</span></code></a>(x, C, npts[, sqrt])</p></td>
+<td><p>Sample points around x according to covariance matrix.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.sigma_points.html#ssapy.utils.sigma_points" title="ssapy.utils.sigma_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sigma_points</span></code></a>(f, x, C[, scale, fixed_dimensions])</p></td>
+<td><p>Compute f(sigma points) for sigma points of C around x.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.sim_lonlatrad.html#ssapy.utils.sim_lonlatrad" title="ssapy.utils.sim_lonlatrad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sim_lonlatrad</span></code></a>(x, y, z, xe, ye, ze, xs, ys, zs)</p></td>
+<td><p>Simulate longitude, latitude, and radius in a geocentric frame with the Sun at (0, 0).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.subsample_high_lnprob.html#ssapy.utils.subsample_high_lnprob" title="ssapy.utils.subsample_high_lnprob"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subsample_high_lnprob</span></code></a>(chain, lnprob, ...[, ...])</p></td>
+<td><p>Select MCMC samples with probabilities above some relative threshold</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.sunPos.html#ssapy.utils.sunPos" title="ssapy.utils.sunPos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sunPos</span></code></a>(t[, fast])</p></td>
+<td><p>Compute GCRF position of the sun.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.sun_ra_dec.html#ssapy.utils.sun_ra_dec" title="ssapy.utils.sun_ra_dec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sun_ra_dec</span></code></a>(time_)</p></td>
+<td><p>Calculate the Right Ascension (RA) and Declination (Dec) of the Sun at a given time.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.tan_to_lb.html#ssapy.utils.tan_to_lb" title="ssapy.utils.tan_to_lb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tan_to_lb</span></code></a>(xx, yy, lcen, bcen)</p></td>
+<td><p>Convert orthographic tangent plane coordinates to lb coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.teme_to_gcrf.html#ssapy.utils.teme_to_gcrf" title="ssapy.utils.teme_to_gcrf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">teme_to_gcrf</span></code></a>(t)</p></td>
+<td><p>Return the rotation matrix that converts TEME cartesian coordinates to GCRS cartesian coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.tp_to_lb.html#ssapy.utils.tp_to_lb" title="ssapy.utils.tp_to_lb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tp_to_lb</span></code></a>(t, p)</p></td>
+<td><p>Convert theta-phi-like coordinates to lb-like coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.tp_to_unit.html#ssapy.utils.tp_to_unit" title="ssapy.utils.tp_to_unit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tp_to_unit</span></code></a>(t, p)</p></td>
+<td><p>Convert theta-phi-like coordinates to unit vectors.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.unitAngle3.html#ssapy.utils.unitAngle3" title="ssapy.utils.unitAngle3"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unitAngle3</span></code></a>(r1, r2)</p></td>
+<td><p>Robustly compute angle between unit vectors r1 and r2.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.unit_to_lb.html#ssapy.utils.unit_to_lb" title="ssapy.utils.unit_to_lb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unit_to_lb</span></code></a>(unit)</p></td>
+<td><p>Convert unit vectors to lb-like coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.unit_to_tp.html#ssapy.utils.unit_to_tp" title="ssapy.utils.unit_to_tp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unit_to_tp</span></code></a>(unit)</p></td>
+<td><p>Convert unit vectors to theta-phi-like coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.unit_vector.html#ssapy.utils.unit_vector" title="ssapy.utils.unit_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unit_vector</span></code></a>(vector)</p></td>
+<td><p>Returns the unit vector of the vector.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.unscented_transform_mean_covar.html#ssapy.utils.unscented_transform_mean_covar" title="ssapy.utils.unscented_transform_mean_covar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unscented_transform_mean_covar</span></code></a>(f, x, C[, scale])</p></td>
+<td><p>Compute mean and covariance matrix using unscented transform given a transformation f, a point x, and a covariance C.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.v_from_r.html#ssapy.utils.v_from_r" title="ssapy.utils.v_from_r"><code class="xref py py-obj docutils literal notranslate"><span class="pre">v_from_r</span></code></a>(r, t)</p></td>
+<td><p>Calculate the velocity from position and time data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.xyz_to_ecliptic.html#ssapy.utils.xyz_to_ecliptic" title="ssapy.utils.xyz_to_ecliptic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz_to_ecliptic</span></code></a>(xc, yc, zc[, xe, ye, ze, ...])</p></td>
+<td><p>Convert rectangular coordinates (X, Y, Z) to ecliptic longitude and latitude.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.xyz_to_equatorial.html#ssapy.utils.xyz_to_equatorial" title="ssapy.utils.xyz_to_equatorial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz_to_equatorial</span></code></a>(xq, yq, zq[, xe, ye, ze, ...])</p></td>
+<td><p>Convert rectangular coordinates (X, Y, Z) to equatorial right ascension (RA) and declination (DEC).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.xyz_to_lb.html#ssapy.utils.xyz_to_lb" title="ssapy.utils.xyz_to_lb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz_to_lb</span></code></a>(x, y, z)</p></td>
+<td><p>Convert x, y, z vectors to lb-like coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.xyz_to_tp.html#ssapy.utils.xyz_to_tp" title="ssapy.utils.xyz_to_tp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xyz_to_tp</span></code></a>(x, y, z)</p></td>
+<td><p>Convert x, y, z vectors to theta-phi-like coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.utils.zenithangle_to_altitude.html#ssapy.utils.zenithangle_to_altitude" title="ssapy.utils.zenithangle_to_altitude"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zenithangle_to_altitude</span></code></a>(zenith_angle[, deg])</p></td>
+<td><p>Convert zenith angle to altitude angle.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.LRU_Cache.html#ssapy.utils.LRU_Cache" title="ssapy.utils.LRU_Cache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LRU_Cache</span></code></a>(user_function[, maxsize])</p></td>
+<td><p>Simplified Least Recently Used Cache.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Time</span></code>(val[, val2, format, scale, precision, ...])</p></td>
+<td><p>Represent and manipulate times and dates for astronomy.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.utils.lazy_property.html#ssapy.utils.lazy_property" title="ssapy.utils.lazy_property"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lazy_property</span></code></a>(fget)</p></td>
+<td><p>meant to be used for lazy evaluation of an object attribute.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="class-inheritance-diagram">
+<h2>Class Inheritance Diagram<a class="headerlink" href="#class-inheritance-diagram" title="Permalink to this heading"></a></h2>
+<div class="graphviz"><img src="../_images/inheritance-e3bf10a63fc9f74e793ea38287ce3feecd2bb051.png" alt="Inheritance diagram of ssapy.utils.LRU_Cache, ssapy.utils.lazy_property" usemap="#inheritance9f55553143" class="inheritance graphviz" /></div>
+<map id="inheritance9f55553143" name="inheritance9f55553143">
+<area shape="rect" id="node1" href="../api/ssapy.utils.LRU_Cache.html#ssapy.utils.LRU_Cache" target="_top" title="Simplified Least Recently Used Cache." alt="" coords="13,55,108,80"/>
+<area shape="rect" id="node2" href="../api/ssapy.utils.lazy_property.html#ssapy.utils.lazy_property" target="_top" title="meant to be used for lazy evaluation of an object attribute." alt="" coords="5,5,116,31"/>
+</map></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../api/ssapy.simple.threebody_prop.html" class="btn btn-neutral float-left" title="threebody_prop" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../api/ssapy.utils.altitude_to_zenithangle.html" class="btn btn-neutral float-right" title="altitude_to_zenithangle" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

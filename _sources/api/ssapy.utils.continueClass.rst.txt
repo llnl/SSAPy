@@ -1,0 +1,6 @@
+continueClass
+=============
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: continueClass

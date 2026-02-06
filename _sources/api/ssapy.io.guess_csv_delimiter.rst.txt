@@ -1,0 +1,6 @@
+guess_csv_delimiter
+===================
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: guess_csv_delimiter

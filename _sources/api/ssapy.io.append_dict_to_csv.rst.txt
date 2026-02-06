@@ -1,0 +1,6 @@
+append_dict_to_csv
+==================
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: append_dict_to_csv

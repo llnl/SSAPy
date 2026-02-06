@@ -1,0 +1,402 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ssapy.simple &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../../_static/ssapy_logo.ico"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ssapy.simple</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ssapy.simple</h1><div class="highlight"><pre>
+<span></span><span class="c1"># flake8: noqa: E501</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions to simplify certain aspects of SSAPy. </span>
+<span class="sd">For when you want a quick answer and do not need want to use high fidelity defaults.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_times</span><span class="p">,</span> <span class="n">points_on_circle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">Orbit</span><span class="p">,</span> <span class="n">rv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.accel</span><span class="w"> </span><span class="kn">import</span> <span class="n">AccelKepler</span><span class="p">,</span> <span class="n">AccelSolRad</span><span class="p">,</span> <span class="n">AccelEarthRad</span><span class="p">,</span> <span class="n">AccelDrag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.body</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_body</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.gravity</span><span class="w"> </span><span class="kn">import</span> <span class="n">AccelHarmonic</span><span class="p">,</span> <span class="n">AccelThirdBody</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.propagator</span><span class="w"> </span><span class="kn">import</span> <span class="n">RK78Propagator</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+
+<div class="viewcode-block" id="keplerian_prop"><a class="viewcode-back" href="../../api/ssapy.simple.keplerian_prop.html#ssapy.simple.keplerian_prop">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">keplerian_prop</span><span class="p">(</span><span class="n">integration_timestep</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RK78Propagator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create and return an RK78Propagator for a Keplerian orbit.</span>
+
+<span class="sd">    This propagator uses only the Keplerian acceleration for a two-body problem.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    ----------</span>
+<span class="sd">    integration_timestep : float, optional</span>
+<span class="sd">        The time step for the RK78Propagator integration (default is 10 seconds).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    -------</span>
+<span class="sd">    RK78Propagator</span>
+<span class="sd">        An instance of RK78Propagator configured with Keplerian acceleration.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">RK78Propagator</span><span class="p">(</span><span class="n">AccelKepler</span><span class="p">(),</span> <span class="n">h</span><span class="o">=</span><span class="n">integration_timestep</span><span class="p">)</span></div>
+
+
+<span class="n">accel_3_cache</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="viewcode-block" id="threebody_prop"><a class="viewcode-back" href="../../api/ssapy.simple.threebody_prop.html#ssapy.simple.threebody_prop">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">threebody_prop</span><span class="p">(</span><span class="n">integration_timestep</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RK78Propagator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create and return an RK78Propagator with a set of accelerations for a three-body problem.</span>
+
+<span class="sd">    The three bodies considered are Earth (Keplerian effect), Moon, and the Earth itself.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    ----------</span>
+<span class="sd">    integration_timestep : float, optional</span>
+<span class="sd">        The time step for the RK78Propagator integration (default is 10 seconds).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    -------</span>
+<span class="sd">    RK78Propagator</span>
+<span class="sd">        An instance of RK78Propagator configured with the three-body accelerations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">accel_3_cache</span>
+    <span class="k">if</span> <span class="n">accel_3_cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">accel_3_cache</span> <span class="o">=</span> <span class="n">AccelKepler</span><span class="p">()</span> <span class="o">+</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;moon&quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">RK78Propagator</span><span class="p">(</span><span class="n">accel_3_cache</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">integration_timestep</span><span class="p">)</span></div>
+
+
+<span class="n">accel_4_cache</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="viewcode-block" id="fourbody_prop"><a class="viewcode-back" href="../../api/ssapy.simple.fourbody_prop.html#ssapy.simple.fourbody_prop">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">fourbody_prop</span><span class="p">(</span><span class="n">integration_timestep</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RK78Propagator</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create and return an RK78Propagator with a set of accelerations for a four-body problem.</span>
+
+<span class="sd">    The four bodies considered are Earth (Keplerian effect), Moon, Sun, and the Earth itself.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    ----------</span>
+<span class="sd">    integration_timestep : float, optional</span>
+<span class="sd">        The time step for the RK78Propagator integration (default is 10 seconds).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    -------</span>
+<span class="sd">    RK78Propagator</span>
+<span class="sd">        An instance of RK78Propagator configured with the four-body accelerations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">accel_4_cache</span>
+    <span class="k">if</span> <span class="n">accel_4_cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">accel_4_cache</span> <span class="o">=</span> <span class="n">AccelKepler</span><span class="p">()</span> <span class="o">+</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;moon&quot;</span><span class="p">))</span> <span class="o">+</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Sun&quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">RK78Propagator</span><span class="p">(</span><span class="n">accel_4_cache</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">integration_timestep</span><span class="p">)</span></div>
+
+
+<span class="n">accel_best_cache</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="viewcode-block" id="best_prop"><a class="viewcode-back" href="../../api/ssapy.simple.best_prop.html#ssapy.simple.best_prop">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">best_prop</span><span class="p">(</span><span class="n">integration_timestep</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">mass</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="mf">.022</span><span class="p">,</span> <span class="n">CD</span><span class="o">=</span><span class="mf">2.3</span><span class="p">,</span> <span class="n">CR</span><span class="o">=</span><span class="mf">1.3</span><span class="p">)):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create and return an RK78Propagator with a comprehensive set of accelerations.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    ----------</span>
+<span class="sd">    integration_timestep : float, optional</span>
+<span class="sd">        The time step for the RK78Propagator integration (default is 10 seconds).</span>
+<span class="sd">    kwargs : dict, optional</span>
+<span class="sd">        Dictionary of parameters for non-conservative forces (mass, area, CD, CR).</span>
+<span class="sd">        If not provided, defaults are used.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    -------</span>
+<span class="sd">    RK78Propagator</span>
+<span class="sd">        An instance of RK78Propagator configured with cached accelerations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">accel_best_cache</span>
+    <span class="k">if</span> <span class="n">accel_best_cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">aEarth</span> <span class="o">=</span> <span class="n">AccelKepler</span><span class="p">()</span> <span class="o">+</span> <span class="n">AccelHarmonic</span><span class="p">(</span><span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Earth&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;EGM2008&quot;</span><span class="p">),</span> <span class="mi">140</span><span class="p">,</span> <span class="mi">140</span><span class="p">)</span>
+        <span class="n">aMoon</span> <span class="o">=</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;moon&quot;</span><span class="p">))</span> <span class="o">+</span> <span class="n">AccelHarmonic</span><span class="p">(</span><span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;moon&quot;</span><span class="p">),</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="n">aSun</span> <span class="o">=</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Sun&quot;</span><span class="p">))</span>
+        <span class="n">aMercury</span> <span class="o">=</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Mercury&quot;</span><span class="p">))</span>
+        <span class="n">aVenus</span> <span class="o">=</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Venus&quot;</span><span class="p">))</span>
+        <span class="n">aMars</span> <span class="o">=</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Mars&quot;</span><span class="p">))</span>
+        <span class="n">aJupiter</span> <span class="o">=</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Jupiter&quot;</span><span class="p">))</span>
+        <span class="n">aSaturn</span> <span class="o">=</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Saturn&quot;</span><span class="p">))</span>
+        <span class="n">aUranus</span> <span class="o">=</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Uranus&quot;</span><span class="p">))</span>
+        <span class="n">aNeptune</span> <span class="o">=</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Neptune&quot;</span><span class="p">))</span>
+        <span class="n">nonConservative</span> <span class="o">=</span> <span class="n">AccelSolRad</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">+</span> <span class="n">AccelEarthRad</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">+</span> <span class="n">AccelDrag</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">planets</span> <span class="o">=</span> <span class="n">aMercury</span> <span class="o">+</span> <span class="n">aVenus</span> <span class="o">+</span> <span class="n">aMars</span> <span class="o">+</span> <span class="n">aJupiter</span> <span class="o">+</span> <span class="n">aSaturn</span> <span class="o">+</span> <span class="n">aUranus</span> <span class="o">+</span> <span class="n">aNeptune</span>
+        <span class="n">accel_best_cache</span> <span class="o">=</span> <span class="n">aEarth</span> <span class="o">+</span> <span class="n">aMoon</span> <span class="o">+</span> <span class="n">aSun</span> <span class="o">+</span> <span class="n">planets</span> <span class="o">+</span> <span class="n">nonConservative</span>
+    <span class="k">return</span> <span class="n">RK78Propagator</span><span class="p">(</span><span class="n">accel_best_cache</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">integration_timestep</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ssapy_kwargs"><a class="viewcode-back" href="../../api/ssapy.simple.ssapy_kwargs.html#ssapy.simple.ssapy_kwargs">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">ssapy_kwargs</span><span class="p">(</span><span class="n">mass</span><span class="o">=</span><span class="mi">250</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="mf">0.022</span><span class="p">,</span> <span class="n">CD</span><span class="o">=</span><span class="mf">2.3</span><span class="p">,</span> <span class="n">CR</span><span class="o">=</span><span class="mf">1.3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a dictionary of default parameters for a space object used in simulations.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mass : float, optional</span>
+<span class="sd">        Mass of the object in kilograms (default is 250 kg).</span>
+<span class="sd">    area : float, optional</span>
+<span class="sd">        Cross-sectional area of the object in square meters (default is 0.022 m^2).</span>
+<span class="sd">    CD : float, optional</span>
+<span class="sd">        Drag coefficient of the object (default is 2.3).</span>
+<span class="sd">    CR : float, optional</span>
+<span class="sd">        Radiation pressure coefficient of the object (default is 1.3).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        A dictionary containing the parameters for the space object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Asteroid parameters</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">,</span>  <span class="c1"># [kg]</span>
+        <span class="n">area</span><span class="o">=</span><span class="n">area</span><span class="p">,</span>  <span class="c1"># [m^2]</span>
+        <span class="n">CD</span><span class="o">=</span><span class="n">CD</span><span class="p">,</span>  <span class="c1"># Drag coefficient</span>
+        <span class="n">CR</span><span class="o">=</span><span class="n">CR</span><span class="p">,</span>  <span class="c1"># Radiation pressure coefficient</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">kwargs</span></div>
+
+
+<div class="viewcode-block" id="ssapy_prop"><a class="viewcode-back" href="../../api/ssapy.simple.ssapy_prop.html#ssapy.simple.ssapy_prop">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">ssapy_prop</span><span class="p">(</span><span class="n">integration_timestep</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">propkw</span><span class="o">=</span><span class="n">ssapy_kwargs</span><span class="p">()):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Setup and return an RK78 propagator with specified accelerations and radiation pressure effects.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    ----------</span>
+<span class="sd">    integration_timestep : int</span>
+<span class="sd">        Time step for the numerical integration (in seconds).</span>
+<span class="sd">    propkw : dict, optional</span>
+<span class="sd">        Keyword arguments for radiation pressure accelerations. If None, default arguments are used.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    -------</span>
+<span class="sd">    RK78Propagator</span>
+<span class="sd">        An RK78 propagator configured with the specified accelerations and time step.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Accelerations - pass a body object or string of body name.</span>
+    <span class="n">moon</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;moon&quot;</span><span class="p">)</span>
+    <span class="n">sun</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Sun&quot;</span><span class="p">)</span>
+    <span class="n">Mercury</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Mercury&quot;</span><span class="p">)</span>
+    <span class="n">Venus</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Venus&quot;</span><span class="p">)</span>
+    <span class="n">Earth</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Earth&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;EGM2008&quot;</span><span class="p">)</span>
+    <span class="n">Mars</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Mars&quot;</span><span class="p">)</span>
+    <span class="n">Jupiter</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Jupiter&quot;</span><span class="p">)</span>
+    <span class="n">Saturn</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Saturn&quot;</span><span class="p">)</span>
+    <span class="n">Uranus</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Uranus&quot;</span><span class="p">)</span>
+    <span class="n">Neptune</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Neptune&quot;</span><span class="p">)</span>
+    <span class="n">aEarth</span> <span class="o">=</span> <span class="n">AccelKepler</span><span class="p">()</span> <span class="o">+</span> <span class="n">AccelHarmonic</span><span class="p">(</span><span class="n">Earth</span><span class="p">,</span> <span class="mi">140</span><span class="p">,</span> <span class="mi">140</span><span class="p">)</span>
+    <span class="n">aSun</span> <span class="o">=</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">sun</span><span class="p">)</span>
+    <span class="n">aMoon</span> <span class="o">=</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">moon</span><span class="p">)</span> <span class="o">+</span> <span class="n">AccelHarmonic</span><span class="p">(</span><span class="n">moon</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="n">aSolRad</span> <span class="o">=</span> <span class="n">AccelSolRad</span><span class="p">(</span><span class="o">**</span><span class="n">propkw</span><span class="p">)</span>
+    <span class="n">aEarthRad</span> <span class="o">=</span> <span class="n">AccelEarthRad</span><span class="p">(</span><span class="o">**</span><span class="n">propkw</span><span class="p">)</span>
+    <span class="n">accel</span> <span class="o">=</span> <span class="n">aEarth</span> <span class="o">+</span> <span class="n">aMoon</span> <span class="o">+</span> <span class="n">aSun</span> <span class="o">+</span> <span class="n">aSolRad</span> <span class="o">+</span> <span class="n">aEarthRad</span>
+    <span class="c1"># Build propagator</span>
+    <span class="n">prop</span> <span class="o">=</span> <span class="n">RK78Propagator</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">integration_timestep</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">prop</span></div>
+
+
+<span class="c1"># Uses the current best propagator and acceleration models in ssapy</span>
+<div class="viewcode-block" id="ssapy_orbit"><a class="viewcode-back" href="../../api/ssapy.simple.ssapy_orbit.html#ssapy.simple.ssapy_orbit">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">ssapy_orbit</span><span class="p">(</span><span class="n">orbit</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pa</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">raan</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ta</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;day&#39;</span><span class="p">),</span> <span class="n">freq</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;hr&#39;</span><span class="p">),</span> <span class="n">t0</span><span class="o">=</span><span class="n">Time</span><span class="p">(</span><span class="s2">&quot;2025-01-01&quot;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s1">&#39;utc&#39;</span><span class="p">),</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="n">ssapy_prop</span><span class="p">()):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the orbit of a spacecraft given either Keplerian elements or position and velocity vectors.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - orbit (Orbit, optional): An Orbit object if you already have an orbit defined.</span>
+<span class="sd">    - a (float, optional): Semi-major axis of the orbit in meters.</span>
+<span class="sd">    - e (float, optional): Eccentricity of the orbit (default is 0, i.e., circular orbit).</span>
+<span class="sd">    - i (float, optional): Inclination of the orbit in degrees.</span>
+<span class="sd">    - pa (float, optional): Argument of perigee in degrees.</span>
+<span class="sd">    - raan (float, optional): Right ascension of the ascending node in degrees.</span>
+<span class="sd">    - ta (float, optional): True anomaly in degrees.</span>
+<span class="sd">    - r (array-like, optional): Position vector in meters.</span>
+<span class="sd">    - v (array-like, optional): Velocity vector in meters per second.</span>
+<span class="sd">    - duration (tuple, optional): Duration of the simulation as a tuple (value, unit), where unit is &#39;day&#39;, &#39;hour&#39;, etc. Default is 30 days.</span>
+<span class="sd">    - freq (tuple, optional): Frequency of the output as a tuple (value, unit), where unit is &#39;day&#39;, &#39;hour&#39;, etc. Default is 1 hour.</span>
+<span class="sd">    - t0 (str, optional): Start date of the simulation in &#39;YYYY-MM-DD&#39; format. Default is &quot;2025-01-01&quot;.</span>
+<span class="sd">    - t (array-like, optional): Specific times at which to compute the orbit. If None, times will be generated based on duration and frequency.</span>
+<span class="sd">    - prop (function, optional): A function to compute the perturbation effects. Default is `ssapy_prop()`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - r (array-like): Position vectors of the spacecraft at the specified times.</span>
+<span class="sd">    - v (array-like): Velocity vectors of the spacecraft at the specified times.</span>
+<span class="sd">    - t (array-like): Times at which the orbit was computed. Returned only if `t` was None.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">    - ValueError: If neither Keplerian elements nor position and velocity vectors are provided.</span>
+<span class="sd">    - RuntimeError or ValueError: If an error occurs during computation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s1">&#39;utc&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">time_is_None</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">get_times</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="n">t0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">time_is_None</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">orbit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">elif</span> <span class="n">a</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">kElements</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">pa</span><span class="p">,</span> <span class="n">raan</span><span class="p">,</span> <span class="n">ta</span><span class="p">]</span>
+        <span class="n">orbit</span> <span class="o">=</span> <span class="n">Orbit</span><span class="o">.</span><span class="n">fromKeplerianElements</span><span class="p">(</span><span class="o">*</span><span class="n">kElements</span><span class="p">,</span> <span class="n">t0</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">r</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">orbit</span> <span class="o">=</span> <span class="n">Orbit</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Either Keplerian elements (a, e, i, pa, raan, ta) or position and velocity vectors (r, v) must be provided.&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">rv</span><span class="p">(</span><span class="n">orbit</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">prop</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">time_is_None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">r</span><span class="p">,</span> <span class="n">v</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span></div>
+
+
+<div class="viewcode-block" id="get_similar_orbits"><a class="viewcode-back" href="../../api/ssapy.simple.get_similar_orbits.html#ssapy.simple.get_similar_orbits">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_similar_orbits</span><span class="p">(</span><span class="n">r0</span><span class="p">,</span> <span class="n">v0</span><span class="p">,</span> <span class="n">rad</span><span class="o">=</span><span class="mf">1e5</span><span class="p">,</span> <span class="n">num_orbits</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="p">(</span><span class="mi">90</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">),</span> <span class="n">freq</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;hour&#39;</span><span class="p">),</span> <span class="n">start_date</span><span class="o">=</span><span class="s2">&quot;2025-1-1&quot;</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="mi">250</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate similar orbits by varying the initial position.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    ----------</span>
+<span class="sd">    r0 : array_like</span>
+<span class="sd">        Initial position vector of shape (3,).</span>
+<span class="sd">    v0 : array_like</span>
+<span class="sd">        Initial velocity vector of shape (3,).</span>
+<span class="sd">    rad : float</span>
+<span class="sd">        Radius of the circle around the initial position to generate similar orbits.</span>
+<span class="sd">    num_orbits : int</span>
+<span class="sd">        Number of similar orbits to generate.</span>
+<span class="sd">    duration : tuple</span>
+<span class="sd">        Duration of the orbit simulation.</span>
+<span class="sd">    freq : tuple</span>
+<span class="sd">        Frequency of output data.</span>
+<span class="sd">    start_date : str</span>
+<span class="sd">        Start date for the simulation.</span>
+<span class="sd">    mass : float</span>
+<span class="sd">        Mass of the satellite.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    -------</span>
+<span class="sd">    trajectories : ndarray</span>
+<span class="sd">        Stacked array of shape (3, n_times, num_orbits) containing the trajectories.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">r0</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">v0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">v0</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">r0</span><span class="p">,</span> <span class="n">v0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">point</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">points_on_circle</span><span class="p">(</span><span class="n">r0</span><span class="p">,</span> <span class="n">v0</span><span class="p">,</span> <span class="n">rad</span><span class="o">=</span><span class="n">rad</span><span class="p">,</span> <span class="n">num_points</span><span class="o">=</span><span class="n">num_orbits</span><span class="p">)):</span>
+        <span class="c1"># Calculate entire satellite trajectory</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">ssapy_orbit</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="n">point</span><span class="p">,</span> <span class="n">v</span><span class="o">=</span><span class="n">v0</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="n">freq</span><span class="p">,</span> <span class="n">start_date</span><span class="o">=</span><span class="n">start_date</span><span class="p">,</span> <span class="n">integration_timestep</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">mass</span><span class="p">,</span> <span class="n">area</span><span class="o">=</span><span class="n">mass</span> <span class="o">/</span> <span class="mi">19000</span> <span class="o">+</span> <span class="mf">0.01</span><span class="p">,</span> <span class="n">CD</span><span class="o">=</span><span class="mf">2.3</span><span class="p">,</span> <span class="n">CR</span><span class="o">=</span><span class="mf">1.3</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">trajectories</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">r0</span><span class="p">,</span> <span class="n">v0</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[:</span><span class="nb">len</span><span class="p">(</span><span class="n">r</span><span class="p">)]</span>
+        <span class="n">rv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">trajectories</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">trajectories</span><span class="p">,</span> <span class="n">rv</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">trajectories</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

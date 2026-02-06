@@ -1,0 +1,6 @@
+check_lunar_collision
+=====================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: check_lunar_collision

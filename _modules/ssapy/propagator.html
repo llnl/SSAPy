@@ -1,0 +1,1042 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ssapy.propagator &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../../_static/ssapy_logo.ico"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ssapy.propagator</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ssapy.propagator</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Classes for propagating orbits.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">LRU_Cache</span><span class="p">,</span> <span class="n">norm</span><span class="p">,</span> <span class="n">teme_to_gcrf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">EARTH_RADIUS</span>
+
+<span class="c1"># Set up a cache for propagation interpolants.  Useful in case one wants to</span>
+<span class="c1"># propagate using the same Propagator and Orbit multiple times, such as when</span>
+<span class="c1"># optimizing a position along an orbit to find a rise-time, set-time,</span>
+<span class="c1"># highest-elevation, etc., or when computing topocentric quantities for one</span>
+<span class="c1"># orbit and many observers.</span>
+
+<span class="c1"># The cache will be a map (orbit, propagator) -&gt; interpolant.  One slight</span>
+<span class="c1"># wrinkle is that we need to be able to extend the domain of a previously cached</span>
+<span class="c1"># interpolant.  An easy way to implement this is to have the return object be a</span>
+<span class="c1"># mutable container (such as a python list) instead of the raw interpolant.  We</span>
+<span class="c1"># can then mutate the interpolant without invalidating the cached container.</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_getInterpolantContainer</span><span class="p">(</span><span class="n">orbit</span><span class="p">,</span> <span class="n">propagator</span><span class="p">):</span>
+    <span class="c1"># The default contained interpolant is empty.  Calling code should mutate</span>
+    <span class="c1"># the container to hold a useful interpolant.  Because the list is mutated</span>
+    <span class="c1"># in-place, it remains in the cache in the same position.</span>
+    <span class="k">return</span> <span class="p">[]</span>
+
+
+<span class="n">_InterpolantCache</span> <span class="o">=</span> <span class="n">LRU_Cache</span><span class="p">(</span><span class="n">_getInterpolantContainer</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Propagator"><a class="viewcode-back" href="../../api/ssapy.propagator.Propagator.html#ssapy.propagator.Propagator">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Propagator</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Abstract base class for orbit propagators.</span>
+
+<span class="sd">    Note, the interface for propagators is through functions in ssapy.compute.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Essentially no public interface.</span>
+    <span class="c1"># Interface is instead through compute.rv</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_getRVOne</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+        <span class="o">...</span>  <span class="c1"># Subclasses must override</span>
+
+    <span class="c1"># def _getRVMany(self, orbit, time):</span>
+    <span class="c1">#     # Computes positions, velocities broadcasting both over orbits and</span>
+    <span class="c1">#     # times.  Base class version is just a for-loop, but subclasses may</span>
+    <span class="c1">#     # override if they can be more efficient (e.g., KeplerianPropagator).</span>
+    <span class="c1">#     nOrbit = len(orbit)</span>
+    <span class="c1">#     nTime = len(time)</span>
+    <span class="c1">#     outR = np.empty((nOrbit, nTime, 3,), dtype=float)</span>
+    <span class="c1">#     outV = np.empty_like(outR)</span>
+    <span class="c1">#     for j, orb in enumerate(orbit):</span>
+    <span class="c1">#         outR[j], outV[j] = self._getRVOne(orb, time)</span>
+    <span class="c1">#     return outR, outV</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_getRVMany</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+        <span class="n">nOrbit</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">orbit</span><span class="p">)</span>
+        <span class="n">outR_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">outV_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">min_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">orb</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">orbit</span><span class="p">):</span>
+            <span class="n">rj</span><span class="p">,</span> <span class="n">vj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getRVOne</span><span class="p">(</span><span class="n">orb</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rj</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">min_len</span><span class="p">:</span>
+                <span class="n">min_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">rj</span><span class="p">)</span>
+            <span class="n">outR_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rj</span><span class="p">)</span>
+            <span class="n">outV_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vj</span><span class="p">)</span>
+
+        <span class="c1"># Truncate all results and time array to minimum length returned</span>
+        <span class="n">outR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">r</span><span class="p">[:</span><span class="n">min_len</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">outR_list</span><span class="p">])</span>
+        <span class="n">outV</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">v</span><span class="p">[:</span><span class="n">min_len</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">outV_list</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">outR</span><span class="p">,</span> <span class="n">outV</span></div>
+
+<div class="viewcode-block" id="KeplerianPropagator"><a class="viewcode-back" href="../../api/ssapy.propagator.KeplerianPropagator.html#ssapy.propagator.KeplerianPropagator">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">KeplerianPropagator</span><span class="p">(</span><span class="n">Propagator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; A basic Keplerian propagator for finding the position and velocity of an</span>
+<span class="sd">    orbiting object at some future or past time.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;KeplerianPropagator()&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_getRVOne</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.orbit</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ellipticalMeanToEccentricLongitude</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.orbit</span><span class="w"> </span><span class="kn">import</span> <span class="n">_hyperbolicMeanToEccentricLongitude</span>
+        <span class="n">dts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">time</span> <span class="o">-</span> <span class="n">orbit</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">lM</span> <span class="o">=</span> <span class="n">orbit</span><span class="o">.</span><span class="n">lM</span> <span class="o">+</span> <span class="n">orbit</span><span class="o">.</span><span class="n">meanMotion</span> <span class="o">*</span> <span class="n">dts</span>
+        <span class="k">if</span> <span class="n">orbit</span><span class="o">.</span><span class="n">a</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">lE</span> <span class="o">=</span> <span class="n">_ellipticalMeanToEccentricLongitude</span><span class="p">(</span><span class="n">lM</span><span class="p">,</span> <span class="n">orbit</span><span class="o">.</span><span class="n">ex</span><span class="p">,</span> <span class="n">orbit</span><span class="o">.</span><span class="n">ey</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lE</span> <span class="o">=</span> <span class="n">_hyperbolicMeanToEccentricLongitude</span><span class="p">(</span><span class="n">lM</span><span class="p">,</span> <span class="n">orbit</span><span class="o">.</span><span class="n">ex</span><span class="p">,</span> <span class="n">orbit</span><span class="o">.</span><span class="n">ey</span><span class="p">)</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">orbit</span><span class="o">.</span><span class="n">_rvFromEquinoctial</span><span class="p">(</span><span class="n">lE</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">lE</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_getRVMany</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.orbit</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ellipticalMeanToEccentricLongitudeMany</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.orbit</span><span class="w"> </span><span class="kn">import</span> <span class="n">_hyperbolicMeanToEccentricLongitudeMany</span>
+        <span class="c1"># expect a Vector orbit.</span>
+        <span class="n">dts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">time</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">orbit</span><span class="o">.</span><span class="n">t</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">])</span>  <span class="c1"># (nOrbit, nTime)</span>
+        <span class="n">lM</span> <span class="o">=</span> <span class="n">orbit</span><span class="o">.</span><span class="n">lM</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">+</span> <span class="n">orbit</span><span class="o">.</span><span class="n">meanMotion</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">dts</span>
+        <span class="n">wBound</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">orbit</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">lE</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">lM</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">wBound</span><span class="p">):</span>
+            <span class="n">ex</span><span class="p">,</span> <span class="n">ey</span> <span class="o">=</span> <span class="n">orbit</span><span class="o">.</span><span class="n">ex</span><span class="p">[</span><span class="n">wBound</span><span class="p">],</span> <span class="n">orbit</span><span class="o">.</span><span class="n">ey</span><span class="p">[</span><span class="n">wBound</span><span class="p">]</span>
+            <span class="n">lE</span><span class="p">[</span><span class="n">wBound</span><span class="p">]</span> <span class="o">=</span> <span class="n">_ellipticalMeanToEccentricLongitudeMany</span><span class="p">(</span>
+                <span class="n">lM</span><span class="p">[</span><span class="n">wBound</span><span class="p">],</span> <span class="n">ex</span><span class="p">,</span> <span class="n">ey</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">wBound</span><span class="p">):</span>
+            <span class="n">ex</span><span class="p">,</span> <span class="n">ey</span> <span class="o">=</span> <span class="n">orbit</span><span class="o">.</span><span class="n">ex</span><span class="p">[</span><span class="o">~</span><span class="n">wBound</span><span class="p">],</span> <span class="n">orbit</span><span class="o">.</span><span class="n">ey</span><span class="p">[</span><span class="o">~</span><span class="n">wBound</span><span class="p">]</span>
+            <span class="n">lE</span><span class="p">[</span><span class="o">~</span><span class="n">wBound</span><span class="p">]</span> <span class="o">=</span> <span class="n">_hyperbolicMeanToEccentricLongitudeMany</span><span class="p">(</span>
+                <span class="n">lM</span><span class="p">[</span><span class="o">~</span><span class="n">wBound</span><span class="p">],</span> <span class="n">ex</span><span class="p">,</span> <span class="n">ey</span>
+            <span class="p">)</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">orbit</span><span class="o">.</span><span class="n">_rvFromEquinoctial</span><span class="p">(</span><span class="n">lE</span><span class="o">=</span><span class="n">lE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">r</span><span class="p">,</span> <span class="n">v</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="s2">&quot;KeplerianPropagator&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">KeplerianPropagator</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SeriesPropagator"><a class="viewcode-back" href="../../api/ssapy.propagator.SeriesPropagator.html#ssapy.propagator.SeriesPropagator">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">SeriesPropagator</span><span class="p">(</span><span class="n">Propagator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Propagate using Taylor series expansion of Keplerian motion.  This is</span>
+<span class="sd">    quite a bit faster than the full Keplerian propagator, but only valid for</span>
+<span class="sd">    short time intervals.  Using order=2 for a few seconds of time though is</span>
+<span class="sd">    definitely reasonable.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    order : int, optional</span>
+<span class="sd">        Order of series expansion.  1 = constant velocity, 2 = constant</span>
+<span class="sd">        acceleration</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;SeriesPropagator()&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;SeriesPropagator(</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_getRVOne</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+        <span class="n">dts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">time</span> <span class="o">-</span> <span class="n">orbit</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># Just constant position.  Weird, but allowed.</span>
+            <span class="n">rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">orbit</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+            <span class="c1"># Or should I use 0 here?</span>
+            <span class="n">vs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">orbit</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">rs</span><span class="p">,</span> <span class="n">vs</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Constant velocity</span>
+            <span class="n">rs</span> <span class="o">=</span> <span class="n">orbit</span><span class="o">.</span><span class="n">r</span> <span class="o">+</span> <span class="n">orbit</span><span class="o">.</span><span class="n">v</span> <span class="o">*</span> <span class="n">dts</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="n">vs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">orbit</span><span class="o">.</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">rs</span><span class="p">,</span> <span class="n">vs</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Constant acceleration</span>
+            <span class="n">accel</span> <span class="o">=</span> <span class="o">-</span><span class="n">orbit</span><span class="o">.</span><span class="n">mu</span> <span class="o">*</span> <span class="n">orbit</span><span class="o">.</span><span class="n">r</span> <span class="o">/</span> <span class="n">norm</span><span class="p">(</span><span class="n">orbit</span><span class="o">.</span><span class="n">r</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span>
+            <span class="n">rs</span> <span class="o">=</span> <span class="n">orbit</span><span class="o">.</span><span class="n">r</span> <span class="o">+</span> <span class="n">dts</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">orbit</span><span class="o">.</span><span class="n">v</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">dts</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">accel</span><span class="p">)</span>
+            <span class="n">vs</span> <span class="o">=</span> <span class="n">orbit</span><span class="o">.</span><span class="n">v</span> <span class="o">+</span> <span class="n">dts</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">accel</span>
+            <span class="k">return</span> <span class="n">rs</span><span class="p">,</span> <span class="n">vs</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">accel</span> <span class="o">=</span> <span class="o">-</span><span class="n">orbit</span><span class="o">.</span><span class="n">mu</span> <span class="o">*</span> <span class="n">orbit</span><span class="o">.</span><span class="n">r</span> <span class="o">/</span> <span class="n">norm</span><span class="p">(</span><span class="n">orbit</span><span class="o">.</span><span class="n">r</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span>
+            <span class="n">jerk</span> <span class="o">=</span> <span class="o">-</span><span class="n">orbit</span><span class="o">.</span><span class="n">mu</span> <span class="o">*</span> <span class="p">(</span>
+                <span class="n">orbit</span><span class="o">.</span><span class="n">r</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">orbit</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">orbit</span><span class="o">.</span><span class="n">v</span><span class="p">)</span> <span class="o">/</span> <span class="n">norm</span><span class="p">(</span><span class="n">orbit</span><span class="o">.</span><span class="n">r</span><span class="p">)</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="n">orbit</span><span class="o">.</span><span class="n">v</span> <span class="o">/</span> <span class="n">norm</span><span class="p">(</span><span class="n">orbit</span><span class="o">.</span><span class="n">r</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span>
+            <span class="p">)</span>
+            <span class="n">rs</span> <span class="o">=</span> <span class="n">orbit</span><span class="o">.</span><span class="n">r</span> <span class="o">+</span> <span class="n">dts</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span>
+                <span class="n">orbit</span><span class="o">.</span><span class="n">v</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">dts</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span>
+                    <span class="n">accel</span> <span class="o">+</span> <span class="n">dts</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">jerk</span> <span class="o">/</span> <span class="mf">3.</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">vs</span> <span class="o">=</span> <span class="n">orbit</span><span class="o">.</span><span class="n">v</span> <span class="o">+</span> <span class="n">dts</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">accel</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">dts</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">jerk</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">rs</span><span class="p">,</span> <span class="n">vs</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># I think this is basically the f and g series idea in Escobal</span>
+            <span class="c1"># (1965) section 3.9.1</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;order&gt;3 not yet implemented&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="s2">&quot;SeriesPropagator&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">SeriesPropagator</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">order</span></div>
+
+
+<div class="viewcode-block" id="SGP4Propagator"><a class="viewcode-back" href="../../api/ssapy.propagator.SGP4Propagator.html#ssapy.propagator.SGP4Propagator">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">SGP4Propagator</span><span class="p">(</span><span class="n">Propagator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Propagate using simplified perturbation model SGP4.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : float or astropy.time.Time, optional</span>
+<span class="sd">        Reference time at which to compute frame transformation between GCRF</span>
+<span class="sd">        and TEME.  SGP4 calculations occur in the TEME frame, but useful input</span>
+<span class="sd">        and output is in the GCRF frame.  In principle, one could do the</span>
+<span class="sd">        transformation at every instant in time for which the orbit is queried.</span>
+<span class="sd">        However, the rate of change in the transformation is small, ~0.15 arcsec</span>
+<span class="sd">        per day, so here we just use a single transformation.</span>
+
+<span class="sd">        If float, then should correspond to GPS seconds;</span>
+<span class="sd">        i.e., seconds since 1980-01-06 00:00:00 UTC</span>
+
+<span class="sd">        If None, then use the time of the orbit being propagated.</span>
+<span class="sd">    truncate : bool, optional</span>
+<span class="sd">        Truncate elements to precision of TLE ASCII format?  This may be</span>
+<span class="sd">        required in order to reproduce the results of running sgp4 directly from</span>
+<span class="sd">        a TLE.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Time</span><span class="p">):</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">gps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">t</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">truncate</span> <span class="o">=</span> <span class="n">truncate</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;SGP4Propagator()&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_getRVOne</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit</span><span class="p">,</span> <span class="n">time</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">sgp4.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Satrec</span><span class="p">,</span> <span class="n">WGS72</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.orbit</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ellipticalEccentricToMeanAnomaly</span><span class="p">,</span> <span class="n">_ellipticalTrueToEccentricAnomaly</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">WGS72_EARTH_MU</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_tle</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">truncate</span><span class="p">:</span>
+            <span class="n">line1</span><span class="p">,</span> <span class="n">line2</span> <span class="o">=</span> <span class="n">make_tle</span><span class="p">(</span><span class="o">*</span><span class="n">orbit</span><span class="o">.</span><span class="n">kozaiMeanKeplerianElements</span><span class="p">,</span> <span class="n">orbit</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+            <span class="n">sat</span> <span class="o">=</span> <span class="n">Satrec</span><span class="o">.</span><span class="n">twoline2rv</span><span class="p">(</span><span class="n">line1</span><span class="p">,</span> <span class="n">line2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">pa</span><span class="p">,</span> <span class="n">raan</span><span class="p">,</span> <span class="n">trueAnomaly</span> <span class="o">=</span> <span class="n">orbit</span><span class="o">.</span><span class="n">kozaiMeanKeplerianElements</span>
+            <span class="n">meanAnomaly</span> <span class="o">=</span> <span class="n">_ellipticalEccentricToMeanAnomaly</span><span class="p">(</span>
+                <span class="n">_ellipticalTrueToEccentricAnomaly</span><span class="p">(</span>
+                    <span class="n">trueAnomaly</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span> <span class="n">e</span>
+                <span class="p">),</span>
+                <span class="n">e</span>
+            <span class="p">)</span>
+            <span class="n">meanMotion</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">WGS72_EARTH_MU</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">a</span><span class="o">**</span><span class="mi">3</span><span class="p">))</span> <span class="o">*</span> <span class="mf">60.0</span>  <span class="c1"># rad/m</span>
+            <span class="n">tt</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">orbit</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;gps&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">utc</span>
+            <span class="n">epoch</span> <span class="o">=</span> <span class="n">tt</span><span class="o">.</span><span class="n">mjd</span> <span class="o">-</span> <span class="mf">33281.0</span>
+            <span class="n">sat</span> <span class="o">=</span> <span class="n">Satrec</span><span class="p">()</span>
+            <span class="n">sat</span><span class="o">.</span><span class="n">sgp4init</span><span class="p">(</span>
+                <span class="n">WGS72</span><span class="p">,</span>        <span class="c1"># gravity model</span>
+                <span class="s1">&#39;i&#39;</span><span class="p">,</span>          <span class="c1"># &#39;a&#39; = old AFSPC mode, &#39;i&#39; = improved mode</span>
+                <span class="mi">0</span><span class="p">,</span>            <span class="c1"># satnum: Satellite number</span>
+                <span class="n">epoch</span><span class="p">,</span>        <span class="c1"># epoch: days since 1949 December 31 00:00 UT</span>
+                <span class="mf">0.0</span><span class="p">,</span>          <span class="c1"># bstar: drag coefficient (kg/m2er)</span>
+                <span class="mf">0.0</span><span class="p">,</span>          <span class="c1"># ndot: ballistic coefficient (revs/day)</span>
+                <span class="mf">0.0</span><span class="p">,</span>          <span class="c1"># nddot: second derivative of mean motion (revs/day^3)</span>
+                <span class="n">e</span><span class="p">,</span>            <span class="c1"># ecco: eccentricity</span>
+                <span class="n">pa</span><span class="p">,</span>           <span class="c1"># argpo: argument of perigee (radians)</span>
+                <span class="n">i</span><span class="p">,</span>            <span class="c1"># inclo: inclination (radians)</span>
+                <span class="n">meanAnomaly</span><span class="p">,</span>  <span class="c1"># mo: mean anomaly (radians)</span>
+                <span class="n">meanMotion</span><span class="p">,</span>   <span class="c1"># no_kozai: mean motion (radians/minute)</span>
+                <span class="n">raan</span><span class="p">,</span>         <span class="c1"># nodeo: right ascension of ascending node (radians)</span>
+            <span class="p">)</span>
+
+        <span class="n">rs</span><span class="p">,</span> <span class="n">vs</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">time</span><span class="p">:</span>
+            <span class="n">e</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">sat</span><span class="o">.</span><span class="n">sgp4_tsince</span><span class="p">((</span><span class="n">t</span> <span class="o">-</span> <span class="n">orbit</span><span class="o">.</span><span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="mf">60.0</span><span class="p">)</span>
+            <span class="n">rs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="n">vs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="n">rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rs</span><span class="p">)</span>
+        <span class="n">vs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vs</span><span class="p">)</span>
+        <span class="n">tref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">orbit</span><span class="o">.</span><span class="n">t</span>
+        <span class="n">rot</span> <span class="o">=</span> <span class="n">teme_to_gcrf</span><span class="p">(</span><span class="n">tref</span><span class="p">)</span>
+        <span class="n">rs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rot</span><span class="p">,</span> <span class="n">rs</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">vs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rot</span><span class="p">,</span> <span class="n">vs</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">rs</span> <span class="o">*=</span> <span class="mf">1e3</span>  <span class="c1"># km -&gt; m</span>
+        <span class="n">vs</span> <span class="o">*=</span> <span class="mf">1e3</span>  <span class="c1"># km/s -&gt; m/s</span>
+        <span class="k">return</span> <span class="n">rs</span><span class="p">,</span> <span class="n">vs</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">gps</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">Time</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="s2">&quot;SGP4Propagator&quot;</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">SGP4Propagator</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">t</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="impact_event"><a class="viewcode-back" href="../../api/ssapy.propagator.impact_event.html#ssapy.propagator.impact_event">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">impact_event</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">-</span> <span class="n">EARTH_RADIUS</span></div>
+
+<span class="n">impact_event</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">impact_event</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+
+<div class="viewcode-block" id="SciPyPropagator"><a class="viewcode-back" href="../../api/ssapy.propagator.SciPyPropagator.html#ssapy.propagator.SciPyPropagator">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">SciPyPropagator</span><span class="p">(</span><span class="n">Propagator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Propagate using the scipy.integrate.solve_ivp ODE solver.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    accel : ssapy.Accel</span>
+<span class="sd">        Accel object containing the acceleration model by which to propagate.</span>
+<span class="sd">    ode_kwargs : dict</span>
+<span class="sd">        Keyword arguments to pass to `scipy.integrate.solve_ivp`.  Of particular</span>
+<span class="sd">        interest may be the kwarg `rtol`, which usually yields reasonable</span>
+<span class="sd">        results when set ~1e-7.  For best results, check for convergence.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accel</span><span class="p">,</span> <span class="n">ode_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accel</span> <span class="o">=</span> <span class="n">accel</span>
+        <span class="k">if</span> <span class="n">ode_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ode_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;rtol&#39;</span><span class="p">:</span> <span class="mf">1e-7</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ode_kwargs</span> <span class="o">=</span> <span class="n">ode_kwargs</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;SciPyPropagator(</span><span class="si">{!r}</span><span class="s2">, </span><span class="si">{!r}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ode_kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_concatenateOdeSolutions</span><span class="p">(</span><span class="n">sol0</span><span class="p">,</span> <span class="n">sol1</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate._ivp.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">OdeSolution</span>
+        <span class="c1"># Ensure solutions are ascending</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sol0</span><span class="o">.</span><span class="n">ascending</span><span class="p">:</span>
+            <span class="n">sol0</span> <span class="o">=</span> <span class="n">OdeSolution</span><span class="p">(</span><span class="n">sol0</span><span class="o">.</span><span class="n">ts</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">sol0</span><span class="o">.</span><span class="n">interpolants</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sol1</span><span class="o">.</span><span class="n">ascending</span><span class="p">:</span>
+            <span class="n">sol1</span> <span class="o">=</span> <span class="n">OdeSolution</span><span class="p">(</span><span class="n">sol1</span><span class="o">.</span><span class="n">ts</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">sol1</span><span class="o">.</span><span class="n">interpolants</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># Just eliminate degenerate solutions</span>
+        <span class="k">if</span> <span class="n">sol0</span><span class="o">.</span><span class="n">ts</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">sol0</span><span class="o">.</span><span class="n">ts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">sol0</span><span class="o">.</span><span class="n">ts</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">sol1</span>
+        <span class="k">if</span> <span class="n">sol1</span><span class="o">.</span><span class="n">ts</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">sol1</span><span class="o">.</span><span class="n">ts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">sol1</span><span class="o">.</span><span class="n">ts</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">sol0</span>
+
+        <span class="c1"># Merge non-degenerate solutions</span>
+        <span class="k">assert</span> <span class="n">sol0</span><span class="o">.</span><span class="n">ts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">sol1</span><span class="o">.</span><span class="n">ts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">sol0</span><span class="o">.</span><span class="n">ts</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">sol1</span><span class="o">.</span><span class="n">ts</span><span class="p">])</span>
+        <span class="n">interpolants</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">s</span><span class="o">.</span><span class="n">interpolants</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="p">[</span><span class="n">sol0</span><span class="p">,</span> <span class="n">sol1</span><span class="p">]],</span> <span class="p">[])</span>
+        <span class="k">return</span> <span class="n">OdeSolution</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">interpolants</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_solve_piecewise_ivp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">t_span</span><span class="p">,</span> <span class="n">sol</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
+        <span class="c1"># solve from t_span[0] to t_span[1]</span>
+        <span class="c1"># we need to cut this into pieces at each time in</span>
+        <span class="c1"># self.accel.time_breakpoints.</span>
+        <span class="n">tbreak</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">accel</span><span class="o">.</span><span class="n">time_breakpoints</span>
+        <span class="c1"># make infinities finite but outside the range t_span</span>
+        <span class="n">tbreak</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">tbreak</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">t_span</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">t_span</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">tbreakind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tbreak</span><span class="p">))</span>
+        <span class="n">t_span_ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">t_span</span><span class="p">,</span> <span class="n">tbreak</span><span class="p">,</span> <span class="n">tbreakind</span><span class="p">)</span>
+        <span class="n">tbreak</span> <span class="o">=</span> <span class="n">tbreak</span><span class="p">[(</span><span class="n">tbreakind</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">t_span_ind</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">tbreakind</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">t_span_ind</span><span class="p">))]</span>
+        <span class="k">if</span> <span class="n">t_span</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">t_span</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">tbreak</span> <span class="o">=</span> <span class="n">tbreak</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">alltimes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([[</span><span class="n">t_span</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">tbreak</span><span class="p">,</span> <span class="p">[</span><span class="n">t_span</span><span class="p">[</span><span class="mi">1</span><span class="p">]]])</span>
+        <span class="k">for</span> <span class="n">t0</span><span class="p">,</span> <span class="n">t1</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">alltimes</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">alltimes</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+            <span class="n">soln</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span>
+                <span class="n">fp</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">],</span>
+                <span class="n">sol</span><span class="p">(</span><span class="n">t0</span><span class="p">),</span>
+                <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">events</span><span class="o">=</span><span class="n">impact_event</span><span class="p">,</span>
+                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">ode_kwargs</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">soln</span><span class="o">.</span><span class="n">t_events</span> <span class="ow">and</span> <span class="n">soln</span><span class="o">.</span><span class="n">t_events</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Impact detected at t = </span><span class="si">{</span><span class="n">soln</span><span class="o">.</span><span class="n">t_events</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> s&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">soln</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">soln</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">t1</span> <span class="o">&gt;</span> <span class="n">t0</span><span class="p">:</span>
+                <span class="n">sol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_concatenateOdeSolutions</span><span class="p">(</span><span class="n">sol</span><span class="p">,</span> <span class="n">soln</span><span class="o">.</span><span class="n">sol</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_concatenateOdeSolutions</span><span class="p">(</span><span class="n">soln</span><span class="o">.</span><span class="n">sol</span><span class="p">,</span> <span class="n">sol</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sol</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_getRVOne</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit</span><span class="p">,</span> <span class="n">tQuery</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate._ivp.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstantDenseOutput</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate._ivp.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">OdeSolution</span>
+        <span class="c1"># Pattern for ScipyPropagator interpolant is just:</span>
+        <span class="c1"># OdeSolution</span>
+        <span class="n">container</span> <span class="o">=</span> <span class="n">_InterpolantCache</span><span class="p">(</span><span class="n">orbit</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        
+        <span class="k">def</span><span class="w"> </span><span class="nf">fp</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">accel</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">orbit</span><span class="o">.</span><span class="n">propkw</span><span class="p">)])</span>
+
+        <span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">tQuery</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">tQuery</span><span class="p">)</span>
+        <span class="n">update</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">container</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">orbit</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">orbit</span><span class="o">.</span><span class="n">t</span><span class="p">])</span>
+            <span class="n">interpolants</span> <span class="o">=</span> <span class="p">[</span><span class="n">ConstantDenseOutput</span><span class="p">(</span>
+                <span class="n">orbit</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+                <span class="n">orbit</span><span class="o">.</span><span class="n">t</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">orbit</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">orbit</span><span class="o">.</span><span class="n">v</span><span class="p">])</span>
+            <span class="p">)]</span>
+            <span class="n">sol</span> <span class="o">=</span> <span class="n">OdeSolution</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">interpolants</span><span class="p">)</span>
+            <span class="n">update</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sol</span> <span class="o">=</span> <span class="n">container</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">tmin</span> <span class="o">&lt;</span> <span class="n">sol</span><span class="o">.</span><span class="n">ts</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">sol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solve_piecewise_ivp</span><span class="p">(</span>
+                <span class="n">fp</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">sol</span><span class="o">.</span><span class="n">ts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tmin</span><span class="p">],</span>
+                <span class="n">sol</span><span class="p">)</span>
+            <span class="n">update</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">tmax</span> <span class="o">&gt;</span> <span class="n">sol</span><span class="o">.</span><span class="n">ts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">sol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solve_piecewise_ivp</span><span class="p">(</span>
+                <span class="n">fp</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">sol</span><span class="o">.</span><span class="n">ts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">tmax</span><span class="p">],</span>
+                <span class="n">sol</span><span class="p">)</span>
+            <span class="n">update</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">update</span><span class="p">:</span>
+            <span class="n">container</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="n">container</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sol</span><span class="p">)</span>
+        
+        <span class="n">tQuery</span> <span class="o">=</span> <span class="n">tQuery</span><span class="p">[</span><span class="n">tQuery</span> <span class="o">&lt;=</span> <span class="n">sol</span><span class="o">.</span><span class="n">ts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tQuery</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    
+        <span class="n">out</span> <span class="o">=</span> <span class="n">sol</span><span class="p">(</span><span class="n">tQuery</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">return</span> <span class="n">out</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">out</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span>
+            <span class="s2">&quot;SciPyPropagator&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">accel</span><span class="p">,</span>
+            <span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ode_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">SciPyPropagator</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">accel</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">accel</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ode_kwargs</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">ode_kwargs</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RKPropagator"><a class="viewcode-back" href="../../api/ssapy.propagator.RKPropagator.html#ssapy.propagator.RKPropagator">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">RKPropagator</span><span class="p">(</span><span class="n">Propagator</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for Runge-Kutta-based orbit propagators.</span>
+
+<span class="sd">    The `RKPropagator` class provides a framework for implementing orbit propagation </span>
+<span class="sd">    using Runge-Kutta methods. Subclasses must override specific methods to define </span>
+<span class="sd">    the propagation logic and interpolation behavior.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        _minPoints (int): Minimum number of points required for interpolation. </span>
+<span class="sd">            This should be overridden by subclasses.</span>
+
+<span class="sd">    Methods:</span>
+<span class="sd">        _prop():</span>
+<span class="sd">            Abstract method that subclasses must implement to define the propagation logic.</span>
+<span class="sd">        _getRVOne(orbit, tQuery):</span>
+<span class="sd">            Retrieves the position and velocity of an orbit at specified query times </span>
+<span class="sd">            using interpolation.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        orbit (Orbit): The orbit object containing initial conditions and propagation settings.</span>
+<span class="sd">        tQuery (numpy.ndarray): An array of times at which the position and velocity are queried.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: A tuple containing:</span>
+<span class="sd">            - r (numpy.ndarray): Position vectors at the query times.</span>
+<span class="sd">            - v (numpy.ndarray): Velocity vectors at the query times.</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        - The `_getRVOne` method uses an interpolation cache to store computed states and times, </span>
+<span class="sd">          minimizing redundant computations.</span>
+<span class="sd">        - The Runge-Kutta propagation logic must be implemented in the `_prop` method by subclasses.</span>
+<span class="sd">        - Spline interpolation is used for smooth querying of position and velocity data.</span>
+<span class="sd">        - The `container` object caches the interpolant data, including times, states, and spline objects.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        Subclass implementation:</span>
+<span class="sd">```python</span>
+<span class="sd">        class RK4Propagator(RKPropagator):</span>
+<span class="sd">            _minPoints = 4</span>
+
+<span class="sd">            def _prop(self, times, states, h, t_target, propkw):</span>
+<span class="sd">                # Implement RK4 propagation logic here</span>
+<span class="sd">                ...</span>
+<span class="sd">```</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        NotImplementedError: If `_prop` is not overridden by a subclass.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_minPoints</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># subclass should override</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="o">...</span>  <span class="c1"># Subclasses must override</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_getRVOne</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orbit</span><span class="p">,</span> <span class="n">tQuery</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">deque</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_interp_spline</span>
+        <span class="c1"># Pattern for RK interpolant is:</span>
+        <span class="c1"># times, states, h_pre, h_app, spline</span>
+        <span class="n">container</span> <span class="o">=</span> <span class="n">_InterpolantCache</span><span class="p">(</span><span class="n">orbit</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+
+        <span class="n">tQuery</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tQuery</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">tmin</span><span class="p">,</span> <span class="n">tmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">tQuery</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">tQuery</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">container</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">times</span> <span class="o">=</span> <span class="n">deque</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">orbit</span><span class="o">.</span><span class="n">t</span><span class="p">)])</span>
+            <span class="n">states</span> <span class="o">=</span> <span class="n">deque</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">orbit</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">orbit</span><span class="o">.</span><span class="n">v</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)])</span>
+            <span class="n">h_pre</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+            <span class="n">h_app</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+            <span class="n">spline</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">times</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">h_pre</span><span class="p">,</span> <span class="n">h_app</span><span class="p">,</span> <span class="n">spline</span> <span class="o">=</span> <span class="n">container</span>
+
+        <span class="n">remake_spline</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">tmin</span><span class="p">:</span>
+            <span class="n">h_pre</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prop</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">h_pre</span><span class="p">,</span> <span class="n">tmin</span><span class="p">,</span> <span class="n">orbit</span><span class="o">.</span><span class="n">propkw</span><span class="p">)</span>
+            <span class="n">remake_spline</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">tmax</span><span class="p">:</span>
+            <span class="n">h_app</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prop</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">h_app</span><span class="p">,</span> <span class="n">tmax</span><span class="p">,</span> <span class="n">orbit</span><span class="o">.</span><span class="n">propkw</span><span class="p">)</span>
+            <span class="n">remake_spline</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Always materialize arrays for trimming / lookup</span>
+        <span class="n">times_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">states_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">times_arr</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Only defined exactly at the single cached time</span>
+            <span class="n">tQuery</span> <span class="o">=</span> <span class="n">tQuery</span><span class="p">[</span><span class="n">tQuery</span> <span class="o">==</span> <span class="n">times_arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">tQuery</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">states_arr</span><span class="p">,</span> <span class="n">tQuery</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">out</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">out</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">remake_spline</span> <span class="ow">or</span> <span class="n">spline</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">times_arr</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># cubic, stable</span>
+            <span class="n">spline</span> <span class="o">=</span> <span class="n">make_interp_spline</span><span class="p">(</span><span class="n">times_arr</span><span class="p">,</span> <span class="n">states_arr</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">container</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="n">container</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">times</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">h_pre</span><span class="p">,</span> <span class="n">h_app</span><span class="p">,</span> <span class="n">spline</span><span class="p">])</span>
+            <span class="n">times_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="n">states_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="n">tQuery</span> <span class="o">=</span> <span class="n">tQuery</span><span class="p">[(</span><span class="n">tQuery</span> <span class="o">&gt;=</span> <span class="n">times_arr</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">tQuery</span> <span class="o">&lt;=</span> <span class="n">times_arr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span>
+        <span class="k">if</span> <span class="n">tQuery</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+        <span class="c1"># Exact knot lookup (prevents tiny spline-at-knot drift)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">times_arr</span><span class="p">,</span> <span class="n">tQuery</span><span class="p">)</span>
+        <span class="n">exact</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">tQuery</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">ok</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="n">times_arr</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">exact</span><span class="p">[</span><span class="n">ok</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">times_arr</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="n">ok</span><span class="p">]],</span> <span class="n">tQuery</span><span class="p">[</span><span class="n">ok</span><span class="p">],</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">)</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">tQuery</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">exact</span><span class="p">):</span>
+            <span class="n">out</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">states_arr</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">exact</span><span class="p">]</span> <span class="o">=</span> <span class="n">states_arr</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="n">exact</span><span class="p">]]</span>
+            <span class="n">out</span><span class="p">[</span><span class="o">~</span><span class="n">exact</span><span class="p">]</span> <span class="o">=</span> <span class="n">spline</span><span class="p">(</span><span class="n">tQuery</span><span class="p">[</span><span class="o">~</span><span class="n">exact</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">out</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">out</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="RK4Propagator"><a class="viewcode-back" href="../../api/ssapy.propagator.RK4Propagator.html#ssapy.propagator.RK4Propagator">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">RK4Propagator</span><span class="p">(</span><span class="n">RKPropagator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Runge-Kutta 4th order numerical integrator.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    accel : ssapy.Accel</span>
+<span class="sd">        Accel object containing the acceleration model by which to propagate.</span>
+<span class="sd">    h : float</span>
+<span class="sd">        Step size in seconds.  Reasonable values are ~50s for LEO propagations</span>
+<span class="sd">        over a ~day for ~meter accuracy, or 1000s for GEO propagations over a</span>
+<span class="sd">        few days with ~meter accuracy.  For best results, check for convergence.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_minPoints</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accel</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accel</span> <span class="o">=</span> <span class="n">accel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">h</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;RK4Propagator(</span><span class="si">{!r}</span><span class="s2">, </span><span class="si">{!r}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">tthresh</span><span class="p">,</span> <span class="n">propkw</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Propagate in one direction.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        times : collections.deque of float</span>
+<span class="sd">            Known times.  Must be non-empty.  Will be mutated.</span>
+<span class="sd">        states : collections.deque of ndarray</span>
+<span class="sd">            Known states.  Must be non-empty.  Will be mutated.</span>
+<span class="sd">        h : float</span>
+<span class="sd">            time increment</span>
+<span class="sd">        tthresh : float</span>
+<span class="sd">            Stop when crossing this boundary</span>
+<span class="sd">        propkw : dict</span>
+<span class="sd">            orbit.propkw arguments</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        h : float</span>
+<span class="sd">            final time increment</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">fp</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">accel</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">propkw</span><span class="p">)])</span>
+
+        <span class="k">if</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span> <span class="o">&lt;=</span> <span class="n">tthresh</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span> <span class="o">&gt;=</span> <span class="n">tthresh</span>
+
+        <span class="n">keepGoing</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">while</span> <span class="n">keepGoing</span><span class="p">:</span>
+            <span class="c1"># test here so we always get 1 extra iteration...</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">pred</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minPoints</span><span class="p">:</span>
+                <span class="n">keepGoing</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">k1</span> <span class="o">=</span> <span class="n">fp</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+            <span class="n">k2</span> <span class="o">=</span> <span class="n">fp</span><span class="p">(</span><span class="n">state</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">k1</span><span class="p">,</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">h</span><span class="p">)</span>
+            <span class="n">k3</span> <span class="o">=</span> <span class="n">fp</span><span class="p">(</span><span class="n">state</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="n">k2</span><span class="p">,</span> <span class="n">t</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">h</span><span class="p">)</span>
+            <span class="n">k4</span> <span class="o">=</span> <span class="n">fp</span><span class="p">(</span><span class="n">state</span> <span class="o">+</span> <span class="n">h</span> <span class="o">*</span> <span class="n">k3</span><span class="p">,</span> <span class="n">t</span> <span class="o">+</span> <span class="n">h</span><span class="p">)</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">state</span> <span class="o">+</span> <span class="n">h</span> <span class="o">/</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">k1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k2</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k3</span> <span class="o">+</span> <span class="n">k4</span><span class="p">)</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">h</span>
+            
+            <span class="k">if</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">states</span><span class="o">.</span><span class="n">appendleft</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                <span class="n">times</span><span class="o">.</span><span class="n">appendleft</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+            <span class="c1"># EARTH COLLISION CHECK</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">EARTH_RADIUS</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Collision with Earth detected. Propagation stopped at t =&quot;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+                <span class="k">break</span>  <span class="c1"># Do not add further states — exit</span>
+
+        <span class="k">return</span> <span class="n">h</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span>
+            <span class="s2">&quot;RK4Propagator&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">accel</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+        <span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">RK4Propagator</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">accel</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">accel</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">h</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RK8Propagator"><a class="viewcode-back" href="../../api/ssapy.propagator.RK8Propagator.html#ssapy.propagator.RK8Propagator">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">RK8Propagator</span><span class="p">(</span><span class="n">RKPropagator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Runge-Kutta 8th order numerical integrator.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    accel : ssapy.Accel</span>
+<span class="sd">        Accel object containing the acceleration model by which to propagate.</span>
+<span class="sd">    h : float</span>
+<span class="sd">        Step size in seconds.  ~70s yields accuracy of ~1e-6 meters at GEO over</span>
+<span class="sd">        a couple of days.  ~20s yields accuracy of ~1e-5 meters at LEO over a</span>
+<span class="sd">        few hours.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_minPoints</span> <span class="o">=</span> <span class="mi">7</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accel</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accel</span> <span class="o">=</span> <span class="n">accel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">h</span>
+
+    <span class="c1"># Class level variables for Butcher tableau</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">5</span> <span class="o">/</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">3</span> <span class="o">/</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">59</span> <span class="o">/</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">93</span> <span class="o">/</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">5490023248</span> <span class="o">/</span> <span class="mi">9719169821</span><span class="p">,</span> <span class="mi">13</span> <span class="o">/</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1201146811</span> <span class="o">/</span> <span class="mi">1299019798</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                  <span class="p">[</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                  <span class="p">[</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                  <span class="p">[</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span> <span class="o">/</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                  <span class="p">[</span><span class="mi">5</span> <span class="o">/</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">75</span> <span class="o">/</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">75</span> <span class="o">/</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                  <span class="p">[</span><span class="mi">3</span> <span class="o">/</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span> <span class="o">/</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">3</span> <span class="o">/</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                  <span class="p">[</span><span class="mi">29443841</span> <span class="o">/</span> <span class="mi">614563906</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">77736538</span> <span class="o">/</span> <span class="mi">692538347</span><span class="p">,</span> <span class="o">-</span><span class="mi">28693883</span> <span class="o">/</span> <span class="mi">1125000000</span><span class="p">,</span> <span class="mi">23124283</span> <span class="o">/</span> <span class="mi">1800000000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                  <span class="p">[</span><span class="mi">16016141</span> <span class="o">/</span> <span class="mi">946692911</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">61564180</span> <span class="o">/</span> <span class="mi">158732637</span><span class="p">,</span> <span class="mi">22789713</span> <span class="o">/</span> <span class="mi">633445777</span><span class="p">,</span> <span class="mi">545815736</span> <span class="o">/</span> <span class="mi">2771057229</span><span class="p">,</span> <span class="o">-</span><span class="mi">180193667</span> <span class="o">/</span> <span class="mi">1043307555</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                  <span class="p">[</span><span class="mi">39632708</span> <span class="o">/</span> <span class="mi">573591083</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">433636366</span> <span class="o">/</span> <span class="mi">683701615</span><span class="p">,</span> <span class="o">-</span><span class="mi">421739975</span> <span class="o">/</span> <span class="mi">2616292301</span><span class="p">,</span> <span class="mi">100302831</span> <span class="o">/</span> <span class="mi">723423059</span><span class="p">,</span> <span class="mi">790204164</span> <span class="o">/</span> <span class="mi">839813087</span><span class="p">,</span> <span class="mi">800635310</span> <span class="o">/</span> <span class="mi">3783071287</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                  <span class="p">[</span><span class="mi">246121993</span> <span class="o">/</span> <span class="mi">1340847787</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">37695042795</span> <span class="o">/</span> <span class="mi">15268766246</span><span class="p">,</span> <span class="o">-</span><span class="mi">309121744</span> <span class="o">/</span> <span class="mi">1061227803</span><span class="p">,</span> <span class="o">-</span><span class="mi">12992083</span> <span class="o">/</span> <span class="mi">490766935</span><span class="p">,</span> <span class="mi">6005943493</span> <span class="o">/</span> <span class="mi">2108947869</span><span class="p">,</span> <span class="mi">393006217</span> <span class="o">/</span> <span class="mi">1396673457</span><span class="p">,</span> <span class="mi">123872331</span> <span class="o">/</span> <span class="mi">1001029789</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                  <span class="p">[</span><span class="o">-</span><span class="mi">1028468189</span> <span class="o">/</span> <span class="mi">846180014</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8478235783</span> <span class="o">/</span> <span class="mi">508512852</span><span class="p">,</span> <span class="mi">1311729495</span> <span class="o">/</span> <span class="mi">1432422823</span><span class="p">,</span> <span class="o">-</span><span class="mi">10304129995</span> <span class="o">/</span> <span class="mi">1701304382</span><span class="p">,</span> <span class="o">-</span><span class="mi">48777925059</span> <span class="o">/</span> <span class="mi">3047939560</span><span class="p">,</span> <span class="mi">15336726248</span> <span class="o">/</span> <span class="mi">1032824649</span><span class="p">,</span> <span class="o">-</span><span class="mi">45442868181</span> <span class="o">/</span> <span class="mi">3398467696</span><span class="p">,</span> <span class="mi">3065993473</span> <span class="o">/</span> <span class="mi">597172653</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                  <span class="p">[</span><span class="mi">185892177</span> <span class="o">/</span> <span class="mi">718116043</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">3185094517</span> <span class="o">/</span> <span class="mi">667107341</span><span class="p">,</span> <span class="o">-</span><span class="mi">477755414</span> <span class="o">/</span> <span class="mi">1098053517</span><span class="p">,</span> <span class="o">-</span><span class="mi">703635378</span> <span class="o">/</span> <span class="mi">230739211</span><span class="p">,</span> <span class="mi">5731566787</span> <span class="o">/</span> <span class="mi">1027545527</span><span class="p">,</span> <span class="mi">5232866602</span> <span class="o">/</span> <span class="mi">850066563</span><span class="p">,</span> <span class="o">-</span><span class="mi">4093664535</span> <span class="o">/</span> <span class="mi">808688257</span><span class="p">,</span> <span class="mi">3962137247</span> <span class="o">/</span> <span class="mi">1805957418</span><span class="p">,</span> <span class="mi">65686358</span> <span class="o">/</span> <span class="mi">487910083</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                  <span class="p">[</span><span class="mi">403863854</span> <span class="o">/</span> <span class="mi">491063109</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">5068492393</span> <span class="o">/</span> <span class="mi">434740067</span><span class="p">,</span> <span class="o">-</span><span class="mi">411421997</span> <span class="o">/</span> <span class="mi">543043805</span><span class="p">,</span> <span class="mi">652783627</span> <span class="o">/</span> <span class="mi">914296604</span><span class="p">,</span> <span class="mi">11173962825</span> <span class="o">/</span> <span class="mi">925320556</span><span class="p">,</span> <span class="o">-</span><span class="mi">13158990841</span> <span class="o">/</span> <span class="mi">6184727034</span><span class="p">,</span> <span class="mi">3936647629</span> <span class="o">/</span> <span class="mi">1978049680</span><span class="p">,</span> <span class="o">-</span><span class="mi">160528059</span> <span class="o">/</span> <span class="mi">685178525</span><span class="p">,</span> <span class="mi">248638103</span> <span class="o">/</span> <span class="mi">1413531060</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="n">b8</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">14005451</span> <span class="o">/</span> <span class="mi">335480064</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">59238493</span> <span class="o">/</span> <span class="mi">1068277825</span><span class="p">,</span> <span class="mi">181606767</span> <span class="o">/</span> <span class="mi">758867731</span><span class="p">,</span> <span class="mi">561292985</span> <span class="o">/</span> <span class="mi">797845732</span><span class="p">,</span> <span class="o">-</span><span class="mi">1041891430</span> <span class="o">/</span> <span class="mi">1371343529</span><span class="p">,</span> <span class="mi">760417239</span> <span class="o">/</span> <span class="mi">1151165299</span><span class="p">,</span> <span class="mi">118820643</span> <span class="o">/</span> <span class="mi">751138087</span><span class="p">,</span> <span class="o">-</span><span class="mi">528747749</span> <span class="o">/</span> <span class="mi">2220607170</span><span class="p">,</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">4</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;RK8Propagator(</span><span class="si">{!r}</span><span class="s2">, </span><span class="si">{!r}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">tthresh</span><span class="p">,</span> <span class="n">propkw</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Propagate in one direction.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        times : collections.deque of float</span>
+<span class="sd">            Know times.  Must be non-empty.  Will be mutated.</span>
+<span class="sd">        state : collections.deque of ndarray</span>
+<span class="sd">            Known states.  Must be non-empty.  Will be mutated.</span>
+<span class="sd">        h : float</span>
+<span class="sd">            time increment</span>
+<span class="sd">        tthresh : float</span>
+<span class="sd">            Stop when crossing this boundary</span>
+<span class="sd">        propkw : dict</span>
+<span class="sd">            orbit.propkw arguments</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        h : float</span>
+<span class="sd">            final time increment</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Make local to save typing, and dot lookups.</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span>
+        <span class="n">b8</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">b8</span>
+
+        <span class="c1"># Can go forward or backward depending on sign of h</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">fp</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">accel</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">propkw</span><span class="p">)])</span>
+
+        <span class="k">if</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span> <span class="o">&lt;=</span> <span class="n">tthresh</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span> <span class="o">&gt;=</span> <span class="n">tthresh</span>
+        <span class="n">keepGoing</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">while</span> <span class="n">keepGoing</span><span class="p">:</span>
+            <span class="c1"># test here so we always get 1 extra iteration, which seems to</span>
+            <span class="c1"># interpolate better</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">pred</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minPoints</span><span class="p">:</span>
+                <span class="n">keepGoing</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">13</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">13</span><span class="p">):</span>
+                <span class="n">k</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span> <span class="o">*</span> <span class="n">fp</span><span class="p">(</span><span class="n">state</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">k</span><span class="p">),</span> <span class="n">t</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">h</span><span class="p">)</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">state</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b8</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">h</span>
+            <span class="k">if</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">states</span><span class="o">.</span><span class="n">appendleft</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                <span class="n">times</span><span class="o">.</span><span class="n">appendleft</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+            <span class="c1"># EARTH COLLISION CHECK</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">EARTH_RADIUS</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Collision with Earth detected. Propagation stopped at t =&quot;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+                <span class="k">break</span>  <span class="c1"># Do not add further states — exit</span>
+
+        <span class="k">return</span> <span class="n">h</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span>
+            <span class="s2">&quot;RK8Propagator&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">accel</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+        <span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">RK8Propagator</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">accel</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">accel</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">h</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RK78Propagator"><a class="viewcode-back" href="../../api/ssapy.propagator.RK78Propagator.html#ssapy.propagator.RK78Propagator">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">RK78Propagator</span><span class="p">(</span><span class="n">RK8Propagator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Runge-Kutta 8th order numerical integrator with adaptive step size</span>
+<span class="sd">    computed from embedded 7th order integrator error estimate.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    accel : ssapy.Accel</span>
+<span class="sd">        Accel object containing the acceleration model by which to propagate.</span>
+<span class="sd">    h : float</span>
+<span class="sd">        Initial step size in seconds.  A few 10s of seconds is usually a good</span>
+<span class="sd">        starting point here; it&#39;ll automatically be adjusted by the algorithm.</span>
+<span class="sd">    tol : float or array of float.</span>
+<span class="sd">        Tolerance for a single integrator step.  Used to adaptively change the</span>
+<span class="sd">        integrator step size.  Broadcasts to 6-dimensions.  A good target is</span>
+<span class="sd">        usually ~[1e-6, 1e-6, 1e-6, 1e-9, 1e-9, 1e-9] for cm accuracy at GEO</span>
+<span class="sd">        over a few days, or around LEO over a few hours.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_minPoints</span> <span class="o">=</span> <span class="mi">7</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accel</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="p">(</span><span class="mf">1e-6</span><span class="p">,)</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1e-9</span><span class="p">,)</span> <span class="o">*</span> <span class="mi">3</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accel</span> <span class="o">=</span> <span class="n">accel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">h</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
+
+    <span class="c1"># Inherit most class vars from RK8Propagator, but need b7 coefficients</span>
+    <span class="n">b7</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">13451932</span> <span class="o">/</span> <span class="mi">455176623</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">808719846</span> <span class="o">/</span> <span class="mi">976000145</span><span class="p">,</span> <span class="mi">1757004468</span> <span class="o">/</span> <span class="mi">5645159321</span><span class="p">,</span> <span class="mi">656045339</span> <span class="o">/</span> <span class="mi">265891186</span><span class="p">,</span> <span class="o">-</span><span class="mi">3867574721</span> <span class="o">/</span> <span class="mi">1518517206</span><span class="p">,</span> <span class="mi">465885868</span> <span class="o">/</span> <span class="mi">322736535</span><span class="p">,</span> <span class="mi">53011238</span> <span class="o">/</span> <span class="mi">667516719</span><span class="p">,</span> <span class="mi">2</span> <span class="o">/</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;RK78Propagator(</span><span class="si">{!r}</span><span class="s2">, </span><span class="si">{!r}</span><span class="s2">, </span><span class="si">{!r}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">accel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">states</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">tthresh</span><span class="p">,</span> <span class="n">propkw</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Propagate in one direction.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        times : collections.deque of float</span>
+<span class="sd">            Know times.  Must be non-empty.  Will be mutated.</span>
+<span class="sd">        state : collections.deque of ndarray</span>
+<span class="sd">            Known states.  Must be non-empty.  Will be mutated.</span>
+<span class="sd">        h : float</span>
+<span class="sd">            time increment</span>
+<span class="sd">        tthresh : float</span>
+<span class="sd">            Stop when crossing this boundary</span>
+<span class="sd">        propkw : dict</span>
+<span class="sd">            orbit.propkw arguments</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        h : float</span>
+<span class="sd">            final time increment</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Make local to save typing, and dot lookups.</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span>
+        <span class="n">b8</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">b8</span>
+        <span class="n">b7</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">b7</span>
+
+        <span class="c1"># Can go forward or backward depending on sign of h</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">fp</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">accel</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">propkw</span><span class="p">)])</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">13</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">13</span><span class="p">):</span>
+                    <span class="n">k</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span> <span class="o">*</span> <span class="n">fp</span><span class="p">(</span><span class="n">state</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">k</span><span class="p">),</span> <span class="n">t</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">h</span><span class="p">)</span>
+                <span class="n">result7</span> <span class="o">=</span> <span class="n">state</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b7</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+                <span class="n">result8</span> <span class="o">=</span> <span class="n">state</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b8</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+                <span class="n">errmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">result7</span> <span class="o">-</span> <span class="n">result8</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">errmax</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">):</span>
+                    <span class="n">h</span> <span class="o">*=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">errmax</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">7</span><span class="p">))</span>
+                    <span class="k">continue</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># reset size for next step and break</span>
+                    <span class="n">errmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">errmax</span><span class="p">,</span> <span class="mf">1e-15</span><span class="p">)</span>  <span class="c1"># avoid underflow</span>
+                    <span class="n">hnext</span> <span class="o">=</span> <span class="n">h</span> <span class="o">*</span> <span class="nb">min</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">errmax</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">8</span><span class="p">))</span>
+                    <span class="k">return</span> <span class="n">h</span><span class="p">,</span> <span class="n">result8</span><span class="p">,</span> <span class="n">hnext</span>
+
+        <span class="k">if</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span> <span class="o">&lt;=</span> <span class="n">tthresh</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span> <span class="o">&gt;=</span> <span class="n">tthresh</span>
+
+        <span class="n">keepGoing</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">while</span> <span class="n">keepGoing</span><span class="p">:</span>
+            <span class="c1"># test here so we always get 1 extra iteration...</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">pred</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minPoints</span><span class="p">:</span>
+                <span class="n">keepGoing</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">h</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">h_next</span> <span class="o">=</span> <span class="n">step</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">h</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">h_next</span>
+            <span class="k">if</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">states</span><span class="o">.</span><span class="n">appendleft</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+                <span class="n">times</span><span class="o">.</span><span class="n">appendleft</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+            <span class="c1"># EARTH COLLISION CHECK</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="n">EARTH_RADIUS</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Collision with Earth detected. Propagation stopped at t =&quot;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+                <span class="k">break</span>  <span class="c1"># Do not add further states — exit</span>
+
+        <span class="k">return</span> <span class="n">h</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span>
+            <span class="s2">&quot;RK78Propagator&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">accel</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tol</span>
+        <span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rhs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span> <span class="n">RK78Propagator</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">accel</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">accel</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">h</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">==</span> <span class="n">rhs</span><span class="o">.</span><span class="n">tol</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="default_numerical"><a class="viewcode-back" href="../../api/ssapy.propagator.default_numerical.html#ssapy.propagator.default_numerical">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">default_numerical</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">accel</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_accel</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct a numerical propagator with sensible default acceleration.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    *args : list</span>
+<span class="sd">        Arguments to Propagator</span>
+<span class="sd">    cls : Propagator</span>
+<span class="sd">        class to use.  Default of None means SciPyPropagator.</span>
+<span class="sd">    accel : Accel</span>
+<span class="sd">        acceleration model to use.  Default of None means Earth(4, 4), sun, moon.</span>
+<span class="sd">    extra_accel : Accel or list of Accel, optional</span>
+<span class="sd">        Additional accelerations to add to `accel`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Instance of Propagator with desired Accel model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.accel</span><span class="w"> </span><span class="kn">import</span> <span class="n">AccelKepler</span><span class="p">,</span> <span class="n">AccelSum</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.gravity</span><span class="w"> </span><span class="kn">import</span> <span class="n">AccelHarmonic</span><span class="p">,</span> <span class="n">AccelThirdBody</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.body</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_body</span>
+    <span class="k">if</span> <span class="n">accel</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">earth</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span>
+        <span class="n">aK</span> <span class="o">=</span> <span class="n">AccelKepler</span><span class="p">(</span><span class="n">earth</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span>
+        <span class="n">aH</span> <span class="o">=</span> <span class="n">AccelHarmonic</span><span class="p">(</span><span class="n">earth</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">aSun</span> <span class="o">=</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;sun&quot;</span><span class="p">))</span>
+        <span class="n">aMoon</span> <span class="o">=</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;moon&quot;</span><span class="p">))</span>
+        <span class="n">accellist</span> <span class="o">=</span> <span class="p">[</span><span class="n">aK</span><span class="p">,</span> <span class="n">aH</span><span class="p">,</span> <span class="n">aSun</span><span class="p">,</span> <span class="n">aMoon</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">extra_accel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extra_accel</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="n">extra_accel</span> <span class="o">=</span> <span class="p">[</span><span class="n">extra_accel</span><span class="p">]</span>
+            <span class="n">accellist</span> <span class="o">+=</span> <span class="n">extra_accel</span>
+        <span class="n">accel</span> <span class="o">=</span> <span class="n">AccelSum</span><span class="p">(</span><span class="n">accellist</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">SciPyPropagator</span><span class="p">,</span> <span class="n">ode_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;DOP853&#39;</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="p">(</span><span class="mf">1e-1</span><span class="p">,</span> <span class="mf">1e-1</span><span class="p">,</span> <span class="mf">1e-1</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">accel</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

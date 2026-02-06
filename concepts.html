@@ -1,0 +1,289 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SSAPy Concepts &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="_static/ssapy_logo.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contribution Guide" href="contribution_guide.html" />
+    <link rel="prev" title="SSAPy Benchmarks" href="benchmarks.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SSAPy Concepts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#coordinate-systems">Coordinate Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#time-standards">Time Standards</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#types-of-standard-orbits">Types of Standard Orbits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#types-of-models">Types of Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#gravitational-models">Gravitational models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#radiation-pressure">Radiation pressure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#atmospheric-modeling">Atmospheric Modeling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#numerical-integrators">Numerical Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#computing-considerations">Computing Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#other-codes">Other Codes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SSAPy Concepts</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/concepts.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ssapy-concepts">
+<h1>SSAPy Concepts<a class="headerlink" href="#ssapy-concepts" title="Permalink to this heading"></a></h1>
+<p>This page explains concepts and terminology used within the SSAPy package.
+It is intended to provide a high-level overview, while details can be found in other sections of the documentation.</p>
+<section id="coordinate-systems">
+<span id="def-coordinate-systems"></span><h2>Coordinate Systems<a class="headerlink" href="#coordinate-systems" title="Permalink to this heading"></a></h2>
+<p>A <a class="reference external" href="https://en.wikipedia.org/wiki/Coordinate_system">coordinate system</a> is a set of one or more values which define a unique position in space. The SSAPy package is capable of using a variety of coordinate systems:</p>
+<blockquote>
+<div><ul>
+<li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Cartesian_coordinate_system">Cartesian coordinates</a></p></li>
+<li><p>Right ascension/Declination (<code class="docutils literal notranslate"><span class="pre">ra</span></code>/<code class="docutils literal notranslate"><span class="pre">dec</span></code>) of stars from catalog positions (J2000/ICRS)</p></li>
+<li><p>Apparent positions</p></li>
+<li><p>NTW</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">T</span></code> gives the projection of <code class="docutils literal notranslate"><span class="pre">rcoord</span> <span class="pre">-</span> <span class="pre">r</span></code> along <code class="docutils literal notranslate"><span class="pre">V</span></code>  (tangent to track)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">W</span></code> gives the projection of <code class="docutils literal notranslate"><span class="pre">rcoord</span> <span class="pre">-</span> <span class="pre">r</span></code> along <code class="docutils literal notranslate"><span class="pre">(V</span> <span class="pre">cross</span> <span class="pre">r)</span></code> (normal to plane)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">N</span></code> gives the projection of <code class="docutils literal notranslate"><span class="pre">rcoord</span> <span class="pre">-</span> <span class="pre">r</span></code> along <code class="docutils literal notranslate"><span class="pre">(V</span> <span class="pre">cross</span> <span class="pre">(V</span> <span class="pre">cross</span> <span class="pre">r))</span></code> (in plane, perpendicular to <code class="docutils literal notranslate"><span class="pre">T</span></code>)</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>theta-phi-like coordinates: the system where <code class="docutils literal notranslate"><span class="pre">theta</span></code> is the angle between zenith and the point in question, and <code class="docutils literal notranslate"><span class="pre">phi</span></code> is the corresponding azimuthal angle. (radians)</p></li>
+<li><p>lb-like coordinates &amp; proper motions</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>If converting from theta-phi, sets <code class="docutils literal notranslate"><span class="pre">b</span> <span class="pre">=</span> <span class="pre">pi</span> <span class="pre">-</span> <span class="pre">theta</span></code> and renames <code class="docutils literal notranslate"><span class="pre">phi</span></code> -&gt; <code class="docutils literal notranslate"><span class="pre">l</span></code>.  Everything is in radians.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Orthographic tangent plane (radiants)</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>If converting from lb-like coordinates, the tangent plane is always chosen so that <code class="docutils literal notranslate"><span class="pre">+Y</span></code> is towards <code class="docutils literal notranslate"><span class="pre">b</span> <span class="pre">=</span> <span class="pre">90</span></code>, and <code class="docutils literal notranslate"><span class="pre">+X</span></code> is towards <code class="docutils literal notranslate"><span class="pre">+l</span></code>.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>Geocentric Celestial Reference Frame (GCRF)</p></li>
+<li><p>International Terrestrial Reference System (ITRS)</p></li>
+<li><p>Geocentric Celestial Reference System (GCRS) Cartesian coordinates</p></li>
+<li><p>True Equator Mean Equinox frame (TEME) Cartesian coordinates</p></li>
+</ul>
+<p>Not every function will be able to make use of every coordinate system, so please be sure to read the documentation associated with a given operation.</p>
+</div></blockquote>
+</section>
+<section id="time-standards">
+<span id="def-time-standards"></span><h2>Time Standards<a class="headerlink" href="#time-standards" title="Permalink to this heading"></a></h2>
+<blockquote>
+<div><ul class="simple">
+<li><p>UTC vs others</p></li>
+</ul>
+</div></blockquote>
+</section>
+<section id="types-of-standard-orbits">
+<span id="def-orbits"></span><h2>Types of Standard Orbits<a class="headerlink" href="#types-of-standard-orbits" title="Permalink to this heading"></a></h2>
+<p>While SSAPy is not technically limited to modeling a specific orbit, there are certain types of orbits which are more closely related to SSAPy’s capabilities. Those orbit types are listed below:</p>
+<ul class="simple">
+<li><p>Low Earth Orbit (LEO)</p></li>
+<li><p>Mid-earth orbit (MEO)</p></li>
+<li><p>Geosynchronous Earth Orbit (GEO)</p></li>
+<li><p>Geostationary Earth Orbit</p></li>
+<li><p>Highly Elliptical Orbit (HEO)</p></li>
+<li><p>Cislunar Orbits</p></li>
+</ul>
+<p>Of course, many other types of near Earth orbits are possible (i.e. lunar rectilinear halo orbits). The sky, or the universe as it may be, is the limit!</p>
+</section>
+<section id="types-of-models">
+<span id="def-models"></span><h2>Types of Models<a class="headerlink" href="#types-of-models" title="Permalink to this heading"></a></h2>
+<p>Accurately predicting the path of a spacecraft requires accounting for not only gravity, but also subtle influences like radiation pressure and atmospheric drag. SSAPy provides different models that can be combined depending on needs.</p>
+<section id="gravitational-models">
+<h3>Gravitational models<a class="headerlink" href="#gravitational-models" title="Permalink to this heading"></a></h3>
+<p>Several graviational models are provided to balance accuracy and performance.</p>
+<p>A point source model assumes all the mass of the celestial body is concentrated at a single point in space, typically its center.  This is a simplification, but useful for long distances or preliminary calculations.
+Using a point source model for the Sun or a planet to calculate the gravitational influence on a spacecraft is sufficient for initial orbit design or basic mission planning, but as the spacecraft gets closer, the limitations of the point source become apparent.</p>
+<p>Harmonics describe the variations in the gravitational field across the sphere.
+A model with more harmonics turned on provides a more accurate picture of the gravity field, but also requires more complex calculations.</p>
+<p>For Earth and the Moon, more sophisticated models are needed due to their non-uniform mass distribution. These models incorporate:</p>
+<ul class="simple">
+<li><p><strong>Spherical Harmonics:</strong> As mentioned above, with higher orders capturing features like mountains and valleys that affect the gravity field.</p></li>
+<li><p><strong>Mascons:</strong> These are specific regions of high or low mass density that significantly impact the gravitational field.</p></li>
+</ul>
+<p>These complexities make Earth/Lunar modeling more computationally demanding compared to a simple point source, but significantly improve the accuracy of orbit predictions.</p>
+</section>
+<section id="radiation-pressure">
+<h3>Radiation pressure<a class="headerlink" href="#radiation-pressure" title="Permalink to this heading"></a></h3>
+<p>Radiation pressure is the force exerted by light or electromagnetic radiation on a surface. In space, where there’s minimal drag from other particles, radiation pressure from the Sun can be a significant influence on a spacecraft’s trajectory.</p>
+<p>Radiation pressure depends on three key factors:</p>
+<ol class="arabic simple">
+<li><p><strong>Intensity of Sunlight:</strong> Stronger sunlight exerts a greater force.</p></li>
+<li><p><strong>Surface Properties:</strong> Reflective surfaces experience a larger force compared to absorbent ones.</p></li>
+<li><p><strong>Spacecraft Orientation:</strong> The angle at which sunlight hits the spacecraft affects the force direction.</p></li>
+</ol>
+<p>There are different levels of complexity in modeling radiation pressure, depending on the desired accuracy and computational resources:</p>
+<ul class="simple">
+<li><p><strong>Cannonball Model:</strong> This is the simplest approach, treating the spacecraft as a perfect sphere.
+It calculates the force based on the spacecraft’s area-to-mass ratio and reflectivity properties, assuming a constant force along the Sun-spacecraft direction.
+It’s quick and easy to use, but lacks accuracy for complex spacecraft shapes.</p></li>
+<li><p><strong>N-Plate Model:</strong> This model approximates the spacecraft using multiple flat plates, each with its own size, orientation, and reflectivity.
+It offers more detail than the cannonball model, capturing the effect of different surfaces on the spacecraft.
+The number of plates determines the accuracy, but also increases computational complexity.</p></li>
+<li><p><strong>Ray-Tracing Techniques:</strong> This advanced method uses software that simulates the path of sunlight rays reflecting off the spacecraft’s actual 3D geometry.
+It provides the most accurate picture of radiation pressure but requires significant computational power.</p></li>
+</ul>
+<p>The choice of model depends on the specific mission requirements. For initial planning, a cannonball model might suffice. However, high-precision orbit determination for critical missions might require ray-tracing techniques.</p>
+</section>
+<section id="atmospheric-modeling">
+<h3>Atmospheric Modeling<a class="headerlink" href="#atmospheric-modeling" title="Permalink to this heading"></a></h3>
+<p>Atmospheric drag is the resistance a spacecraft experiences due to collisions with gas molecules in a planet’s atmosphere. While negligible at high altitudes, it becomes a significant force during atmospheric entry or when operating in low-Earth orbit.</p>
+<p>Accurate atmospheric models are crucial for:</p>
+<ul class="simple">
+<li><p>Predicting spacecraft re-entry paths to ensure safe landing zones.</p></li>
+<li><p>Maintaining orbit stability for low-Earth satellites by compensating for drag-induced orbital decay.</p></li>
+<li><p>Optimizing fuel usage by accounting for drag during maneuvers.</p></li>
+</ul>
+</section>
+</section>
+<section id="numerical-integrators">
+<span id="def-numerical-integrators"></span><h2>Numerical Integrators<a class="headerlink" href="#numerical-integrators" title="Permalink to this heading"></a></h2>
+<p>Numerical integrators solve the complex differential equations that govern the motion of a spacecraft under various gravitational and environmental influences.
+Different integrators offer trade-offs between accuracy, efficiency, and stability.</p>
+<p>The step size in a numerical integrator defines the time interval between calculations. Smaller step sizes lead to more accurate results but require more computations. Choosing the right step size involves balancing accuracy needs with computational resources.
+Different integrators handle step sizes differently:</p>
+<ul class="simple">
+<li><p><strong>Fixed-Step Integrators</strong> use a constant time step size for calculations. They are simple to implement but can be inefficient, especially for rapidly changing forces or highly elliptical orbits.</p></li>
+<li><p><strong>Variable-Step Integrators</strong> adjust the time step size dynamically based on the complexity of the motion. They are more efficient for problems with varying forces but can be more complex to implement.</p></li>
+<li><p><strong>Multi-Step Integrators</strong> utilize information from previous time steps to improve accuracy. They can be efficient but may introduce stability issues for certain types of orbits.</p></li>
+</ul>
+<p>The choice of integrator depends on several factors:</p>
+<ul class="simple">
+<li><p><strong>Orbit Type:</strong> Highly elliptical orbits require more sophisticated methods than circular ones.</p></li>
+<li><p><strong>Force Model Complexity:</strong> Simpler models might allow for simpler integrators, while complex models may necessitate more advanced methods.</p></li>
+<li><p><strong>Propagation Time:</strong> Longer propagations benefit from efficient integrators.</p></li>
+<li><p><strong>Desired Accuracy:</strong> Higher accuracy often comes at the cost of increased computation time.</p></li>
+</ul>
+</section>
+<section id="computing-considerations">
+<span id="def-computing-considerations"></span><h2>Computing Considerations<a class="headerlink" href="#computing-considerations" title="Permalink to this heading"></a></h2>
+<p>When propagating multiple orbits, make sure to leverage SSAPy’s vectorization.
+For instance, the <a class="reference internal" href="api/ssapy.orbit.Orbit.html#ssapy.orbit.Orbit" title="ssapy.orbit.Orbit"><code class="xref py py-class docutils literal notranslate"><span class="pre">Orbit</span></code></a> class can represents either a single scalar orbit or a vector of orbits.</p>
+</section>
+<section id="other-codes">
+<span id="def-other-codes"></span><h2>Other Codes<a class="headerlink" href="#other-codes" title="Permalink to this heading"></a></h2>
+<p>Below is a list of other orbit propagation codes, both commercial and free. While these other pieces of software may have some features in common with SSAPy, we believe SSAPy brings a more complete list of capabilities within one package.</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://software.nasa.gov/software/GSC-17177-1">General Mission Analysis Tool (GMAT)</a></p></li>
+<li><p><a class="reference external" href="https://www.ansys.com/products/missions/ansys-stk">Ansys Systems Tool Kit (STK)</a></p></li>
+<li><p><a class="reference external" href="https://ai-solutions.com/freeflyer-astrodynamic-software/">a.i. solutions FreeFlyer Astrodynamics Software</a></p></li>
+<li><p><a class="reference external" href="https://www.mathworks.com/products/matlab.html?s_tid=hp_products_matlab">MathWorks MATLAB</a></p></li>
+<li><p><a class="reference external" href="https://docs.astropy.org/en/stable/index.html">AstroPy</a></p></li>
+<li><p><a class="reference external" href="https://rebound.readthedocs.io/en/latest/">REBOUND</a></p></li>
+<li><p><a class="reference external" href="https://reboundx.readthedocs.io/en/latest/index.html">REBOUNDx</a></p></li>
+<li><p><a class="reference external" href="https://nyxspace.com/nyxspace/showcase/">Nyx Space</a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="benchmarks.html" class="btn btn-neutral float-left" title="SSAPy Benchmarks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="contribution_guide.html" class="btn btn-neutral float-right" title="Contribution Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

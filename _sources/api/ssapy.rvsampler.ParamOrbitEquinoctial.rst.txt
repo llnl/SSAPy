@@ -1,0 +1,23 @@
+ParamOrbitEquinoctial
+=====================
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: ParamOrbitEquinoctial
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~ParamOrbitEquinoctial.input_param_translation
+      ~ParamOrbitEquinoctial.orbit_to_param
+      ~ParamOrbitEquinoctial.output_covar_translation
+      ~ParamOrbitEquinoctial.param_to_orbit
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: input_param_translation
+   .. automethod:: orbit_to_param
+   .. automethod:: output_covar_translation
+   .. automethod:: param_to_orbit

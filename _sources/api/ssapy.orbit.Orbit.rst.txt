@@ -1,0 +1,91 @@
+Orbit
+=====
+
+.. currentmodule:: ssapy.orbit
+
+.. autoclass:: Orbit
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~Orbit.LRL
+      ~Orbit.a
+      ~Orbit.angularMomentum
+      ~Orbit.apoapsis
+      ~Orbit.e
+      ~Orbit.eccentricAnomaly
+      ~Orbit.energy
+      ~Orbit.equinoctialElements
+      ~Orbit.ex
+      ~Orbit.ey
+      ~Orbit.hx
+      ~Orbit.hy
+      ~Orbit.i
+      ~Orbit.keplerianElements
+      ~Orbit.kozaiMeanKeplerianElements
+      ~Orbit.lE
+      ~Orbit.lM
+      ~Orbit.lonPa
+      ~Orbit.lv
+      ~Orbit.meanAnomaly
+      ~Orbit.meanMotion
+      ~Orbit.p
+      ~Orbit.pa
+      ~Orbit.periapsis
+      ~Orbit.period
+      ~Orbit.raan
+      ~Orbit.tle
+      ~Orbit.trueAnomaly
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~Orbit.at
+      ~Orbit.fromEquinoctialElements
+      ~Orbit.fromKeplerianElements
+      ~Orbit.fromKozaiMeanKeplerianElements
+      ~Orbit.fromTLE
+      ~Orbit.fromTLETuple
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: LRL
+   .. autoattribute:: a
+   .. autoattribute:: angularMomentum
+   .. autoattribute:: apoapsis
+   .. autoattribute:: e
+   .. autoattribute:: eccentricAnomaly
+   .. autoattribute:: energy
+   .. autoattribute:: equinoctialElements
+   .. autoattribute:: ex
+   .. autoattribute:: ey
+   .. autoattribute:: hx
+   .. autoattribute:: hy
+   .. autoattribute:: i
+   .. autoattribute:: keplerianElements
+   .. autoattribute:: kozaiMeanKeplerianElements
+   .. autoattribute:: lE
+   .. autoattribute:: lM
+   .. autoattribute:: lonPa
+   .. autoattribute:: lv
+   .. autoattribute:: meanAnomaly
+   .. autoattribute:: meanMotion
+   .. autoattribute:: p
+   .. autoattribute:: pa
+   .. autoattribute:: periapsis
+   .. autoattribute:: period
+   .. autoattribute:: raan
+   .. autoattribute:: tle
+   .. autoattribute:: trueAnomaly
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: at
+   .. automethod:: fromEquinoctialElements
+   .. automethod:: fromKeplerianElements
+   .. automethod:: fromKozaiMeanKeplerianElements
+   .. automethod:: fromTLE
+   .. automethod:: fromTLETuple

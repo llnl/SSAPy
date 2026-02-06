@@ -1,0 +1,6 @@
+read_csv
+========
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: read_csv

@@ -1,0 +1,6 @@
+calc_gamma
+==========
+
+.. currentmodule:: ssapy.compute
+
+.. autofunction:: calc_gamma

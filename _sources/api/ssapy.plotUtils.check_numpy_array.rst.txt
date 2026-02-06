@@ -1,0 +1,6 @@
+check_numpy_array
+=================
+
+.. currentmodule:: ssapy.plotUtils
+
+.. autofunction:: check_numpy_array

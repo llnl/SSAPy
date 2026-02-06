@@ -1,0 +1,17 @@
+EquinoctialLMOptimizer
+======================
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: EquinoctialLMOptimizer
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~EquinoctialLMOptimizer.optimize
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: optimize

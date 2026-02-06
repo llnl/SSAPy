@@ -1,0 +1,19 @@
+Track
+=====
+
+.. currentmodule:: ssapy.correlate_tracks
+
+.. autoclass:: Track
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~Track.addto
+      ~Track.gaussian_approximation
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: addto
+   .. automethod:: gaussian_approximation

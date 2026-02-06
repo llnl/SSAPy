@@ -1,0 +1,7 @@
+RVSigmaProposal
+===============
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: RVSigmaProposal
+   :show-inheritance:

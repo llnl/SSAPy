@@ -1,0 +1,19 @@
+EarthObserver
+=============
+
+.. currentmodule:: ssapy.orbit
+
+.. autoclass:: EarthObserver
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~EarthObserver.getRV
+      ~EarthObserver.sunAlt
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: getRV
+   .. automethod:: sunAlt

@@ -1,0 +1,6 @@
+get_memory_usage
+================
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: get_memory_usage

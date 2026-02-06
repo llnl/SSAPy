@@ -1,0 +1,7 @@
+GaussTwoPosOrbitSolver
+======================
+
+.. currentmodule:: ssapy.orbit_solver
+
+.. autoclass:: GaussTwoPosOrbitSolver
+   :show-inheritance:

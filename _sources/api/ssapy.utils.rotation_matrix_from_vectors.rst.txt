@@ -1,0 +1,6 @@
+rotation_matrix_from_vectors
+============================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: rotation_matrix_from_vectors

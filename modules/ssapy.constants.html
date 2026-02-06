@@ -1,0 +1,477 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ssapy.constants &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ssapy.correlate_tracks" href="ssapy.correlate_tracks.html" />
+    <link rel="prev" title="HashableArrayContainer" href="../api/ssapy.compute.HashableArrayContainer.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ssapy.constants</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#ssapy.constants.WGS84_EARTH_MU"><code class="docutils literal notranslate"><span class="pre">WGS84_EARTH_MU</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ssapy.constants.WGS72_EARTH_MU"><code class="docutils literal notranslate"><span class="pre">WGS72_EARTH_MU</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ssapy.constants.WGS84_EARTH_OMEGA"><code class="docutils literal notranslate"><span class="pre">WGS84_EARTH_OMEGA</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ssapy.constants.WGS72_EARTH_OMEGA"><code class="docutils literal notranslate"><span class="pre">WGS72_EARTH_OMEGA</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ssapy.constants.WGS84_EARTH_RADIUS"><code class="docutils literal notranslate"><span class="pre">WGS84_EARTH_RADIUS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ssapy.constants.WGS72_EARTH_RADIUS"><code class="docutils literal notranslate"><span class="pre">WGS72_EARTH_RADIUS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ssapy.constants.WGS84_EARTH_FLATTENING"><code class="docutils literal notranslate"><span class="pre">WGS84_EARTH_FLATTENING</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ssapy.constants.WGS72_EARTH_FLATTENING"><code class="docutils literal notranslate"><span class="pre">WGS72_EARTH_FLATTENING</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ssapy.constants.WGS84_EARTH_POLAR_RADIUS"><code class="docutils literal notranslate"><span class="pre">WGS84_EARTH_POLAR_RADIUS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ssapy.constants.WGS72_EARTH_POLAR_RADIUS"><code class="docutils literal notranslate"><span class="pre">WGS72_EARTH_POLAR_RADIUS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ssapy.constants.RGEO"><code class="docutils literal notranslate"><span class="pre">RGEO</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ssapy.constants.VGEO"><code class="docutils literal notranslate"><span class="pre">VGEO</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ssapy.constants.RGEOALT"><code class="docutils literal notranslate"><span class="pre">RGEOALT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ssapy.constants.VLEO"><code class="docutils literal notranslate"><span class="pre">VLEO</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ssapy.constants.LD"><code class="docutils literal notranslate"><span class="pre">LD</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gravitational-constants">Gravitational constants</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.SUN_MU"><code class="docutils literal notranslate"><span class="pre">SUN_MU</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.MOON_MU"><code class="docutils literal notranslate"><span class="pre">MOON_MU</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.MERCURY_MU"><code class="docutils literal notranslate"><span class="pre">MERCURY_MU</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.VENUS_MU"><code class="docutils literal notranslate"><span class="pre">VENUS_MU</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.EARTH_MU"><code class="docutils literal notranslate"><span class="pre">EARTH_MU</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.MARS_MU"><code class="docutils literal notranslate"><span class="pre">MARS_MU</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.JUPITER_MU"><code class="docutils literal notranslate"><span class="pre">JUPITER_MU</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.SATURN_MU"><code class="docutils literal notranslate"><span class="pre">SATURN_MU</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.URANUS_MU"><code class="docutils literal notranslate"><span class="pre">URANUS_MU</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.NEPTUNE_MU"><code class="docutils literal notranslate"><span class="pre">NEPTUNE_MU</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mass">Mass</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.SUN_MASS"><code class="docutils literal notranslate"><span class="pre">SUN_MASS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.MOON_MASS"><code class="docutils literal notranslate"><span class="pre">MOON_MASS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.MERCURY_MASS"><code class="docutils literal notranslate"><span class="pre">MERCURY_MASS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.VENUS_MASS"><code class="docutils literal notranslate"><span class="pre">VENUS_MASS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.EARTH_MASS"><code class="docutils literal notranslate"><span class="pre">EARTH_MASS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.MARS_MASS"><code class="docutils literal notranslate"><span class="pre">MARS_MASS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.JUPITER_MASS"><code class="docutils literal notranslate"><span class="pre">JUPITER_MASS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.SATURN_MASS"><code class="docutils literal notranslate"><span class="pre">SATURN_MASS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.URANUS_MASS"><code class="docutils literal notranslate"><span class="pre">URANUS_MASS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.NEPTUNE_MASS"><code class="docutils literal notranslate"><span class="pre">NEPTUNE_MASS</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#radius">Radius</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.MOON_RADIUS"><code class="docutils literal notranslate"><span class="pre">MOON_RADIUS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.MERCURY_RADIUS"><code class="docutils literal notranslate"><span class="pre">MERCURY_RADIUS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.VENUS_RADIUS"><code class="docutils literal notranslate"><span class="pre">VENUS_RADIUS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.EARTH_RADIUS"><code class="docutils literal notranslate"><span class="pre">EARTH_RADIUS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.MARS_RADIUS"><code class="docutils literal notranslate"><span class="pre">MARS_RADIUS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.JUPITER_RADIUS"><code class="docutils literal notranslate"><span class="pre">JUPITER_RADIUS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.SATURN_RADIUS"><code class="docutils literal notranslate"><span class="pre">SATURN_RADIUS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.URANUS_RADIUS"><code class="docutils literal notranslate"><span class="pre">URANUS_RADIUS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ssapy.constants.NEPTUNE_RADIUS"><code class="docutils literal notranslate"><span class="pre">NEPTUNE_RADIUS</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+      <li class="breadcrumb-item active">ssapy.constants</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/ssapy.constants.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-ssapy.constants">
+<span id="ssapy-constants"></span><h1>ssapy.constants<a class="headerlink" href="#module-ssapy.constants" title="Permalink to this heading"></a></h1>
+<p>A collection of physical constants.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.WGS84_EARTH_MU">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">WGS84_EARTH_MU</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.WGS84_EARTH_MU" title="Permalink to this definition"></a></dt>
+<dd><p>Earth gravitational constant from WGS84 model [m³/s²]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.WGS72_EARTH_MU">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">WGS72_EARTH_MU</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.WGS72_EARTH_MU" title="Permalink to this definition"></a></dt>
+<dd><p>Earth gravitational constant from WGS72 model [m³/s²]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.WGS84_EARTH_OMEGA">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">WGS84_EARTH_OMEGA</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.WGS84_EARTH_OMEGA" title="Permalink to this definition"></a></dt>
+<dd><p>Earth angular velocity from WGS84 model [rad/s]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.WGS72_EARTH_OMEGA">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">WGS72_EARTH_OMEGA</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.WGS72_EARTH_OMEGA" title="Permalink to this definition"></a></dt>
+<dd><p>Earth angular velocity from WGS72 model [rad/s]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.WGS84_EARTH_RADIUS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">WGS84_EARTH_RADIUS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.WGS84_EARTH_RADIUS" title="Permalink to this definition"></a></dt>
+<dd><p>Earth radius at equator from WGS84 model [m]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.WGS72_EARTH_RADIUS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">WGS72_EARTH_RADIUS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.WGS72_EARTH_RADIUS" title="Permalink to this definition"></a></dt>
+<dd><p>Earth radius at equator from WGS72 model [m]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.WGS84_EARTH_FLATTENING">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">WGS84_EARTH_FLATTENING</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.WGS84_EARTH_FLATTENING" title="Permalink to this definition"></a></dt>
+<dd><p>Earth flattening f = (a - b) / a where a and b are the major
+and minor axes respectively, from WGS84 model [unitless]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.WGS72_EARTH_FLATTENING">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">WGS72_EARTH_FLATTENING</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.WGS72_EARTH_FLATTENING" title="Permalink to this definition"></a></dt>
+<dd><p>Earth flattening f = (a - b) / a where a and b are the major
+and minor axes respectively, from WGS72 model [unitless]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.WGS84_EARTH_POLAR_RADIUS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">WGS84_EARTH_POLAR_RADIUS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.WGS84_EARTH_POLAR_RADIUS" title="Permalink to this definition"></a></dt>
+<dd><p>Earth polar radius, calculated by multiplying the equatorial
+radius by (1 - flattening), from WGS84 model [m]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.WGS72_EARTH_POLAR_RADIUS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">WGS72_EARTH_POLAR_RADIUS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.WGS72_EARTH_POLAR_RADIUS" title="Permalink to this definition"></a></dt>
+<dd><p>Earth polar radius, calculated by multiplying the equatorial
+radius by (1 - flattening), from WGS72 model [m]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.RGEO">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">RGEO</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.RGEO" title="Permalink to this definition"></a></dt>
+<dd><p>GEO-synchronous radius [m]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.VGEO">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">VGEO</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.VGEO" title="Permalink to this definition"></a></dt>
+<dd><p>GEO-synchronous velocity [m/s]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.RGEOALT">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">RGEOALT</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.RGEOALT" title="Permalink to this definition"></a></dt>
+<dd><p>GEO-synchronous altitude [m]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.VLEO">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">VLEO</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.VLEO" title="Permalink to this definition"></a></dt>
+<dd><p>Approximate orbital velocity for low earth orbit (altitude of 500km) [m/s]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.LD">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">LD</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.LD" title="Permalink to this definition"></a></dt>
+<dd><p>Lunar semi-major axis [m]</p>
+</dd></dl>
+
+<section id="gravitational-constants">
+<h2>Gravitational constants<a class="headerlink" href="#gravitational-constants" title="Permalink to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.SUN_MU">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">SUN_MU</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.SUN_MU" title="Permalink to this definition"></a></dt>
+<dd><p>Sun gravitational constant, from IAU 1976 model [m³/s²]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.MOON_MU">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">MOON_MU</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.MOON_MU" title="Permalink to this definition"></a></dt>
+<dd><p>Moon gravitational constant, from the DE200 ephemeris [m³/s²]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.MERCURY_MU">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">MERCURY_MU</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.MERCURY_MU" title="Permalink to this definition"></a></dt>
+<dd><p>Mercury gravitational constant [m³/s²]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.VENUS_MU">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">VENUS_MU</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.VENUS_MU" title="Permalink to this definition"></a></dt>
+<dd><p>Venus gravitational constant [m³/s²]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.EARTH_MU">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">EARTH_MU</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.EARTH_MU" title="Permalink to this definition"></a></dt>
+<dd><p>Earth gravitational constant, from WGS84 model [m³/s²]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.MARS_MU">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">MARS_MU</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.MARS_MU" title="Permalink to this definition"></a></dt>
+<dd><p>Mars gravitational constant [m³/s²]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.JUPITER_MU">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">JUPITER_MU</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.JUPITER_MU" title="Permalink to this definition"></a></dt>
+<dd><p>Jupiter gravitational constant [m³/s²]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.SATURN_MU">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">SATURN_MU</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.SATURN_MU" title="Permalink to this definition"></a></dt>
+<dd><p>Saturn gravitational constant [m³/s²]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.URANUS_MU">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">URANUS_MU</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.URANUS_MU" title="Permalink to this definition"></a></dt>
+<dd><p>Uranus gravitational constant [m³/s²]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.NEPTUNE_MU">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">NEPTUNE_MU</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.NEPTUNE_MU" title="Permalink to this definition"></a></dt>
+<dd><p>Neptune gravitational constant [m³/s²]</p>
+</dd></dl>
+
+</section>
+<section id="mass">
+<h2>Mass<a class="headerlink" href="#mass" title="Permalink to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.SUN_MASS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">SUN_MASS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.SUN_MASS" title="Permalink to this definition"></a></dt>
+<dd><p>Sun mass, from the DE405 ephemeris [kg]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.MOON_MASS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">MOON_MASS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.MOON_MASS" title="Permalink to this definition"></a></dt>
+<dd><p>Moon mass, from the DE405 ephemeris [kg]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.MERCURY_MASS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">MERCURY_MASS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.MERCURY_MASS" title="Permalink to this definition"></a></dt>
+<dd><p>Mercury mass, from the DE405 ephemeris [kg]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.VENUS_MASS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">VENUS_MASS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.VENUS_MASS" title="Permalink to this definition"></a></dt>
+<dd><p>Venus mass, from the DE405 ephemeris [kg]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.EARTH_MASS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">EARTH_MASS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.EARTH_MASS" title="Permalink to this definition"></a></dt>
+<dd><p>Earth mass, from the DE405 ephemeris [kg]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.MARS_MASS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">MARS_MASS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.MARS_MASS" title="Permalink to this definition"></a></dt>
+<dd><p>Mars mass, from the DE405 ephemeris [kg]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.JUPITER_MASS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">JUPITER_MASS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.JUPITER_MASS" title="Permalink to this definition"></a></dt>
+<dd><p>Jupiter mass, from the DE405 ephemeris [kg]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.SATURN_MASS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">SATURN_MASS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.SATURN_MASS" title="Permalink to this definition"></a></dt>
+<dd><p>Saturn mass, from the DE405 ephemeris [kg]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.URANUS_MASS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">URANUS_MASS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.URANUS_MASS" title="Permalink to this definition"></a></dt>
+<dd><p>Uranus mass, from the DE405 ephemeris [kg]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.NEPTUNE_MASS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">NEPTUNE_MASS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.NEPTUNE_MASS" title="Permalink to this definition"></a></dt>
+<dd><p>Neptune mass, from the DE405 ephemeris [kg]</p>
+</dd></dl>
+
+</section>
+<section id="radius">
+<h2>Radius<a class="headerlink" href="#radius" title="Permalink to this heading"></a></h2>
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.MOON_RADIUS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">MOON_RADIUS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.MOON_RADIUS" title="Permalink to this definition"></a></dt>
+<dd><p>Moon radius (source: 10.2138/rmg.2006.60.3) [m]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.MERCURY_RADIUS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">MERCURY_RADIUS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.MERCURY_RADIUS" title="Permalink to this definition"></a></dt>
+<dd><p>Mercury radius [m]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.VENUS_RADIUS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">VENUS_RADIUS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.VENUS_RADIUS" title="Permalink to this definition"></a></dt>
+<dd><p>Venus radius [m]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.EARTH_RADIUS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">EARTH_RADIUS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.EARTH_RADIUS" title="Permalink to this definition"></a></dt>
+<dd><p>Earth radius [m]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.MARS_RADIUS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">MARS_RADIUS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.MARS_RADIUS" title="Permalink to this definition"></a></dt>
+<dd><p>Mars radius [m]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.JUPITER_RADIUS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">JUPITER_RADIUS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.JUPITER_RADIUS" title="Permalink to this definition"></a></dt>
+<dd><p>Jupiter radius [m]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.SATURN_RADIUS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">SATURN_RADIUS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.SATURN_RADIUS" title="Permalink to this definition"></a></dt>
+<dd><p>Saturn radius [m]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.URANUS_RADIUS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">URANUS_RADIUS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.URANUS_RADIUS" title="Permalink to this definition"></a></dt>
+<dd><p>Uranus radius [m]</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="ssapy.constants.NEPTUNE_RADIUS">
+<span class="sig-prename descclassname"><span class="pre">ssapy.constants.</span></span><span class="sig-name descname"><span class="pre">NEPTUNE_RADIUS</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/constants.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.constants.NEPTUNE_RADIUS" title="Permalink to this definition"></a></dt>
+<dd><p>Neptune radius [m]</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../api/ssapy.compute.HashableArrayContainer.html" class="btn btn-neutral float-left" title="HashableArrayContainer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ssapy.correlate_tracks.html" class="btn btn-neutral float-right" title="ssapy.correlate_tracks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

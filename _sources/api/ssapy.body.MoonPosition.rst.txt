@@ -1,0 +1,17 @@
+MoonPosition
+============
+
+.. currentmodule:: ssapy.body
+
+.. autoclass:: MoonPosition
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~MoonPosition.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

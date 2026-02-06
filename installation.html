@@ -1,0 +1,210 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+      <link rel="stylesheet" type="text/css" href="_static/tabs.css?v=a5c4661c" />
+
+  
+    <link rel="shortcut icon" href="_static/ssapy_logo.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script src="_static/tabs.js?v=3030b3cb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SSAPy by Example" href="examples.html" />
+    <link rel="prev" title="SSAPy - Space Situational Awareness for Python" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#system-prerequisites">System Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#orekit-dependency">Orekit dependency</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Getting Started</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/installation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h1>
+<section id="system-prerequisites">
+<h2>System Prerequisites<a class="headerlink" href="#system-prerequisites" title="Permalink to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">SSAPy</span></code> has the following minimum system requirements, which are assumed to be present on the machine where <code class="docutils literal notranslate"><span class="pre">SSAPy</span></code> is run:</p>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">System prerequisites for SSAPy</span><a class="headerlink" href="#id1" title="Permalink to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Supported Versions</p></th>
+<th class="head"><p>Notes</p></th>
+<th class="head"><p>Requirement Reason</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Python</p></td>
+<td><p>3.8–3.11</p></td>
+<td></td>
+<td><p>Interpreter</p></td>
+</tr>
+<tr class="row-odd"><td><p>C/C++ Compilers</p></td>
+<td></td>
+<td></td>
+<td><p>Building software</p></td>
+</tr>
+<tr class="row-even"><td><p>make</p></td>
+<td></td>
+<td></td>
+<td><p>Build software</p></td>
+</tr>
+<tr class="row-odd"><td><p>git</p></td>
+<td></td>
+<td></td>
+<td><p>Manage software repositories</p></td>
+</tr>
+<tr class="row-even"><td><p>git-lfs</p></td>
+<td></td>
+<td></td>
+<td><p>Track large binary files</p></td>
+</tr>
+<tr class="row-odd"><td><p>graphviz</p></td>
+<td></td>
+<td></td>
+<td><p>Local documentation building</p></td>
+</tr>
+</tbody>
+</table>
+<p>These requirements can be easily installed on most modern macOS and Linux systems.</p>
+<div class="sphinx-tabs docutils container">
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-0-0" aria-selected="true" class="sphinx-tabs-tab" id="tab-0-0-0" name="0-0" role="tab" tabindex="0">Debian/Ubuntu</button><button aria-controls="panel-0-0-1" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-1" name="0-1" role="tab" tabindex="-1">RHEL</button><button aria-controls="panel-0-0-2" aria-selected="false" class="sphinx-tabs-tab" id="tab-0-0-2" name="0-2" role="tab" tabindex="-1">macOS Brew</button></div><div aria-labelledby="tab-0-0-0" class="sphinx-tabs-panel" id="panel-0-0-0" name="0-0" role="tabpanel" tabindex="0"><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">apt update</span>
+<span class="go">apt install build-essential git git-lfs python3 python3-distutils python3-venv graphviz</span>
+</pre></div>
+</div>
+</div><div aria-labelledby="tab-0-0-1" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-1" name="0-1" role="tabpanel" tabindex="0"><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">dnf install epel-release</span>
+<span class="go">dnf group install &quot;Development Tools&quot;</span>
+<span class="go">dnf install git git-lfs gcc-gfortran python3 python3-pip python3-setuptools graphviz</span>
+</pre></div>
+</div>
+</div><div aria-labelledby="tab-0-0-2" class="sphinx-tabs-panel" hidden="true" id="panel-0-0-2" name="0-2" role="tabpanel" tabindex="0"><div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">brew update</span>
+<span class="go">brew install gcc git git-lfs python3 graphviz</span>
+</pre></div>
+</div>
+</div></div>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<p>As the package has been published on <a class="reference external" href="https://pypi.org/project/llnl-ssapy/">PyPI</a>, it can be installed using pip.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install llnl-ssapy</span>
+</pre></div>
+</div>
+<section id="orekit-dependency">
+<h3>Orekit dependency<a class="headerlink" href="#orekit-dependency" title="Permalink to this heading"></a></h3>
+<p><a class="reference external" href="https://www.orekit.org/">Orekit</a> is an optional dependency, including the <code class="docutils literal notranslate"><span class="pre">Orekit</span></code> Python wrapper that is hard to find. Clone the python wrappper from here:</p>
+<blockquote>
+<div><p><a class="reference external" href="https://gitlab.orekit.org/orekit-labs/python-wrapper">https://gitlab.orekit.org/orekit-labs/python-wrapper</a></p>
+</div></blockquote>
+<p>Alternatively, the <code class="docutils literal notranslate"><span class="pre">Orekit</span></code> python wrapper can be installed from <a class="reference external" href="https://www.anaconda.com/">Anaconda</a>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="SSAPy - Space Situational Awareness for Python" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.html" class="btn btn-neutral float-right" title="SSAPy by Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

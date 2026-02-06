@@ -1,0 +1,6 @@
+get_all_files_recursive
+=======================
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: get_all_files_recursive

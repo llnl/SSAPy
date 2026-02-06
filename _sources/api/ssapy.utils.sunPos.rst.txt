@@ -1,0 +1,6 @@
+sunPos
+======
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: sunPos

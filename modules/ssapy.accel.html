@@ -1,0 +1,206 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ssapy.accel &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Accel" href="../api/ssapy.accel.Accel.html" />
+    <link rel="prev" title="API Reference Guide" href="../api.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ssapy.accel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#classes">Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.accel.Accel.html">Accel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.accel.AccelConstNTW.html">AccelConstNTW</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.accel.AccelDrag.html">AccelDrag</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.accel.AccelEarthRad.html">AccelEarthRad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.accel.AccelKepler.html">AccelKepler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.accel.AccelProd.html">AccelProd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.accel.AccelSolRad.html">AccelSolRad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.accel.AccelSum.html">AccelSum</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+      <li class="breadcrumb-item active">ssapy.accel</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/ssapy.accel.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-ssapy.accel">
+<span id="ssapy-accel"></span><h1>ssapy.accel<a class="headerlink" href="#module-ssapy.accel" title="Permalink to this heading"></a></h1>
+<p>Classes for modeling accelerations.</p>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.accel.Accel.html#ssapy.accel.Accel" title="ssapy.accel.Accel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Accel</span></code></a>([time_breakpoints])</p></td>
+<td><p>Base class for accelerations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.accel.AccelConstNTW.html#ssapy.accel.AccelConstNTW" title="ssapy.accel.AccelConstNTW"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AccelConstNTW</span></code></a>(accelntw[, time_breakpoints])</p></td>
+<td><p>Constant acceleration in NTW coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.accel.AccelDrag.html#ssapy.accel.AccelDrag" title="ssapy.accel.AccelDrag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AccelDrag</span></code></a>([recalc_threshold])</p></td>
+<td><p>Acceleration due to atmospheric drag.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.accel.AccelEarthRad.html#ssapy.accel.AccelEarthRad" title="ssapy.accel.AccelEarthRad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AccelEarthRad</span></code></a>(**defaultkw)</p></td>
+<td><p>Acceleration due to Earth radiation pressure.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.accel.AccelKepler.html#ssapy.accel.AccelKepler" title="ssapy.accel.AccelKepler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AccelKepler</span></code></a>([mu])</p></td>
+<td><p>Keplerian acceleration. I.e., force is proportional to 1/<a href="#id1"><span class="problematic" id="id2">|</span></a>r|^2.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.accel.AccelProd.html#ssapy.accel.AccelProd" title="ssapy.accel.AccelProd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AccelProd</span></code></a>(accel, factor)</p></td>
+<td><p>Acceleration defined as the product of an acceleration with a constant factor.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.accel.AccelSolRad.html#ssapy.accel.AccelSolRad" title="ssapy.accel.AccelSolRad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AccelSolRad</span></code></a>(**defaultkw)</p></td>
+<td><p>Acceleration due to solar radiation pressure.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.accel.AccelSum.html#ssapy.accel.AccelSum" title="ssapy.accel.AccelSum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AccelSum</span></code></a>(accels)</p></td>
+<td><p>Acceleration defined as the sum of other accelerations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsoid</span></code></p></td>
+<td><p>An ellipsoid representation for coordinate transformations.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="class-inheritance-diagram">
+<h2>Class Inheritance Diagram<a class="headerlink" href="#class-inheritance-diagram" title="Permalink to this heading"></a></h2>
+<div class="graphviz"><img src="../_images/inheritance-86be43fbcc09682150e3e5c044279b4cd0bb6601.png" alt="Inheritance diagram of ssapy.accel.Accel, ssapy.accel.AccelConstNTW, ssapy.accel.AccelDrag, ssapy.accel.AccelEarthRad, ssapy.accel.AccelKepler, ssapy.accel.AccelProd, ssapy.accel.AccelSolRad, ssapy.accel.AccelSum" usemap="#inheritance83824c4f5d" class="inheritance graphviz" /></div>
+<map id="inheritance83824c4f5d" name="inheritance83824c4f5d">
+<area shape="rect" id="node1" href="../api/ssapy.accel.Accel.html#ssapy.accel.Accel" target="_top" title="Base class for accelerations." alt="" coords="5,153,77,179"/>
+<area shape="rect" id="node2" href="../api/ssapy.accel.AccelConstNTW.html#ssapy.accel.AccelConstNTW" target="_top" title="Constant acceleration in NTW coordinates." alt="" coords="125,5,251,31"/>
+<area shape="rect" id="node3" href="../api/ssapy.accel.AccelDrag.html#ssapy.accel.AccelDrag" target="_top" title="Acceleration due to atmospheric drag." alt="" coords="144,55,232,80"/>
+<area shape="rect" id="node4" href="../api/ssapy.accel.AccelEarthRad.html#ssapy.accel.AccelEarthRad" target="_top" title="Acceleration due to Earth radiation pressure." alt="" coords="130,104,246,129"/>
+<area shape="rect" id="node5" href="../api/ssapy.accel.AccelKepler.html#ssapy.accel.AccelKepler" target="_top" title="Keplerian acceleration. &#160;I.e., force is proportional to 1/|r|^2." alt="" coords="139,153,237,179"/>
+<area shape="rect" id="node6" href="../api/ssapy.accel.AccelProd.html#ssapy.accel.AccelProd" target="_top" title="Acceleration defined as the product of an acceleration with a constant factor." alt="" coords="145,203,231,228"/>
+<area shape="rect" id="node7" href="../api/ssapy.accel.AccelSolRad.html#ssapy.accel.AccelSolRad" target="_top" title="Acceleration due to solar radiation pressure." alt="" coords="137,252,239,277"/>
+<area shape="rect" id="node8" href="../api/ssapy.accel.AccelSum.html#ssapy.accel.AccelSum" target="_top" title="Acceleration defined as the sum of other accelerations." alt="" coords="145,301,231,327"/>
+</map></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../api.html" class="btn btn-neutral float-left" title="API Reference Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../api/ssapy.accel.Accel.html" class="btn btn-neutral float-right" title="Accel" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

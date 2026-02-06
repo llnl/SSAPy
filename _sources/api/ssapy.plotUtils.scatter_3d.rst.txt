@@ -1,0 +1,6 @@
+scatter_3d
+==========
+
+.. currentmodule:: ssapy.plotUtils
+
+.. autofunction:: scatter_3d

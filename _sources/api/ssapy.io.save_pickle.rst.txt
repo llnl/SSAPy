@@ -1,0 +1,6 @@
+save_pickle
+===========
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: save_pickle

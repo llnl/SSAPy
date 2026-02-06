@@ -1,0 +1,228 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>sun_shine &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="HashableArrayContainer" href="ssapy.compute.HashableArrayContainer.html" />
+    <link rel="prev" title="rvObsToRaDecRate" href="ssapy.compute.rvObsToRaDecRate.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../modules/ssapy.compute.html">ssapy.compute</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../modules/ssapy.compute.html#functions">Functions</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.M_v_lambertian.html">M_v_lambertian</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.altaz.html">altaz</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.calc_M_v.html">calc_M_v</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.calc_gamma.html">calc_gamma</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.calculate_orbital_elements.html">calculate_orbital_elements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.dircos.html">dircos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.earthShadowCoords.html">earthShadowCoords</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.earth_shine.html">earth_shine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.find_passes.html">find_passes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.groundTrack.html">groundTrack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.lagrange_points_lunar_frame.html">lagrange_points_lunar_frame</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.lunar_lagrange_points.html">lunar_lagrange_points</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.lunar_lagrange_points_circular.html">lunar_lagrange_points_circular</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.moon_normal_vector.html">moon_normal_vector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.moon_shine.html">moon_shine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.nby3shape.html">nby3shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.quickAltAz.html">quickAltAz</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.radec.html">radec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.radecRate.html">radecRate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.radecRateObsToRV.html">radecRateObsToRV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.refine_pass.html">refine_pass</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.rv.html">rv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.compute.rvObsToRaDecRate.html">rvObsToRaDecRate</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">sun_shine</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../modules/ssapy.compute.html#classes">Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../modules/ssapy.compute.html#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+          <li class="breadcrumb-item"><a href="../modules/ssapy.compute.html">ssapy.compute</a></li>
+      <li class="breadcrumb-item active">sun_shine</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/ssapy.compute.sun_shine.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sun-shine">
+<h1>sun_shine<a class="headerlink" href="#sun-shine" title="Permalink to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="ssapy.compute.sun_shine">
+<span class="sig-prename descclassname"><span class="pre">ssapy.compute.</span></span><span class="sig-name descname"><span class="pre">sun_shine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r_sat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_earth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_sun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">albedo</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">albedo_front</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_panels</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/compute.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/compute.html#sun_shine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.compute.sun_shine" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the fractional flux of sunlight reflected from the Sun to the satellite.</p>
+<p>This function computes the fractional flux of sunlight reflected from the Sun to the satellite, including contributions from the front surface of the satellite’s solar panels.</p>
+<section id="parameters">
+<h2>Parameters:<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>r_sat<span class="classifier">(n, 3) numpy.ndarray</span></dt><dd><p>Array of coordinates representing the position of the satellite.</p>
+</dd>
+<dt>r_earth<span class="classifier">(n, 3) numpy.ndarray</span></dt><dd><p>Array of coordinates representing the position of the Earth.</p>
+</dd>
+<dt>r_sun<span class="classifier">(n, 3) numpy.ndarray</span></dt><dd><p>Array of coordinates representing the position of the Sun.</p>
+</dd>
+<dt>radius<span class="classifier">float</span></dt><dd><p>Radius of the satellite in meters.</p>
+</dd>
+<dt>albedo<span class="classifier">float</span></dt><dd><p>Albedo of the satellite’s surface.</p>
+</dd>
+<dt>albedo_front<span class="classifier">float</span></dt><dd><p>Albedo of the front surface of the satellite’s solar panels.</p>
+</dd>
+<dt>area_panels<span class="classifier">float</span></dt><dd><p>Area of the satellite’s solar panels in square meters.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h2>Returns:<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>dict</dt><dd><p>Dictionary containing the flux contributions from the Sun to the satellite:
+- ‘sun_bus’: Fraction of solar flux reflected off the satellite’s bus from the Sun.
+- ‘sun_panels’: Fraction of solar flux reflected off the satellite’s panels from the Sun.</p>
+</dd>
+</dl>
+</section>
+<section id="notes">
+<h2>Notes:<a class="headerlink" href="#notes" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>The function assumes that the solar panels are always facing the Sun and calculates flux based on the phase angle.</p></li>
+<li><p>Fraction of solar flux contributions from the front surface of the solar panels are computed.</p></li>
+</ul>
+</section>
+<section id="example">
+<h2>Example:<a class="headerlink" href="#example" title="Permalink to this heading"></a></h2>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">r_sat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1e7</span><span class="p">,</span> <span class="mf">1e7</span><span class="p">,</span> <span class="mf">1e7</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r_earth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r_sun</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1e11</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sun_shine</span><span class="p">(</span><span class="n">r_sat</span><span class="p">,</span> <span class="n">r_earth</span><span class="p">,</span> <span class="n">r_sun</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">albedo</span><span class="o">=</span><span class="mf">0.20</span><span class="p">,</span> <span class="n">albedo_front</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">area_panels</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="go">{&#39;sun_bus&#39;: array([...]), &#39;sun_panels&#39;: array([...])}</span>
+</pre></div>
+</div>
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ssapy.compute.rvObsToRaDecRate.html" class="btn btn-neutral float-left" title="rvObsToRaDecRate" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ssapy.compute.HashableArrayContainer.html" class="btn btn-neutral float-right" title="HashableArrayContainer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

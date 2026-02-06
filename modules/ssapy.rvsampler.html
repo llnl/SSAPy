@@ -1,0 +1,354 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ssapy.rvsampler &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="circular_guess" href="../api/ssapy.rvsampler.circular_guess.html" />
+    <link rel="prev" title="SeriesPropagator" href="../api/ssapy.propagator.SeriesPropagator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ssapy.rvsampler</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#functions">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.circular_guess.html">circular_guess</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.damper.html">damper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.damper_deriv.html">damper_deriv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.eq2kep.html">eq2kep</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.sample_ball.html">sample_ball</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#classes">Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.APrior.html">APrior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.AreaPrior.html">AreaPrior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.DirectInitializer.html">DirectInitializer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.DistanceProjectionInitializer.html">DistanceProjectionInitializer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.EPrior.html">EPrior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.EmceeSampler.html">EmceeSampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.EquinoctialExEyPrior.html">EquinoctialExEyPrior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.EquinoctialLMOptimizer.html">EquinoctialLMOptimizer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.GEOProjectionInitializer.html">GEOProjectionInitializer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.GaussianRVInitializer.html">GaussianRVInitializer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.LMOptimizer.html">LMOptimizer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.LMOptimizerAngular.html">LMOptimizerAngular</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.LeastSquaresOptimizer.html">LeastSquaresOptimizer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.Log10AreaPrior.html">Log10AreaPrior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.MHSampler.html">MHSampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.MVNormalProposal.html">MVNormalProposal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.ParamOrbitAngle.html">ParamOrbitAngle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.ParamOrbitEquinoctial.html">ParamOrbitEquinoctial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.ParamOrbitRV.html">ParamOrbitRV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.ParamOrbitTranslator.html">ParamOrbitTranslator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.RPrior.html">RPrior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.RVProbability.html">RVProbability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.RVSigmaProposal.html">RVSigmaProposal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.SGP4LMOptimizer.html">SGP4LMOptimizer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.rvsampler.VPrior.html">VPrior</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+      <li class="breadcrumb-item active">ssapy.rvsampler</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/ssapy.rvsampler.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-ssapy.rvsampler">
+<span id="ssapy-rvsampler"></span><h1>ssapy.rvsampler<a class="headerlink" href="#module-ssapy.rvsampler" title="Permalink to this heading"></a></h1>
+<p>This module provides functions and classes for orbital mechanics calculations, optimization techniques, sampling methods, and orbital parameter translations.</p>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.circular_guess.html#ssapy.rvsampler.circular_guess" title="ssapy.rvsampler.circular_guess"><code class="xref py py-obj docutils literal notranslate"><span class="pre">circular_guess</span></code></a>(arc[, indices])</p></td>
+<td><p>Guess position and velocity from two closely spaced (in time) observations of ra/dec.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cluster_emcee_walkers</span></code>(chain, lnprob, lnprior)</p></td>
+<td><p>Down-select emcee walkers to those with the largest posterior mean.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.damper.html#ssapy.rvsampler.damper" title="ssapy.rvsampler.damper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">damper</span></code></a>(chi, damp)</p></td>
+<td><p>Pseudo-Huber loss function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.damper_deriv.html#ssapy.rvsampler.damper_deriv" title="ssapy.rvsampler.damper_deriv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">damper_deriv</span></code></a>(chi, damp[, derivnum])</p></td>
+<td><p>Derivative of the pseudo-Huber loss function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dircos</span></code>(orbit, time[, obsPos, obsVel, ...])</p></td>
+<td><p>Calculate observed direction-cosines of orbiting objects as viewed at specified times and positions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.eq2kep.html#ssapy.rvsampler.eq2kep" title="ssapy.rvsampler.eq2kep"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eq2kep</span></code></a>(eq)</p></td>
+<td><p>Convert equinoctial orbital elements to classical Keplerian orbital elements.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">norm</span></code>(arr)</p></td>
+<td><p>Compute the Euclidean norm of an array over the last axis while preserving leading axes.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">normSq</span></code>(arr)</p></td>
+<td><p>Compute the squared norm of an array over the last axis while preserving leading axes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">normed</span></code>(arr)</p></td>
+<td><p>Normalize an array along the last axis to have unit length.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">radec</span></code>(orbit, time[, obsPos, obsVel, ...])</p></td>
+<td><p>Calculate observed right ascension, declination, and slant range of orbiting objects as viewed at specified times and positions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">radecRateObsToRV</span></code>(ra, dec, slantRange[, ...])</p></td>
+<td><p>Convert object angles and observer position to 3D observer position</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rvObsToRaDecRate</span></code>(r, v[, obsPos, obsVel])</p></td>
+<td><p>Convert object and observer position and velocity to angles.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.sample_ball.html#ssapy.rvsampler.sample_ball" title="ssapy.rvsampler.sample_ball"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_ball</span></code></a>(p0, std[, nSample])</p></td>
+<td><p>Produce a ball of walkers around an initial parameter value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">unitAngle3</span></code>(r1, r2)</p></td>
+<td><p>Robustly compute angle between unit vectors r1 and r2.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.APrior.html#ssapy.rvsampler.APrior" title="ssapy.rvsampler.APrior"><code class="xref py py-obj docutils literal notranslate"><span class="pre">APrior</span></code></a>(amean, asigma)</p></td>
+<td><p>Gaussian prior on orbit semimajor axis a.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.AreaPrior.html#ssapy.rvsampler.AreaPrior" title="ssapy.rvsampler.AreaPrior"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AreaPrior</span></code></a>([mean, sigma])</p></td>
+<td><p>Gaussian prior on log10(area) of object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.DirectInitializer.html#ssapy.rvsampler.DirectInitializer" title="ssapy.rvsampler.DirectInitializer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DirectInitializer</span></code></a>(samples[, replace])</p></td>
+<td><p>Directly specify initial position and velocity samples.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.DistanceProjectionInitializer.html#ssapy.rvsampler.DistanceProjectionInitializer" title="ssapy.rvsampler.DistanceProjectionInitializer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DistanceProjectionInitializer</span></code></a>(arc, rho[, ...])</p></td>
+<td><p>Initialize position and velocity from two closely spaced (in time) observations of ra/dec.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.EPrior.html#ssapy.rvsampler.EPrior" title="ssapy.rvsampler.EPrior"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EPrior</span></code></a>(emean, esigma)</p></td>
+<td><p>Gaussian prior on orbit eccentricity e.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.EmceeSampler.html#ssapy.rvsampler.EmceeSampler" title="ssapy.rvsampler.EmceeSampler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EmceeSampler</span></code></a>(probfn, initializer[, nWalker])</p></td>
+<td><p>A sampler built on the emcee package.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.EquinoctialExEyPrior.html#ssapy.rvsampler.EquinoctialExEyPrior" title="ssapy.rvsampler.EquinoctialExEyPrior"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EquinoctialExEyPrior</span></code></a>(sigma)</p></td>
+<td><p>Gaussian prior on equinoctial ex and ey, favoring ex = ey = 0.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.EquinoctialLMOptimizer.html#ssapy.rvsampler.EquinoctialLMOptimizer" title="ssapy.rvsampler.EquinoctialLMOptimizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EquinoctialLMOptimizer</span></code></a>(probfn, initel[, ...])</p></td>
+<td><p>Optimizer that employs Levenberg-Marquardt least-squares fitting and fits in Kozai mean Keplerian element space.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.GEOProjectionInitializer.html#ssapy.rvsampler.GEOProjectionInitializer" title="ssapy.rvsampler.GEOProjectionInitializer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GEOProjectionInitializer</span></code></a>(arc[, rSigma, vSigma])</p></td>
+<td><p>Initialize position and velocity samples by projecting an observed ra/dec into the equatorial plane and assuming a GEO statationary orbital velocity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.GaussianRVInitializer.html#ssapy.rvsampler.GaussianRVInitializer" title="ssapy.rvsampler.GaussianRVInitializer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GaussianRVInitializer</span></code></a>(rMean, vMean[, ...])</p></td>
+<td><p>Generate position and velocity samples as an isotropic Gaussian distribution around an asserted position and velocity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">KeplerianPropagator</span></code>()</p></td>
+<td><p>A basic Keplerian propagator for finding the position and velocity of an orbiting object at some future or past time.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.LMOptimizer.html#ssapy.rvsampler.LMOptimizer" title="ssapy.rvsampler.LMOptimizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LMOptimizer</span></code></a>(probfn, initRV[, fracstep, ...])</p></td>
+<td><p>Optimizer that employs Levenberg-Marquardt least-squares fitting.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.LMOptimizerAngular.html#ssapy.rvsampler.LMOptimizerAngular" title="ssapy.rvsampler.LMOptimizerAngular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LMOptimizerAngular</span></code></a>(probfn, initGuess, ...[, ...])</p></td>
+<td><p>Optimizer that employs Levenberg-Marquardt least-squares fitting.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.LeastSquaresOptimizer.html#ssapy.rvsampler.LeastSquaresOptimizer" title="ssapy.rvsampler.LeastSquaresOptimizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LeastSquaresOptimizer</span></code></a>(probfn, initparam, ...)</p></td>
+<td><p>Base class for LeastSquaresOptimizers</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.Log10AreaPrior.html#ssapy.rvsampler.Log10AreaPrior" title="ssapy.rvsampler.Log10AreaPrior"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Log10AreaPrior</span></code></a>([mean, sigma])</p></td>
+<td><p>Gaussian prior on log10(area) of object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.MHSampler.html#ssapy.rvsampler.MHSampler" title="ssapy.rvsampler.MHSampler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MHSampler</span></code></a>(probfn, initializer, proposer, nChain)</p></td>
+<td><p>Generate MCMC samples using a Metropolis-Hastings sampler.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.MVNormalProposal.html#ssapy.rvsampler.MVNormalProposal" title="ssapy.rvsampler.MVNormalProposal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MVNormalProposal</span></code></a>(cov)</p></td>
+<td><p>A multivariate normal proposal distribution.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Orbit</span></code>(r, v, t[, mu, propkw])</p></td>
+<td><p>Orbital state of one or more objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.ParamOrbitAngle.html#ssapy.rvsampler.ParamOrbitAngle" title="ssapy.rvsampler.ParamOrbitAngle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ParamOrbitAngle</span></code></a>(initparam, epoch, ...)</p></td>
+<td><p>A class for translating orbital parameters in angle-based form, including conversions between angular parameters and orbit objects.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.ParamOrbitEquinoctial.html#ssapy.rvsampler.ParamOrbitEquinoctial" title="ssapy.rvsampler.ParamOrbitEquinoctial"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ParamOrbitEquinoctial</span></code></a>(*args, **kwargs)</p></td>
+<td><p>A class for translating orbital parameters in equinoctial form, including input/output transformations and conversions between parameters and orbit objects.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.ParamOrbitRV.html#ssapy.rvsampler.ParamOrbitRV" title="ssapy.rvsampler.ParamOrbitRV"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ParamOrbitRV</span></code></a>(*args, **kwargs)</p></td>
+<td><p>A class for translating orbital parameters in position-velocity (RV) form, including conversions between parameters and orbit objects.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.ParamOrbitTranslator.html#ssapy.rvsampler.ParamOrbitTranslator" title="ssapy.rvsampler.ParamOrbitTranslator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ParamOrbitTranslator</span></code></a>(initparam, epoch[, ...])</p></td>
+<td><p>Class for making parameters into Orbits and vice-versa.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.RPrior.html#ssapy.rvsampler.RPrior" title="ssapy.rvsampler.RPrior"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RPrior</span></code></a>(rmean, rsigma)</p></td>
+<td><p>Gaussian prior on distance from origin <a href="#id1"><span class="problematic" id="id2">|r|</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.RVProbability.html#ssapy.rvsampler.RVProbability" title="ssapy.rvsampler.RVProbability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RVProbability</span></code></a>(arc, epoch[, priors, ...])</p></td>
+<td><p>A class to manage MCMC sampling of orbits (parameterized by position and velocity at a given epoch) given some angular observations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.RVSigmaProposal.html#ssapy.rvsampler.RVSigmaProposal" title="ssapy.rvsampler.RVSigmaProposal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RVSigmaProposal</span></code></a>(rSigma, vSigma)</p></td>
+<td><p>Isotropic multivariate normal proposal distribution.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.SGP4LMOptimizer.html#ssapy.rvsampler.SGP4LMOptimizer" title="ssapy.rvsampler.SGP4LMOptimizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SGP4LMOptimizer</span></code></a>(probfn, initel[, fracstep, ...])</p></td>
+<td><p>Optimizer that employs Levenberg-Marquardt least-squares fitting and fits in Kozai mean Keplerian element space.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Time</span></code>(val[, val2, format, scale, precision, ...])</p></td>
+<td><p>Represent and manipulate times and dates for astronomy.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.rvsampler.VPrior.html#ssapy.rvsampler.VPrior" title="ssapy.rvsampler.VPrior"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VPrior</span></code></a>(vmean, vsigma)</p></td>
+<td><p>Gaussian prior on velocity magnitude <a href="#id3"><span class="problematic" id="id4">|v|</span></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="class-inheritance-diagram">
+<h2>Class Inheritance Diagram<a class="headerlink" href="#class-inheritance-diagram" title="Permalink to this heading"></a></h2>
+<div class="graphviz"><img src="../_images/inheritance-37af5839333b9580c33d14249ba83fd62f35a843.png" alt="Inheritance diagram of ssapy.rvsampler.APrior, ssapy.rvsampler.AreaPrior, ssapy.rvsampler.DirectInitializer, ssapy.rvsampler.DistanceProjectionInitializer, ssapy.rvsampler.EPrior, ssapy.rvsampler.EmceeSampler, ssapy.rvsampler.EquinoctialExEyPrior, ssapy.rvsampler.EquinoctialLMOptimizer, ssapy.rvsampler.GEOProjectionInitializer, ssapy.rvsampler.GaussianRVInitializer, ssapy.rvsampler.LMOptimizer, ssapy.rvsampler.LMOptimizerAngular, ssapy.rvsampler.LeastSquaresOptimizer, ssapy.rvsampler.Log10AreaPrior, ssapy.rvsampler.MHSampler, ssapy.rvsampler.MVNormalProposal, ssapy.rvsampler.ParamOrbitAngle, ssapy.rvsampler.ParamOrbitEquinoctial, ssapy.rvsampler.ParamOrbitRV, ssapy.rvsampler.ParamOrbitTranslator, ssapy.rvsampler.RPrior, ssapy.rvsampler.RVProbability, ssapy.rvsampler.RVSigmaProposal, ssapy.rvsampler.SGP4LMOptimizer, ssapy.rvsampler.VPrior" usemap="#inheritance4d4d73cf78" class="inheritance graphviz" /></div>
+<map id="inheritance4d4d73cf78" name="inheritance4d4d73cf78">
+<area shape="rect" id="node1" href="../api/ssapy.rvsampler.APrior.html#ssapy.rvsampler.APrior" target="_top" title="Gaussian prior on orbit semimajor axis a." alt="" coords="72,1041,144,1067"/>
+<area shape="rect" id="node2" href="../api/ssapy.rvsampler.AreaPrior.html#ssapy.rvsampler.AreaPrior" target="_top" title="Gaussian prior on log10(area) of object." alt="" coords="67,992,149,1017"/>
+<area shape="rect" id="node3" href="../api/ssapy.rvsampler.DirectInitializer.html#ssapy.rvsampler.DirectInitializer" target="_top" title="Directly specify initial position and velocity samples. &#160;This can be" alt="" coords="47,943,169,968"/>
+<area shape="rect" id="node4" href="../api/ssapy.rvsampler.DistanceProjectionInitializer.html#ssapy.rvsampler.DistanceProjectionInitializer" target="_top" title="Initialize position and velocity from two closely spaced (in time)" alt="" coords="5,893,211,919"/>
+<area shape="rect" id="node5" href="../api/ssapy.rvsampler.EPrior.html#ssapy.rvsampler.EPrior" target="_top" title="Gaussian prior on orbit eccentricity e." alt="" coords="72,844,144,869"/>
+<area shape="rect" id="node6" href="../api/ssapy.rvsampler.EmceeSampler.html#ssapy.rvsampler.EmceeSampler" target="_top" title="A sampler built on the emcee package." alt="" coords="48,795,168,820"/>
+<area shape="rect" id="node7" href="../api/ssapy.rvsampler.EquinoctialExEyPrior.html#ssapy.rvsampler.EquinoctialExEyPrior" target="_top" title="Gaussian prior on equinoctial ex and ey, favoring ex = ey = 0." alt="" coords="30,745,186,771"/>
+<area shape="rect" id="node8" href="../api/ssapy.rvsampler.EquinoctialLMOptimizer.html#ssapy.rvsampler.EquinoctialLMOptimizer" target="_top" title="Optimizer that employs Levenberg&#45;Marquardt least&#45;squares fitting" alt="" coords="19,696,197,721"/>
+<area shape="rect" id="node9" href="../api/ssapy.rvsampler.GEOProjectionInitializer.html#ssapy.rvsampler.GEOProjectionInitializer" target="_top" title="Initialize position and velocity samples by projecting an observed ra/dec" alt="" coords="20,647,196,672"/>
+<area shape="rect" id="node10" href="../api/ssapy.rvsampler.GaussianRVInitializer.html#ssapy.rvsampler.GaussianRVInitializer" target="_top" title="Generate position and velocity samples as an isotropic Gaussian" alt="" coords="27,597,189,623"/>
+<area shape="rect" id="node11" href="../api/ssapy.rvsampler.LMOptimizer.html#ssapy.rvsampler.LMOptimizer" target="_top" title="Optimizer that employs Levenberg&#45;Marquardt least&#45;squares fitting." alt="" coords="55,548,161,573"/>
+<area shape="rect" id="node12" href="../api/ssapy.rvsampler.LMOptimizerAngular.html#ssapy.rvsampler.LMOptimizerAngular" target="_top" title="Optimizer that employs Levenberg&#45;Marquardt least&#45;squares fitting." alt="" coords="31,499,185,524"/>
+<area shape="rect" id="node13" href="../api/ssapy.rvsampler.LeastSquaresOptimizer.html#ssapy.rvsampler.LeastSquaresOptimizer" target="_top" title="Base class for LeastSquaresOptimizers" alt="" coords="21,449,195,475"/>
+<area shape="rect" id="node14" href="../api/ssapy.rvsampler.Log10AreaPrior.html#ssapy.rvsampler.Log10AreaPrior" target="_top" title="Gaussian prior on log10(area) of object." alt="" coords="47,400,169,425"/>
+<area shape="rect" id="node15" href="../api/ssapy.rvsampler.MHSampler.html#ssapy.rvsampler.MHSampler" target="_top" title="Generate MCMC samples using a Metropolis&#45;Hastings sampler." alt="" coords="59,351,157,376"/>
+<area shape="rect" id="node16" href="../api/ssapy.rvsampler.MVNormalProposal.html#ssapy.rvsampler.MVNormalProposal" target="_top" title="A multivariate normal proposal distribution." alt="" coords="35,301,181,327"/>
+<area shape="rect" id="node23" href="../api/ssapy.rvsampler.RVSigmaProposal.html#ssapy.rvsampler.RVSigmaProposal" target="_top" title="Isotropic multivariate normal proposal distribution." alt="" coords="273,301,411,327"/>
+<area shape="rect" id="node17" href="../api/ssapy.rvsampler.ParamOrbitAngle.html#ssapy.rvsampler.ParamOrbitAngle" target="_top" title="A class for translating orbital parameters in angle&#45;based form, " alt="" coords="276,153,408,179"/>
+<area shape="rect" id="node18" href="../api/ssapy.rvsampler.ParamOrbitTranslator.html#ssapy.rvsampler.ParamOrbitTranslator" target="_top" title="Class for making parameters into Orbits and vice&#45;versa." alt="" coords="29,203,187,228"/>
+<area shape="rect" id="node19" href="../api/ssapy.rvsampler.ParamOrbitEquinoctial.html#ssapy.rvsampler.ParamOrbitEquinoctial" target="_top" title="A class for translating orbital parameters in equinoctial form, " alt="" coords="259,203,425,228"/>
+<area shape="rect" id="node20" href="../api/ssapy.rvsampler.ParamOrbitRV.html#ssapy.rvsampler.ParamOrbitRV" target="_top" title="A class for translating orbital parameters in position&#45;velocity (RV) form, " alt="" coords="285,252,399,277"/>
+<area shape="rect" id="node21" href="../api/ssapy.rvsampler.RPrior.html#ssapy.rvsampler.RPrior" target="_top" title="Gaussian prior on distance from origin |r|." alt="" coords="72,153,144,179"/>
+<area shape="rect" id="node22" href="../api/ssapy.rvsampler.RVProbability.html#ssapy.rvsampler.RVProbability" target="_top" title="A class to manage MCMC sampling of orbits (parameterized by position and" alt="" coords="53,104,163,129"/>
+<area shape="rect" id="node24" href="../api/ssapy.rvsampler.SGP4LMOptimizer.html#ssapy.rvsampler.SGP4LMOptimizer" target="_top" title="Optimizer that employs Levenberg&#45;Marquardt least&#45;squares fitting" alt="" coords="39,55,177,80"/>
+<area shape="rect" id="node25" href="../api/ssapy.rvsampler.VPrior.html#ssapy.rvsampler.VPrior" target="_top" title="Gaussian prior on velocity magnitude |v|." alt="" coords="72,5,144,31"/>
+</map></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../api/ssapy.propagator.SeriesPropagator.html" class="btn btn-neutral float-left" title="SeriesPropagator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../api/ssapy.rvsampler.circular_guess.html" class="btn btn-neutral float-right" title="circular_guess" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+pd_flatten
+==========
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: pd_flatten

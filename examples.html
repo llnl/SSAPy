@@ -1,0 +1,307 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SSAPy by Example &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="_static/ssapy_logo.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SSAPy Benchmarks" href="benchmarks.html" />
+    <link rel="prev" title="Getting Started" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SSAPy by Example</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/examples.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ssapy-by-example">
+<h1>SSAPy by Example<a class="headerlink" href="#ssapy-by-example" title="Permalink to this heading"></a></h1>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">ssapy</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</pre></div>
+</div>
+<p>Set an initial astropy time object</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">t0</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="s2">&quot;2024-1-1&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="mi">2024</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">01</span> <span class="mi">00</span><span class="p">:</span><span class="mi">00</span><span class="p">:</span><span class="mf">00.000</span>
+</pre></div>
+</div>
+<p>Get the position and velocity of the Moon.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">r_moon</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;moon&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">position</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="n">v_moon</span> <span class="o">=</span> <span class="p">(</span><span class="n">r_moon</span> <span class="o">-</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;moon&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">position</span><span class="p">(</span><span class="n">t0</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r_moon</span><span class="p">,</span> <span class="n">v_moon</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="o">-</span><span class="mf">3.67980873e+08</span>  <span class="mf">1.42721025e+08</span>  <span class="mf">8.93144235e+07</span><span class="p">],</span> <span class="p">[</span><span class="mf">13379651.47831511</span> <span class="mf">35015714.2905997</span>  <span class="mf">18263361.07635442</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Get a starting position and velocity (statevector) for an orbit. This is a Lunar bound orbit.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">r0</span> <span class="o">=</span> <span class="n">r_moon</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1000e3</span> <span class="o">*</span> <span class="n">r_moon</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">r_moon</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">v0</span> <span class="o">=</span> <span class="n">v_moon</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">100</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r0</span><span class="p">,</span> <span class="n">v0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mf">368980873.0925871</span> <span class="mf">13379751.478315115</span>
+</pre></div>
+</div>
+<p>Initialize an orbit object.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">RGEO</span>
+<span class="n">e</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">45</span><span class="p">)</span>
+<span class="n">pa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">raan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">180</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>kElements = [a, e, i, pa, raan, ta]
+orbit = Orbit.fromKeplerianElements(<a href="#id1"><span class="problematic" id="id2">*</span></a>kElements, t=t0)</p>
+<p>Set parameters of the satellite</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sat_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">mass</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>  <span class="c1"># [kg]</span>
+        <span class="n">area</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># [m^2]</span>
+        <span class="n">CD</span><span class="o">=</span><span class="mf">2.3</span><span class="p">,</span>  <span class="c1"># Drag coefficient</span>
+        <span class="n">CR</span><span class="o">=</span><span class="mf">1.3</span><span class="p">,</span>  <span class="c1"># Radiation pressure coefficient</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Build a propagator and set custom accelerations.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">moon</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;moon&quot;</span><span class="p">)</span>
+<span class="n">sun</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Sun&quot;</span><span class="p">)</span>
+<span class="n">Mercury</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Mercury&quot;</span><span class="p">)</span>
+<span class="n">Venus</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Venus&quot;</span><span class="p">)</span>
+<span class="n">Earth</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Earth&quot;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="s2">&quot;EGM2008&quot;</span><span class="p">)</span>
+<span class="n">Mars</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Mars&quot;</span><span class="p">)</span>
+<span class="n">Jupiter</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Jupiter&quot;</span><span class="p">)</span>
+<span class="n">Saturn</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Saturn&quot;</span><span class="p">)</span>
+<span class="n">Uranus</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Uranus&quot;</span><span class="p">)</span>
+<span class="n">Neptune</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;Neptune&quot;</span><span class="p">)</span>
+<span class="n">aEarth</span> <span class="o">=</span> <span class="n">AccelKepler</span><span class="p">()</span> <span class="o">+</span> <span class="n">AccelHarmonic</span><span class="p">(</span><span class="n">Earth</span><span class="p">,</span> <span class="mi">140</span><span class="p">,</span> <span class="mi">140</span><span class="p">)</span>
+<span class="n">aSun</span> <span class="o">=</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">sun</span><span class="p">)</span>
+<span class="n">aMoon</span> <span class="o">=</span> <span class="n">AccelThirdBody</span><span class="p">(</span><span class="n">moon</span><span class="p">)</span> <span class="o">+</span> <span class="n">AccelHarmonic</span><span class="p">(</span><span class="n">moon</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="n">aSolRad</span> <span class="o">=</span> <span class="n">AccelSolRad</span><span class="p">(</span><span class="o">**</span><span class="n">sat_kwargs</span><span class="p">)</span>
+<span class="n">aEarthRad</span> <span class="o">=</span> <span class="n">AccelEarthRad</span><span class="p">(</span><span class="o">**</span><span class="n">sat_kwargs</span><span class="p">)</span>
+<span class="n">accel</span> <span class="o">=</span> <span class="n">aEarth</span> <span class="o">+</span> <span class="n">aMoon</span> <span class="o">+</span> <span class="n">aSun</span> <span class="o">+</span> <span class="n">aSolRad</span> <span class="o">+</span> <span class="n">aEarthRad</span>
+<span class="n">prop</span> <span class="o">=</span> <span class="n">SciPyPropagator</span><span class="p">(</span><span class="n">accel</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Build a time array to evaluate the orbit at</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">times</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_times</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;day&#39;</span><span class="p">),</span> <span class="n">freq</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;minute&#39;</span><span class="p">),</span> <span class="n">t0</span><span class="o">=</span><span class="n">t0</span><span class="p">)</span>
+<span class="n">r</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">rv</span><span class="p">(</span><span class="n">orbit</span><span class="o">=</span><span class="n">orbit</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">times</span><span class="p">,</span> <span class="n">propagator</span><span class="o">=</span><span class="n">prop</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Plot the output in a GCRF (star fixed frame) and lunar (a non-interial Earth-Moon fixed frame)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plotUtils</span><span class="o">.</span><span class="n">orbit_plot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s2">&quot;gcrf&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plotUtils</span><span class="o">.</span><span class="n">orbit_plot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">times</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s2">&quot;lunar&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="_images/orbit_plot_1.png" src="_images/orbit_plot_1.png" />
+</figure>
+<figure class="align-default">
+<img alt="_images/orbit_plot_2.png" src="_images/orbit_plot_2.png" />
+</figure>
+<p>Lets see a ground track of the orbit.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plotUtils</span><span class="o">.</span><span class="n">ground_track_plot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">times</span><span class="p">)</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="_images/ground_track_plot.png" src="_images/ground_track_plot.png" />
+</figure>
+<p>Calculate the Lambertian Reflectance of the orbit</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mv</span> <span class="o">=</span> <span class="n">compute</span><span class="o">.</span><span class="n">M_v_lambertian</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">times</span><span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">decimal_to_datetime_label</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="n">rem</span> <span class="o">=</span> <span class="n">d</span> <span class="o">-</span> <span class="n">year</span>
+    <span class="n">is_leap</span> <span class="o">=</span> <span class="n">year</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">year</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">year</span> <span class="o">%</span> <span class="mi">400</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">days_in_year</span> <span class="o">=</span> <span class="mi">366</span> <span class="k">if</span> <span class="n">is_leap</span> <span class="k">else</span> <span class="mi">365</span>
+    <span class="n">total_seconds</span> <span class="o">=</span> <span class="n">rem</span> <span class="o">*</span> <span class="n">days_in_year</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">3600</span>
+
+    <span class="n">day</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">total_seconds</span> <span class="o">//</span> <span class="p">(</span><span class="mi">24</span> <span class="o">*</span> <span class="mi">3600</span><span class="p">))</span>
+    <span class="n">seconds_in_day</span> <span class="o">=</span> <span class="n">total_seconds</span> <span class="o">%</span> <span class="p">(</span><span class="mi">24</span> <span class="o">*</span> <span class="mi">3600</span><span class="p">)</span>
+    <span class="n">hour</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">seconds_in_day</span> <span class="o">//</span> <span class="mi">3600</span><span class="p">)</span>
+    <span class="n">minute</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">seconds_in_day</span> <span class="o">%</span> <span class="mi">3600</span><span class="p">)</span> <span class="o">//</span> <span class="mi">60</span><span class="p">)</span>
+
+    <span class="n">base_date</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">datetime64</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s1">-01-01&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">(</span><span class="n">day</span><span class="p">,</span> <span class="s1">&#39;D&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_date</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">hour</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">minute</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span>
+
+<span class="n">xticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">times</span><span class="o">.</span><span class="n">decimalyear</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">times</span><span class="o">.</span><span class="n">decimalyear</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">6</span><span class="p">)</span>
+<span class="n">xtick_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">decimal_to_datetime_label</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">xticks</span><span class="p">]</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">times</span><span class="o">.</span><span class="n">decimalyear</span><span class="p">,</span> <span class="n">mv</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Date&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Lambertian Reflectance [Apparent Magnitude]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">xticks</span><span class="p">,</span> <span class="n">xtick_labels</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="_images/reflectance_plot.png" src="_images/reflectance_plot.png" />
+</figure>
+<p>Plot the apparent magnitude of the orbit at each timestep:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">r_sun</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;sun&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">position</span><span class="p">(</span><span class="n">times</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="n">r_earth</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;earth&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">position</span><span class="p">(</span><span class="n">times</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+<span class="c1"># Calculate the apparent magnitude at each timestep</span>
+<span class="n">mags</span> <span class="o">=</span> <span class="n">compute</span><span class="o">.</span><span class="n">calc_M_v</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">r_sun</span><span class="p">,</span> <span class="n">r_earth</span><span class="p">)</span>
+
+<span class="n">RGEO</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">RGEO</span>
+<span class="n">moon</span> <span class="o">=</span> <span class="n">get_body</span><span class="p">(</span><span class="s2">&quot;moon&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">position</span><span class="p">(</span><span class="n">times</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">),</span> <span class="n">layout</span><span class="o">=</span><span class="s1">&#39;constrained&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;font.size&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">r</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">RGEO</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">r</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">RGEO</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">r</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="n">RGEO</span>
+
+<span class="c1"># Plot orbit</span>
+<span class="n">scatter</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">scatter3D</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">mags</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdYlBu&#39;</span><span class="p">)</span>
+
+<span class="n">cbar</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">scatter</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">shrink</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;vertical&#39;</span><span class="p">)</span>
+<span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">&#39;Vis Mag&#39;</span><span class="p">)</span>
+<span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">invert_yaxis</span><span class="p">()</span>
+
+<span class="c1"># Plot Earth</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter3D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Earth&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c1"># Plot Moon</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">moon</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">RGEO</span><span class="p">,</span> <span class="n">moon</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">RGEO</span><span class="p">,</span> <span class="n">moon</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="n">RGEO</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Moon&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;X [GEO]&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Y [GEO]&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s1">&#39;Z [GEO]&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="_images/magnitude_plot.png" src="_images/magnitude_plot.png" />
+</figure>
+<p>Plot the solar phase angle at each timestep:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sun_angle</span><span class="o">=</span><span class="n">compute</span><span class="o">.</span><span class="n">get_angle</span><span class="p">(</span><span class="n">r_sun</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">r_earth</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">sun_angle</span><span class="p">,</span><span class="n">mags</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Solar Equatorial Phase Angle [rad]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Apparent Magnitude&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">mags</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">mags</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="_images/phase_angle.png" src="_images/phase_angle.png" />
+</figure>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="benchmarks.html" class="btn btn-neutral float-right" title="SSAPy Benchmarks" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+h5_root_keys
+============
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: h5_root_keys

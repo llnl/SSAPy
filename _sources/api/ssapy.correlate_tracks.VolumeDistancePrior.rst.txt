@@ -1,0 +1,17 @@
+VolumeDistancePrior
+===================
+
+.. currentmodule:: ssapy.correlate_tracks
+
+.. autoclass:: VolumeDistancePrior
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~VolumeDistancePrior.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

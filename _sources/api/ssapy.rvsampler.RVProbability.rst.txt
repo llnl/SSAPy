@@ -1,0 +1,25 @@
+RVProbability
+=============
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: RVProbability
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~RVProbability.__call__
+      ~RVProbability.chi
+      ~RVProbability.lnlike
+      ~RVProbability.lnprior
+      ~RVProbability.lnprob
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__
+   .. automethod:: chi
+   .. automethod:: lnlike
+   .. automethod:: lnprior
+   .. automethod:: lnprob

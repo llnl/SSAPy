@@ -1,0 +1,17 @@
+AccelKepler
+===========
+
+.. currentmodule:: ssapy.accel
+
+.. autoclass:: AccelKepler
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~AccelKepler.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

@@ -1,0 +1,17 @@
+LMOptimizerAngular
+==================
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: LMOptimizerAngular
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~LMOptimizerAngular.optimize
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: optimize

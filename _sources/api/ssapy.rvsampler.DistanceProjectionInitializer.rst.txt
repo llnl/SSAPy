@@ -1,0 +1,17 @@
+DistanceProjectionInitializer
+=============================
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: DistanceProjectionInitializer
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~DistanceProjectionInitializer.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

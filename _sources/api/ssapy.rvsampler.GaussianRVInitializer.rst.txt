@@ -1,0 +1,17 @@
+GaussianRVInitializer
+=====================
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: GaussianRVInitializer
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~GaussianRVInitializer.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

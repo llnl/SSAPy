@@ -1,0 +1,6 @@
+deg90to90
+=========
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: deg90to90

@@ -1,0 +1,6 @@
+combine_h5
+==========
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: combine_h5

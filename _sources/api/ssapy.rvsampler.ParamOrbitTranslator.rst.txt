@@ -1,0 +1,31 @@
+ParamOrbitTranslator
+====================
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: ParamOrbitTranslator
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~ParamOrbitTranslator.fullparam
+      ~ParamOrbitTranslator.get_propkw_from_fullparam
+      ~ParamOrbitTranslator.get_propkw_from_orbit
+      ~ParamOrbitTranslator.input_param_translation
+      ~ParamOrbitTranslator.optimizeparam
+      ~ParamOrbitTranslator.orbit_to_param
+      ~ParamOrbitTranslator.output_covar_translation
+      ~ParamOrbitTranslator.param_to_orbit
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: fullparam
+   .. automethod:: get_propkw_from_fullparam
+   .. automethod:: get_propkw_from_orbit
+   .. automethod:: input_param_translation
+   .. automethod:: optimizeparam
+   .. automethod:: orbit_to_param
+   .. automethod:: output_covar_translation
+   .. automethod:: param_to_orbit

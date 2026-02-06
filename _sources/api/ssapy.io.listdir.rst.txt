@@ -1,0 +1,6 @@
+listdir
+=======
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: listdir

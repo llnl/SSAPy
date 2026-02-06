@@ -1,0 +1,6 @@
+circular_guess
+==============
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autofunction:: circular_guess

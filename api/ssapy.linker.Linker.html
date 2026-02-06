@@ -1,0 +1,384 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linker &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ModelSelectorParams" href="ssapy.linker.ModelSelectorParams.html" />
+    <link rel="prev" title="BinarySelectorParams" href="ssapy.linker.BinarySelectorParams.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../modules/ssapy.linker.html">ssapy.linker</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../modules/ssapy.linker.html#classes">Classes</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ssapy.linker.BinarySelectorParams.html">BinarySelectorParams</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">Linker</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.linker.ModelSelectorParams.html">ModelSelectorParams</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../modules/ssapy.linker.html#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+          <li class="breadcrumb-item"><a href="../modules/ssapy.linker.html">ssapy.linker</a></li>
+      <li class="breadcrumb-item active">Linker</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/ssapy.linker.Linker.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="linker">
+<h1>Linker<a class="headerlink" href="#linker" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ssapy.linker.Linker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssapy.linker.</span></span><span class="sig-name descname"><span class="pre">Linker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iods</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_orbits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_orbit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/linker.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/linker.html#Linker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.linker.Linker" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Monte Carlo linking of uncorrelated orbit tracks</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iods</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – List of Particles class instances summarizing initial orbit determinations (iods)</p></li>
+<li><p><strong>num_orbits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Number of orbit models to fit. If not specified, set num_orbits = num_tracks</p></li>
+<li><p><strong>a_orbit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Clustering hyperparameter in the Dirichlet prior on P_orbit (Default: 0.01)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.linker.Linker.iods">
+<span class="sig-name descname"><span class="pre">iods</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/linker.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.linker.Linker.iods" title="Permalink to this definition"></a></dt>
+<dd><p>List of Particles class instances summarizing initial orbit determinations (iods)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.linker.Linker.num_tracks">
+<span class="sig-name descname"><span class="pre">num_tracks</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/linker.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.linker.Linker.num_tracks" title="Permalink to this definition"></a></dt>
+<dd><p>Number of observed tracks. Equal to the length of the iods list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.linker.Linker.num_orbits">
+<span class="sig-name descname"><span class="pre">num_orbits</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/linker.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.linker.Linker.num_orbits" title="Permalink to this definition"></a></dt>
+<dd><p>Number of orbit models to fit. If not specified, set num_orbits = num_tracks</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.linker.Linker.orbit_selectors">
+<span class="sig-name descname"><span class="pre">orbit_selectors</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/linker.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.linker.Linker.orbit_selectors" title="Permalink to this definition"></a></dt>
+<dd><p>The orbit selector parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ssapy.linker.BinarySelectorParams.html#ssapy.linker.BinarySelectorParams" title="ssapy.linker.BinarySelectorParams">BinarySelectorParams</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ssapy.linker.Linker.p_orbit">
+<span class="sig-name descname"><span class="pre">p_orbit</span></span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/linker.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.linker.Linker.p_orbit" title="Permalink to this definition"></a></dt>
+<dd><p>The prior parameters on the orbit selectors</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ssapy.linker.ModelSelectorParams.html#ssapy.linker.ModelSelectorParams" title="ssapy.linker.ModelSelectorParams">ModelSelectorParams</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.linker.Linker.sample_Porbit_conditional_dist">
+<span class="sig-name descname"><span class="pre">sample_Porbit_conditional_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">track_ndx</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/linker.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/linker.html#Linker.sample_Porbit_conditional_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.linker.Linker.sample_Porbit_conditional_dist" title="Permalink to this definition"></a></dt>
+<dd><p>Sample from the conditional distribution for p_orbit at track_index</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.linker.Linker.sample_orbit_selectors_from_data_conditional">
+<span class="sig-name descname"><span class="pre">sample_orbit_selectors_from_data_conditional</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">track_ndx</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/linker.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/linker.html#Linker.sample_orbit_selectors_from_data_conditional"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.linker.Linker.sample_orbit_selectors_from_data_conditional" title="Permalink to this definition"></a></dt>
+<dd><p>Sample from the conditional distribution for orbit_selector at track_index</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.linker.Linker.update_orbit_parameters">
+<span class="sig-name descname"><span class="pre">update_orbit_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/linker.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/linker.html#Linker.update_orbit_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.linker.Linker.update_orbit_parameters" title="Permalink to this definition"></a></dt>
+<dd><p>Find the groups of linked tracks and update all particles across linked groups</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.linker.Linker.update_params_using_carlin_chib">
+<span class="sig-name descname"><span class="pre">update_params_using_carlin_chib</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/linker.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/linker.html#Linker.update_params_using_carlin_chib"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.linker.Linker.update_params_using_carlin_chib" title="Permalink to this definition"></a></dt>
+<dd><p>Perform MCMC step using algorithm of Carlin &amp; Chib (1995).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.linker.Linker.save_step">
+<span class="sig-name descname"><span class="pre">save_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outfile_head</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/linker.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/linker.html#Linker.save_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.linker.Linker.save_step" title="Permalink to this definition"></a></dt>
+<dd><p>Save MCMC step to file</p>
+</dd></dl>
+
+<p class="rubric">Methods Summary</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssapy.linker.Linker.sample" title="ssapy.linker.Linker.sample"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample</span></code></a>([nStep, outfile_head])</p></td>
+<td><p>Run the top-level MCMC to link tracks and refine orbit parameters</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id0" title="ssapy.linker.Linker.sample_Porbit_conditional_dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_Porbit_conditional_dist</span></code></a>(track_ndx)</p></td>
+<td><p>Sample from the conditional distribution for p_orbit at track_index</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id1" title="ssapy.linker.Linker.sample_orbit_selectors_from_data_conditional"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sample_orbit_selectors_from_data_conditional</span></code></a>(...)</p></td>
+<td><p>Sample from the conditional distribution for orbit_selector at track_index ignoring the dependence orbit selector dependence of the conditional priors for the orbital elements.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id2" title="ssapy.linker.Linker.save_step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_step</span></code></a>(outfile_head)</p></td>
+<td><p>Save MCMC step to file</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#id3" title="ssapy.linker.Linker.update_orbit_parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_orbit_parameters</span></code></a>()</p></td>
+<td><p>Find the groups of linked tracks and update all particles across linked groups</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#id4" title="ssapy.linker.Linker.update_params_using_carlin_chib"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_params_using_carlin_chib</span></code></a>([verbose])</p></td>
+<td><p>Perform MCMC step using algorithm of Carlin &amp; Chib (1995).</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.linker.Linker.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nStep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile_head</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linker'</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/linker.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/linker.html#Linker.sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.linker.Linker.sample" title="Permalink to this definition"></a></dt>
+<dd><p>Run the top-level MCMC to link tracks and refine orbit parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nStep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of MCMC steps</p></li>
+<li><p><strong>outfile_head</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Head (i.e., first part) of the output file name for chain steps</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">sample_Porbit_conditional_dist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">track_ndx</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/linker.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/linker.html#Linker.sample_Porbit_conditional_dist"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id0" title="Permalink to this definition"></a></dt>
+<dd><p>Sample from the conditional distribution for p_orbit at track_index</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>track_index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The observation list index</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>p_orbit</strong> – Draw from the conditional distribution for the p.orbit parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array_like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">sample_orbit_selectors_from_data_conditional</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">track_ndx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/linker.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/linker.html#Linker.sample_orbit_selectors_from_data_conditional"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id1" title="Permalink to this definition"></a></dt>
+<dd><p>Sample from the conditional distribution for orbit_selector at track_index ignoring the
+dependence orbit selector dependence of the conditional priors for the orbital elements.</p>
+<p>Draw from :math:P(y | k, theta_k) P(k | P_orbit):</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>track_index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The observation list index</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>orbit_selectors</strong> – Draw from the conditional distribution for the orbit_selectors parameters</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>array_like</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">save_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outfile_head</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/linker.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/linker.html#Linker.save_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id2" title="Permalink to this definition"></a></dt>
+<dd><p>Save MCMC step to file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>outfile_head</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Head (i.e., first part) of the output file name for chain steps</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">update_orbit_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/linker.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/linker.html#Linker.update_orbit_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id3" title="Permalink to this definition"></a></dt>
+<dd><p>Find the groups of linked tracks and update all particles across linked groups</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">update_params_using_carlin_chib</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/linker.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/linker.html#Linker.update_params_using_carlin_chib"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#id4" title="Permalink to this definition"></a></dt>
+<dd><p>Perform MCMC step using algorithm of Carlin &amp; Chib (1995).</p>
+<p>Sample the “active” orbit parameters from their conditional distribution
+(in a Gibbs update), the “inactive” orbit parameters from the
+pseudo-prior, and Gibbs updates for the orbit selectors and their prior
+parameters.  This method is distinct from the Reversible Jump MCMC
+(RJMCMC) updates that have no need of the pseudo-prior at the expense of
+finding a suitable proposal distribution for the model updates.</p>
+<p>The Gibbs updates for each class of parameters in turn defines a blocking
+procedure that can, in principle, give more efficient sampling than the
+joint updates in RJMCMC if a good proposal distribution for the orbit
+selectors  is not known (see Godsill 2001).</p>
+<p>Here the pseudo-prior for the “inactive” orbit parameters is not conjugate
+to the orbit selector prior, so there is no direct method to perform Gibbs
+samples of the orbit selectors.  Instead, this function performs an MH
+update of orbit selectors with a proposal from the distribution determined
+by the product of the orbit likelihoods and the orbit selector prior (which
+would be the orbit selector conditional distribution if the orbit priors were
+independent of the orbit selectors).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lnP</strong> – Current log-posterior value</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Carlin, B., Chib, S., 1995. Bayesian model choice via Markov chain
+Monte Carlo methods. Journal of the Royal Statistical Society.
+Series B (Method- ological) 57 (3), 473?484.</p>
+<p>Godsill, S., 2001. On the relationship between Markov chain Monte Carlo
+methods for model uncertainty. Journal of Computational and Graphical
+Statistics 10 (2), 230?248.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ssapy.linker.BinarySelectorParams.html" class="btn btn-neutral float-left" title="BinarySelectorParams" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ssapy.linker.ModelSelectorParams.html" class="btn btn-neutral float-right" title="ModelSelectorParams" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

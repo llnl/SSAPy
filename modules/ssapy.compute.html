@@ -1,0 +1,322 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ssapy.compute &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="M_v_lambertian" href="../api/ssapy.compute.M_v_lambertian.html" />
+    <link rel="prev" title="SunPosition" href="../api/ssapy.body.SunPosition.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ssapy.compute</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#functions">Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.M_v_lambertian.html">M_v_lambertian</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.altaz.html">altaz</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.calc_M_v.html">calc_M_v</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.calc_gamma.html">calc_gamma</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.calculate_orbital_elements.html">calculate_orbital_elements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.dircos.html">dircos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.earthShadowCoords.html">earthShadowCoords</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.earth_shine.html">earth_shine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.find_passes.html">find_passes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.groundTrack.html">groundTrack</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.lagrange_points_lunar_frame.html">lagrange_points_lunar_frame</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.lunar_lagrange_points.html">lunar_lagrange_points</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.lunar_lagrange_points_circular.html">lunar_lagrange_points_circular</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.moon_normal_vector.html">moon_normal_vector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.moon_shine.html">moon_shine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.nby3shape.html">nby3shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.quickAltAz.html">quickAltAz</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.radec.html">radec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.radecRate.html">radecRate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.radecRateObsToRV.html">radecRateObsToRV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.refine_pass.html">refine_pass</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.rv.html">rv</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.rvObsToRaDecRate.html">rvObsToRaDecRate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.sun_shine.html">sun_shine</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#classes">Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/ssapy.compute.HashableArrayContainer.html">HashableArrayContainer</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+      <li class="breadcrumb-item active">ssapy.compute</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/modules/ssapy.compute.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-ssapy.compute">
+<span id="ssapy-compute"></span><h1>ssapy.compute<a class="headerlink" href="#module-ssapy.compute" title="Permalink to this heading"></a></h1>
+<p>Tools for orbital dynamics, satellite tracking, and celestial mechanics.</p>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.compute.M_v_lambertian.html#ssapy.compute.M_v_lambertian" title="ssapy.compute.M_v_lambertian"><code class="xref py py-obj docutils literal notranslate"><span class="pre">M_v_lambertian</span></code></a>(r_sat, times[, radius, ...])</p></td>
+<td><p>Calculate the apparent magnitude (M_v) of a satellite due to reflections from the Sun, Earth, and Moon.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.compute.altaz.html#ssapy.compute.altaz" title="ssapy.compute.altaz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">altaz</span></code></a>(orbit, time, observer[, propagator, ...])</p></td>
+<td><p>Calculate observed altitude and azimuth of orbiting objects as viewed at specified times and locations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">angle_between_vectors</span></code>(vector1, vector2)</p></td>
+<td><p>Calculates the angle (in radians) between two vectors.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.compute.calc_M_v.html#ssapy.compute.calc_M_v" title="ssapy.compute.calc_M_v"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_M_v</span></code></a>(r_sat, r_earth, r_sun[, r_moon, ...])</p></td>
+<td><p>Calculate the apparent magnitude (M_v) of a satellite due to reflections from the Sun, Earth, and optionally the Moon.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.compute.calc_gamma.html#ssapy.compute.calc_gamma" title="ssapy.compute.calc_gamma"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calc_gamma</span></code></a>(r, t)</p></td>
+<td><p>Calculate the gamma angle between position and velocity vectors in the ITRF frame.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.compute.calculate_orbital_elements.html#ssapy.compute.calculate_orbital_elements" title="ssapy.compute.calculate_orbital_elements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_orbital_elements</span></code></a>(r_, v_[, ...])</p></td>
+<td><p>Calculate the Keplerian orbital elements from position and velocity vectors.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.compute.dircos.html#ssapy.compute.dircos" title="ssapy.compute.dircos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dircos</span></code></a>(orbit, time[, obsPos, obsVel, ...])</p></td>
+<td><p>Calculate observed direction-cosines of orbiting objects as viewed at specified times and positions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.compute.earthShadowCoords.html#ssapy.compute.earthShadowCoords" title="ssapy.compute.earthShadowCoords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">earthShadowCoords</span></code></a>(r, time)</p></td>
+<td><p>Determine components of position <cite>r</cite> parallel and perpendicular to sun unit vector.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.compute.earth_shine.html#ssapy.compute.earth_shine" title="ssapy.compute.earth_shine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">earth_shine</span></code></a>(r_sat, r_earth, r_sun, radius, ...)</p></td>
+<td><p>Calculate the fractional flux of sunlight reflected from the Earth to the satellite.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.compute.find_passes.html#ssapy.compute.find_passes" title="ssapy.compute.find_passes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_passes</span></code></a>(orbit, observers, tStart, tSpan, dt)</p></td>
+<td><p>Find satellite overhead passes for a collection of observers.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">gcrf_to_itrf</span></code>(r_gcrf, t[, v])</p></td>
+<td><p>Converts a position vector in the GCRF (Geocentric Celestial Reference Frame) to the ITRF (International Terrestrial Reference Frame) in Cartesian coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_angle</span></code>(a, b, c)</p></td>
+<td><p>Calculate the angle between two vectors where b is the vertex of the angle.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_body</span></code>(name[, model])</p></td>
+<td><p>Get a Body object for a named body.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.compute.groundTrack.html#ssapy.compute.groundTrack" title="ssapy.compute.groundTrack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">groundTrack</span></code></a>(orbit, time[, propagator, format])</p></td>
+<td><p>Calculate satellite ground track on the outer product of all supplied times and state vectors or orbits.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">iers_interp</span></code>(t)</p></td>
+<td><p>Interpolate IERS values</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.compute.lagrange_points_lunar_frame.html#ssapy.compute.lagrange_points_lunar_frame" title="ssapy.compute.lagrange_points_lunar_frame"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lagrange_points_lunar_frame</span></code></a>()</p></td>
+<td><p>Calculate the positions of the lunar Lagrange points in the lunar frame, This frame is defined by the coordinate transformation in utils.py gcrf_to_lunar().</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">lb_to_unit</span></code>(r, d)</p></td>
+<td><p>Convert lb-like coordinates to unit vectors.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.compute.lunar_lagrange_points.html#ssapy.compute.lunar_lagrange_points" title="ssapy.compute.lunar_lagrange_points"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lunar_lagrange_points</span></code></a>(t)</p></td>
+<td><p>Calculate the positions of the lunar Lagrange points in the GCRF frame at a given time.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.compute.lunar_lagrange_points_circular.html#ssapy.compute.lunar_lagrange_points_circular" title="ssapy.compute.lunar_lagrange_points_circular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lunar_lagrange_points_circular</span></code></a>(t)</p></td>
+<td><p>Calculate the positions of the lunar Lagrange points in the GCRF frame for a given time.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.compute.moon_normal_vector.html#ssapy.compute.moon_normal_vector" title="ssapy.compute.moon_normal_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moon_normal_vector</span></code></a>(t)</p></td>
+<td><p>Calculate the normal vector to the Moon's orbital plane at a given time.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.compute.moon_shine.html#ssapy.compute.moon_shine" title="ssapy.compute.moon_shine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">moon_shine</span></code></a>(r_moon, r_sat, r_earth, r_sun, ...)</p></td>
+<td><p>Calculate the fractional solar flux reflected from the Moon to the satellite.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.compute.nby3shape.html#ssapy.compute.nby3shape" title="ssapy.compute.nby3shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nby3shape</span></code></a>(arr_)</p></td>
+<td><p>Reshapes or transforms an input NumPy array into a shape compatible with (n, 3).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">norm</span></code>(arr)</p></td>
+<td><p>Compute the Euclidean norm of an array over the last axis while preserving leading axes.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">normed</span></code>(arr)</p></td>
+<td><p>Normalize an array along the last axis to have unit length.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.compute.quickAltAz.html#ssapy.compute.quickAltAz" title="ssapy.compute.quickAltAz"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quickAltAz</span></code></a>(orbit, time, observer[, ...])</p></td>
+<td><p>Quickly estimate observed altitude and azimuth of orbiting objects as viewed at specified times and locations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.compute.radec.html#ssapy.compute.radec" title="ssapy.compute.radec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radec</span></code></a>(orbit, time[, obsPos, obsVel, ...])</p></td>
+<td><p>Calculate observed right ascension, declination, and slant range of orbiting objects as viewed at specified times and positions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.compute.radecRate.html#ssapy.compute.radecRate" title="ssapy.compute.radecRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radecRate</span></code></a>(orbit, time[, obsPos, obsVel, ...])</p></td>
+<td><p>Calculate ra/dec rate and slant range rate of orbit at specified times and observer positions and velocities.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.compute.radecRateObsToRV.html#ssapy.compute.radecRateObsToRV" title="ssapy.compute.radecRateObsToRV"><code class="xref py py-obj docutils literal notranslate"><span class="pre">radecRateObsToRV</span></code></a>(ra, dec, slantRange[, ...])</p></td>
+<td><p>Convert object angles and observer position to 3D observer position</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.compute.refine_pass.html#ssapy.compute.refine_pass" title="ssapy.compute.refine_pass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">refine_pass</span></code></a>(orbit, observer, time[, ...])</p></td>
+<td><p>Refine a satellite overhead pass.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rotation_matrix_from_vectors</span></code>(vec1, vec2)</p></td>
+<td><p>Find the rotation matrix that aligns vec1 to vec2 :param vec1: A 3d &quot;source&quot; vector :param vec2: A 3d &quot;destination&quot; vector :return mat: A transform matrix (3x3) which when applied to vec1, aligns it with vec2.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/ssapy.compute.rv.html#ssapy.compute.rv" title="ssapy.compute.rv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rv</span></code></a>(orbit, time[, propagator])</p></td>
+<td><p>Calculate positions and velocities on the outer product of all supplied orbits and times.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.compute.rvObsToRaDecRate.html#ssapy.compute.rvObsToRaDecRate" title="ssapy.compute.rvObsToRaDecRate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rvObsToRaDecRate</span></code></a>(r, v[, obsPos, obsVel])</p></td>
+<td><p>Convert object and observer position and velocity to angles.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sunPos</span></code>(t[, fast])</p></td>
+<td><p>Compute GCRF position of the sun.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.compute.sun_shine.html#ssapy.compute.sun_shine" title="ssapy.compute.sun_shine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sun_shine</span></code></a>(r_sat, r_earth, r_sun, radius, ...)</p></td>
+<td><p>Calculate the fractional flux of sunlight reflected from the Sun to the satellite.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">unitAngle3</span></code>(r1, r2)</p></td>
+<td><p>Robustly compute angle between unit vectors r1 and r2.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Ellipsoid</span></code></p></td>
+<td><p>An ellipsoid representation for coordinate transformations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/ssapy.compute.HashableArrayContainer.html#ssapy.compute.HashableArrayContainer" title="ssapy.compute.HashableArrayContainer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HashableArrayContainer</span></code></a>(arr)</p></td>
+<td><p>A container for NumPy arrays that makes them hashable and immutable.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">KeplerianPropagator</span></code>()</p></td>
+<td><p>A basic Keplerian propagator for finding the position and velocity of an orbiting object at some future or past time.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">LRU_Cache</span></code>(user_function[, maxsize])</p></td>
+<td><p>Simplified Least Recently Used Cache.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Orbit</span></code>(r, v, t[, mu, propkw])</p></td>
+<td><p>Orbital state of one or more objects.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Time</span></code>(val[, val2, format, scale, precision, ...])</p></td>
+<td><p>Represent and manipulate times and dates for astronomy.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="class-inheritance-diagram">
+<h2>Class Inheritance Diagram<a class="headerlink" href="#class-inheritance-diagram" title="Permalink to this heading"></a></h2>
+<div class="graphviz"><img src="../_images/inheritance-95283a32547744dc7516c85f498339c09f3949a6.png" alt="Inheritance diagram of ssapy.compute.HashableArrayContainer" usemap="#inheritancec10521549d" class="inheritance graphviz" /></div>
+<map id="inheritancec10521549d" name="inheritancec10521549d">
+<area shape="rect" id="node1" href="../api/ssapy.compute.HashableArrayContainer.html#ssapy.compute.HashableArrayContainer" target="_top" title="A container for NumPy arrays that makes them hashable and immutable." alt="" coords="5,5,187,31"/>
+</map></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../api/ssapy.body.SunPosition.html" class="btn btn-neutral float-left" title="SunPosition" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../api/ssapy.compute.M_v_lambertian.html" class="btn btn-neutral float-right" title="M_v_lambertian" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+read_csv_header
+===============
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: read_csv_header

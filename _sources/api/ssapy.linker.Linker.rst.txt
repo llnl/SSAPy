@@ -1,0 +1,27 @@
+Linker
+======
+
+.. currentmodule:: ssapy.linker
+
+.. autoclass:: Linker
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~Linker.sample
+      ~Linker.sample_Porbit_conditional_dist
+      ~Linker.sample_orbit_selectors_from_data_conditional
+      ~Linker.save_step
+      ~Linker.update_orbit_parameters
+      ~Linker.update_params_using_carlin_chib
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: sample
+   .. automethod:: sample_Porbit_conditional_dist
+   .. automethod:: sample_orbit_selectors_from_data_conditional
+   .. automethod:: save_step
+   .. automethod:: update_orbit_parameters
+   .. automethod:: update_params_using_carlin_chib

@@ -1,0 +1,305 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ParamOrbitEquinoctial &mdash; SSAPy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../_static/ssapy_logo.ico"/>
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js?v=b3ba4146"></script>
+      <script src="../_static/doctools.js?v=888ff710"></script>
+      <script src="../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ParamOrbitRV" href="ssapy.rvsampler.ParamOrbitRV.html" />
+    <link rel="prev" title="ParamOrbitAngle" href="ssapy.rvsampler.ParamOrbitAngle.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference Guide</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.plotUtils.html">ssapy.plotUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../modules/ssapy.rvsampler.html">ssapy.rvsampler</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../modules/ssapy.rvsampler.html#functions">Functions</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../modules/ssapy.rvsampler.html#classes">Classes</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.APrior.html">APrior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.AreaPrior.html">AreaPrior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.DirectInitializer.html">DirectInitializer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.DistanceProjectionInitializer.html">DistanceProjectionInitializer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.EPrior.html">EPrior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.EmceeSampler.html">EmceeSampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.EquinoctialExEyPrior.html">EquinoctialExEyPrior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.EquinoctialLMOptimizer.html">EquinoctialLMOptimizer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.GEOProjectionInitializer.html">GEOProjectionInitializer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.GaussianRVInitializer.html">GaussianRVInitializer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.LMOptimizer.html">LMOptimizer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.LMOptimizerAngular.html">LMOptimizerAngular</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.LeastSquaresOptimizer.html">LeastSquaresOptimizer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.Log10AreaPrior.html">Log10AreaPrior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.MHSampler.html">MHSampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.MVNormalProposal.html">MVNormalProposal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.ParamOrbitAngle.html">ParamOrbitAngle</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">ParamOrbitEquinoctial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.ParamOrbitRV.html">ParamOrbitRV</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.ParamOrbitTranslator.html">ParamOrbitTranslator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.RPrior.html">RPrior</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.RVProbability.html">RVProbability</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.RVSigmaProposal.html">RVSigmaProposal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.SGP4LMOptimizer.html">SGP4LMOptimizer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssapy.rvsampler.VPrior.html">VPrior</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../modules/ssapy.rvsampler.html#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.simple.html">ssapy.simple</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modules/ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../api.html">API Reference Guide</a></li>
+          <li class="breadcrumb-item"><a href="../modules/ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+      <li class="breadcrumb-item active">ParamOrbitEquinoctial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/ssapy.rvsampler.ParamOrbitEquinoctial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="paramorbitequinoctial">
+<h1>ParamOrbitEquinoctial<a class="headerlink" href="#paramorbitequinoctial" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="ssapy.rvsampler.ParamOrbitEquinoctial">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ssapy.rvsampler.</span></span><span class="sig-name descname"><span class="pre">ParamOrbitEquinoctial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/rvsampler.html#ParamOrbitEquinoctial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.rvsampler.ParamOrbitEquinoctial" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="ssapy.rvsampler.ParamOrbitTranslator.html#ssapy.rvsampler.ParamOrbitTranslator" title="ssapy.rvsampler.ParamOrbitTranslator"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParamOrbitTranslator</span></code></a></p>
+<p>A class for translating orbital parameters in equinoctial form,
+including input/output transformations and conversions between
+parameters and orbit objects.</p>
+<section id="inherits">
+<h2>Inherits:<a class="headerlink" href="#inherits" title="Permalink to this heading"></a></h2>
+<p>ParamOrbitTranslator : Base class providing foundational functionality
+for orbital parameter translation.</p>
+</section>
+<section id="methods">
+<h2>Methods:<a class="headerlink" href="#methods" title="Permalink to this heading"></a></h2>
+<dl>
+<dt>__init__(<a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs):</dt><dd><p>Initialize the <cite>ParamOrbitEquinoctial</cite> object, inheriting behavior
+from the <cite>ParamOrbitTranslator</cite> base class.</p>
+</dd>
+<dt>input_param_translation(p):</dt><dd><p>Transform input orbital parameters by scaling the first parameter
+(typically semi-major axis) for internal use.</p>
+<dl class="simple">
+<dt>p<span class="classifier">array-like</span></dt><dd><p>Input orbital parameters.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>numpy.ndarray</dt><dd><p>Transformed orbital parameters with the first element scaled.</p>
+</dd>
+</dl>
+</dd>
+<dt>output_covar_translation(covar):</dt><dd><p>Transform covariance matrix for output by scaling the first row
+and column (typically related to semi-major axis).</p>
+<dl class="simple">
+<dt>covar<span class="classifier">array-like</span></dt><dd><p>Input covariance matrix.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>numpy.ndarray</dt><dd><p>Transformed covariance matrix with scaled elements.</p>
+</dd>
+</dl>
+</dd>
+<dt>param_to_orbit(p):</dt><dd><p>Convert equinoctial orbital parameters to an <cite>Orbit</cite> object,
+ensuring constraints on eccentricity and semi-major axis.</p>
+<dl class="simple">
+<dt>p<span class="classifier">array-like</span></dt><dd><p>Equinoctial orbital parameters.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Orbit</dt><dd><p>An <cite>Orbit</cite> object created from the equinoctial parameters.</p>
+</dd>
+</dl>
+<ul class="simple">
+<li><p>The semi-major axis (<cite>p[0]</cite>) is scaled and clipped to a minimum value of 1.</p></li>
+<li><p>The eccentricity vector (<cite>p[3]</cite>, <cite>p[4]</cite>) is normalized if its magnitude exceeds 0.999.</p></li>
+<li><p>Additional propagation keywords are extracted from the full parameter set.</p></li>
+</ul>
+</dd>
+<dt>orbit_to_param(orbit):</dt><dd><p>Convert an <cite>Orbit</cite> object to a list of equinoctial orbital parameters
+and associated propagation keywords.</p>
+<dl class="simple">
+<dt>orbit<span class="classifier">Orbit</span></dt><dd><p>An <cite>Orbit</cite> object containing equinoctial elements.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>list</dt><dd><p>A list of equinoctial orbital parameters and propagation keywords.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+<section id="notes">
+<h2>Notes:<a class="headerlink" href="#notes" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>This class assumes equinoctial orbital elements are used for parameterization.</p></li>
+<li><p>The <cite>Orbit</cite> class is expected to provide methods for handling equinoctial elements.</p></li>
+<li><p>Scaling factors (e.g., 1e7 for semi-major axis) are applied for numerical stability.</p></li>
+</ul>
+</section>
+<section id="example">
+<h2>Example:<a class="headerlink" href="#example" title="Permalink to this heading"></a></h2>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">translator</span> <span class="o">=</span> <span class="n">ParamOrbitEquinoctial</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="mi">7000000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># Example equinoctial parameters</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">orbit</span> <span class="o">=</span> <span class="n">translator</span><span class="o">.</span><span class="n">param_to_orbit</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_params</span> <span class="o">=</span> <span class="n">translator</span><span class="o">.</span><span class="n">orbit_to_param</span><span class="p">(</span><span class="n">orbit</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">new_params</span><span class="p">)</span>
+<span class="go">[7000000, 0, 0, 0.01, 0.01, 0]  # Example output matching input</span>
+</pre></div>
+</div>
+<p class="rubric">Methods Summary</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssapy.rvsampler.ParamOrbitEquinoctial.input_param_translation" title="ssapy.rvsampler.ParamOrbitEquinoctial.input_param_translation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">input_param_translation</span></code></a>(p)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssapy.rvsampler.ParamOrbitEquinoctial.orbit_to_param" title="ssapy.rvsampler.ParamOrbitEquinoctial.orbit_to_param"><code class="xref py py-obj docutils literal notranslate"><span class="pre">orbit_to_param</span></code></a>(orbit)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#ssapy.rvsampler.ParamOrbitEquinoctial.output_covar_translation" title="ssapy.rvsampler.ParamOrbitEquinoctial.output_covar_translation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">output_covar_translation</span></code></a>(covar)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#ssapy.rvsampler.ParamOrbitEquinoctial.param_to_orbit" title="ssapy.rvsampler.ParamOrbitEquinoctial.param_to_orbit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">param_to_orbit</span></code></a>(p)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.rvsampler.ParamOrbitEquinoctial.input_param_translation">
+<span class="sig-name descname"><span class="pre">input_param_translation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/rvsampler.html#ParamOrbitEquinoctial.input_param_translation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.rvsampler.ParamOrbitEquinoctial.input_param_translation" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.rvsampler.ParamOrbitEquinoctial.orbit_to_param">
+<span class="sig-name descname"><span class="pre">orbit_to_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orbit</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/rvsampler.html#ParamOrbitEquinoctial.orbit_to_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.rvsampler.ParamOrbitEquinoctial.orbit_to_param" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.rvsampler.ParamOrbitEquinoctial.output_covar_translation">
+<span class="sig-name descname"><span class="pre">output_covar_translation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">covar</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/rvsampler.html#ParamOrbitEquinoctial.output_covar_translation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.rvsampler.ParamOrbitEquinoctial.output_covar_translation" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ssapy.rvsampler.ParamOrbitEquinoctial.param_to_orbit">
+<span class="sig-name descname"><span class="pre">param_to_orbit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference external" href="https://github.com/LLNL/SSAPy/tree/main/ssapy/rvsampler.py"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="reference internal" href="../_modules/ssapy/rvsampler.html#ParamOrbitEquinoctial.param_to_orbit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ssapy.rvsampler.ParamOrbitEquinoctial.param_to_orbit" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="ssapy.rvsampler.ParamOrbitAngle.html" class="btn btn-neutral float-left" title="ParamOrbitAngle" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ssapy.rvsampler.ParamOrbitRV.html" class="btn btn-neutral float-right" title="ParamOrbitRV" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

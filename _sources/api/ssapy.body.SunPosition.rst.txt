@@ -1,0 +1,17 @@
+SunPosition
+===========
+
+.. currentmodule:: ssapy.body
+
+.. autoclass:: SunPosition
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~SunPosition.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__

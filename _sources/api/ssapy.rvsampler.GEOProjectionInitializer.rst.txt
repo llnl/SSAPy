@@ -1,0 +1,17 @@
+GEOProjectionInitializer
+========================
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autoclass:: GEOProjectionInitializer
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~GEOProjectionInitializer.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__
