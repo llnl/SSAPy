@@ -22,6 +22,7 @@ dependencies = [
     "emcee",
     "lmfit",
     "sgp4",
+    "ipython_genutils",
     "ipyvolume",
     "jplephem",
     "tqdm",
