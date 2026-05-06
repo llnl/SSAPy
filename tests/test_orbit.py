@@ -18,6 +18,14 @@ from ssapy.utils import normed, norm, teme_to_gcrf
 from . import ssapy_test_helpers
 from .ssapy_test_helpers import timer, checkAngle, checkSphere, sample_orbit, sample_LEO_orbit, sample_GEO_orbit
 
+from pathlib import Path
+
+def _is_lfs_pointer(path):
+    try:
+        with open(path, "rb") as f:
+            return f.readline().startswith(b"version https://git-lfs.github.com/spec/v1")
+    except Exception:
+        return False
 
 try:
     import orekit
@@ -1544,7 +1552,10 @@ def test_light_time_correction():
         np.testing.assert_allclose(dircos, dc_linear, rtol=0, atol=1e-7)
         np.testing.assert_allclose(dircos, dc_exact, rtol=0, atol=1e-14)
 
-
+@pytest.mark.skipif(
+    _is_lfs_pointer(Path(ssapy.datadir) / "de430.bsp"),
+    reason="de430.bsp is a Git LFS pointer, not real ephemeris data",
+)
 @timer
 def test_find_passes():
     # Just checking that things run.  No checking of values.

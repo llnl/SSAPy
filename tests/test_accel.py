@@ -5,15 +5,40 @@ import sys
 import importlib
 import types
 from types import SimpleNamespace
+from pathlib import Path
 import pytest
 import erfa
 
 import ssapy
 from ssapy.utils import norm, iers_interp
 from .ssapy_test_helpers import timer, sample_LEO_orbit, sample_GEO_orbit
-from ssapy.accel import (AccelProd, Accel, AccelKepler, AccelSolRad, 
-                         AccelEarthRad, AccelDrag, AccelConstNTW, AccelSum)
+from ssapy.accel import (
+    AccelProd, Accel, AccelKepler, AccelSolRad,
+    AccelEarthRad, AccelDrag, AccelConstNTW, AccelSum
+)
 from ssapy.constants import EARTH_MU, EARTH_RADIUS
+
+
+def _is_lfs_pointer(path):
+    try:
+        with open(path, "rb") as f:
+            first = f.readline()
+        return first.startswith(b"version https://git-lfs.github.com/spec/v1")
+    except Exception:
+        return False
+
+
+_required_files = [
+    Path(ssapy.datadir) / "egm84.egm.cof",
+    Path(ssapy.datadir) / "de430.bsp",
+    Path(ssapy.datadir) / "moon_pa_de440_200625.bpc",
+]
+
+if any(_is_lfs_pointer(p) for p in _required_files):
+    pytest.skip(
+        "Required SSAPy data files are unavailable because one or more files are Git LFS pointers",
+        allow_module_level=True,
+    )
 
 iers_interp(0.0)  # Prime the IERS interpolant cache
 earth = ssapy.get_body("earth")

@@ -7,7 +7,6 @@ pyerfa
 emcee
 lmfit
 sgp4
-ipython
 pytest
 tqdm
 build
