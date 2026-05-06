@@ -29,7 +29,6 @@ RUN echo "sslverify=False" >> /etc/dnf/dnf.conf && \
 # Install Python and some requirement dependencies
 RUN echo "sslverify=False" >> /etc/dnf/dnf.conf && \
     dnf install -y epel-release && \
-    dnf install -y hdf5 hdf5-devel && \
     dnf install -y python3.12 python3.12-devel python3.12-pip && \
     dnf -y clean all && \
     sed -i '$ d' /etc/dnf/dnf.conf && \

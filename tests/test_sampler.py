@@ -343,13 +343,7 @@ def test_mh_sampler():
         # Just check that things are generally improving over time...
         np.testing.assert_array_less(np.mean(lnprob[:10]), np.mean(lnprob[-10:]))
         print("Acceptance ratio: ", sampler.acceptanceRatio)
-        if False:
-            import matplotlib.pyplot as plt
-            fig, axes = plt.subplots(nrows=2, ncols=3)
-            for i, ax in enumerate(axes.ravel()):
-                ax.plot(chain[..., i])
-                ax.axhline(np.hstack([r, v])[i], c='k', lw=2)
-            plt.show()
+
         # Now iterate while updating covariance of proposals
         for _ in range(2):
             cov = np.cov(chain.reshape(-1, 6), rowvar=False)
@@ -358,14 +352,6 @@ def test_mh_sampler():
             chain, lnprob, lnprior = sampler.sample(nBurn=500, nStep=500)
             np.testing.assert_array_less(np.mean(lnprob[:10]), np.mean(lnprob[-10:]))
             print("Acceptance ratio: ", sampler.acceptanceRatio)
-
-            if False:
-                import matplotlib.pyplot as plt
-                fig, axes = plt.subplots(nrows=2, ncols=3)
-                for i, ax in enumerate(axes.ravel()):
-                    ax.plot(chain[..., i])
-                    ax.axhline(np.hstack([r, v])[i], c='k', lw=2)
-                plt.show()
 
         rmean = np.mean(chain[...,0:3], axis=(0,1))
         vmean = np.mean(chain[...,3:6], axis=(0,1))
