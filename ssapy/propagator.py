@@ -887,6 +887,201 @@ class RK78Propagator(RK8Propagator):
         )
 
 
+class LeapfrogPropagator(RKPropagator):
+    """Second-order symplectic leapfrog propagator.
+
+    This propagator uses a fixed-step kick-drift-kick update, also known as
+    velocity Verlet / leapfrog integration. It is especially well-suited for
+    conservative dynamical systems, where long-term energy behavior is often
+    better than with non-symplectic fixed-step methods of similar cost.
+
+    Parameters
+    ----------
+    accel : ssapy.Accel
+        Accel object containing the acceleration model by which to propagate.
+    h : float
+        Fixed time step in seconds.
+
+    Notes
+    -----
+    This method is most appropriate for conservative force models. It can still
+    be used with non-conservative or time-dependent accelerations, but some of
+    the desirable symplectic properties may no longer hold.
+    """
+
+    _minPoints = 3
+
+    def __init__(self, accel, h):
+        self.accel = accel
+        self.h = h
+
+    def __repr__(self):
+        return "LeapfrogPropagator({!r}, {!r})".format(
+            self.accel, self.h
+        )
+
+    def _prop(self, times, states, h, tthresh, propkw):
+        def accel_fn(r, v, t):
+            return self.accel(r, v, t, **propkw)
+
+        if h > 0:
+            t = times[-1]
+            state = states[-1]
+            pred = lambda t: t <= tthresh
+        else:
+            t = times[0]
+            state = states[0]
+            pred = lambda t: t >= tthresh
+
+        keepGoing = True
+        while keepGoing:
+            if not pred(t) and len(times) >= self._minPoints:
+                keepGoing = False
+
+            r = state[0:3]
+            v = state[3:6]
+
+            a0 = accel_fn(r, v, t)
+            v_half = v + 0.5 * h * a0
+            r_new = r + h * v_half
+            a1 = accel_fn(r_new, v_half, t + h)
+            v_new = v_half + 0.5 * h * a1
+
+            state = np.hstack([r_new, v_new])
+            t = t + h
+
+            if h > 0:
+                states.append(state)
+                times.append(t)
+            else:
+                states.appendleft(state)
+                times.appendleft(t)
+
+            if np.linalg.norm(state[0:3]) <= EARTH_RADIUS:
+                print("Collision with Earth detected. Propagation stopped at t =", t)
+                break
+
+        return h
+
+    def __hash__(self):
+        return hash((
+            "LeapfrogPropagator",
+            self.accel,
+            self.h
+        ))
+
+    def __eq__(self, rhs):
+        if not isinstance(rhs, LeapfrogPropagator):
+            return False
+        return (
+            self.accel == rhs.accel and self.h == rhs.h
+        )
+
+
+class Leapfrog4Propagator(RKPropagator):
+    """Fourth-order symplectic leapfrog propagator.
+
+    This propagator uses a Yoshida-style composition of second-order leapfrog
+    steps to achieve fourth-order accuracy while preserving the symplectic
+    structure for conservative systems.
+
+    Parameters
+    ----------
+    accel : ssapy.Accel
+        Accel object containing the acceleration model by which to propagate.
+    h : float
+        Fixed time step in seconds.
+
+    Notes
+    -----
+    This method is most appropriate for conservative force models. It can still
+    be used with non-conservative or time-dependent accelerations, but some of
+    the desirable symplectic properties may no longer hold.
+    """
+
+    _minPoints = 3
+
+    def __init__(self, accel, h):
+        self.accel = accel
+        self.h = h
+
+    def __repr__(self):
+        return "Leapfrog4Propagator({!r}, {!r})".format(
+            self.accel, self.h
+        )
+
+    @staticmethod
+    def _leapfrog_step(accel, r, v, t, h, propkw):
+        a0 = accel(r, v, t, **propkw)
+        v_half = v + 0.5 * h * a0
+        r_new = r + h * v_half
+        a1 = accel(r_new, v_half, t + h, **propkw)
+        v_new = v_half + 0.5 * h * a1
+        return r_new, v_new
+
+    def _prop(self, times, states, h, tthresh, propkw):
+        w1 = 1.0 / (2.0 - 2.0**(1.0 / 3.0))
+        w0 = -2.0**(1.0 / 3.0) / (2.0 - 2.0**(1.0 / 3.0))
+
+        if h > 0:
+            t = times[-1]
+            state = states[-1]
+            pred = lambda t: t <= tthresh
+        else:
+            t = times[0]
+            state = states[0]
+            pred = lambda t: t >= tthresh
+
+        keepGoing = True
+        while keepGoing:
+            if not pred(t) and len(times) >= self._minPoints:
+                keepGoing = False
+
+            r = state[0:3]
+            v = state[3:6]
+
+            h1 = w1 * h
+            h0 = w0 * h
+
+            r, v = self._leapfrog_step(self.accel, r, v, t, h1, propkw)
+            t1 = t + h1
+
+            r, v = self._leapfrog_step(self.accel, r, v, t1, h0, propkw)
+            t2 = t1 + h0
+
+            r, v = self._leapfrog_step(self.accel, r, v, t2, h1, propkw)
+            t = t2 + h1
+
+            state = np.hstack([r, v])
+
+            if h > 0:
+                states.append(state)
+                times.append(t)
+            else:
+                states.appendleft(state)
+                times.appendleft(t)
+
+            if np.linalg.norm(state[0:3]) <= EARTH_RADIUS:
+                print("Collision with Earth detected. Propagation stopped at t =", t)
+                break
+
+        return h
+
+    def __hash__(self):
+        return hash((
+            "Leapfrog4Propagator",
+            self.accel,
+            self.h
+        ))
+
+    def __eq__(self, rhs):
+        if not isinstance(rhs, Leapfrog4Propagator):
+            return False
+        return (
+            self.accel == rhs.accel and self.h == rhs.h
+        )
+
+
 def default_numerical(*args, cls=None, accel=None, extra_accel=None):
     """Construct a numerical propagator with sensible default acceleration.
 

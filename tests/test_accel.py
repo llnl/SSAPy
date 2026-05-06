@@ -28,44 +28,48 @@ def _is_lfs_pointer(path):
         return False
 
 
-_required_files = [
-    Path(ssapy.datadir) / "egm84.egm.cof",
-    Path(ssapy.datadir) / "de430.bsp",
-    Path(ssapy.datadir) / "moon_pa_de440_200625.bpc",
-]
+HAS_EGM84 = not _is_lfs_pointer(Path(ssapy.datadir) / "egm84.egm.cof")
+HAS_DE430 = not _is_lfs_pointer(Path(ssapy.datadir) / "de430.bsp")
+HAS_MOON_PA = not _is_lfs_pointer(Path(ssapy.datadir) / "moon_pa_de440_200625.bpc")
 
-if any(_is_lfs_pointer(p) for p in _required_files):
-    pytest.skip(
-        "Required SSAPy data files are unavailable because one or more files are Git LFS pointers",
-        allow_module_level=True,
+HAS_BODY_DATA = HAS_EGM84 and HAS_DE430 and HAS_MOON_PA
+
+
+def _make_body_dependent_objects():
+    iers_interp(0.0)  # Prime the IERS interpolant cache
+    earth = ssapy.get_body("earth")
+    moon = ssapy.get_body("moon")
+    sun = ssapy.get_body("sun")
+
+    # When testing against M&G results, use M&G functions for the moon and sun positions.
+    sun_MG = ssapy.Body(
+        sun.mu,
+        sun.radius,
+        position=ssapy.utils.sunPos
     )
 
-iers_interp(0.0)  # Prime the IERS interpolant cache
-earth = ssapy.get_body("earth")
-moon = ssapy.get_body("moon")
-sun = ssapy.get_body("sun")
+    moon_MG = ssapy.Body(
+        moon.mu,
+        moon.radius,
+        position=ssapy.utils.moonPos
+    )
 
-# When testing against M&G results, use M&G functions for the moon and sun positions.
-sun_MG = ssapy.Body(
-    sun.mu,
-    sun.radius,
-    position=ssapy.utils.sunPos
-)
-
-moon_MG = ssapy.Body(
-    moon.mu,
-    moon.radius,
-    position=ssapy.utils.moonPos
-)
-
-earth_MG = ssapy.Body(
-    3986004.418e8,
-    6378137.0,
-    orientation=earth.orientation,
-    harmonics=earth.harmonics
-)
+    earth_MG = ssapy.Body(
+        3986004.418e8,
+        6378137.0,
+        orientation=earth.orientation,
+        harmonics=earth.harmonics
+    )
+    return earth, moon, sun, earth_MG, moon_MG, sun_MG
 
 
+if HAS_BODY_DATA:
+    earth, moon, sun, earth_MG, moon_MG, sun_MG = _make_body_dependent_objects()
+else:
+    earth = moon = sun = earth_MG = moon_MG = sun_MG = None
+
+
+@pytest.mark.skipif(not HAS_EGM84, reason="EGM84 gravity file unavailable (Git LFS pointer)")
 @timer
 def test_MG_3_1():
     """Exercise 3.1 from Montenbruck and Gill
@@ -910,8 +914,8 @@ def test_RK78():
         np.testing.assert_allclose(r1, r2, rtol=1e-1, atol=1)
 
 
+@pytest.mark.skipif(not HAS_BODY_DATA, reason="Required body/ephemeris data unavailable")
 @timer
- 
 def test_reverse():
     t = Time("1999-03-01", scale='utc')
     # LEO sat
@@ -1358,3 +1362,163 @@ def test_eq_diff_class_returns_false_due_to_bug():
     a = AccelConstNTW([0.0, 1.0, 0.0])
     b = FakeAccelDrag()
     assert a != b  # Should be True in theory, but buggy check looks for AccelDrag
+
+
+@timer
+def test_LeapfrogPropagator_GEO_vs_analytic():
+    np.random.seed(5772156)
+    t0 = Time("1982-03-14", scale="utc")
+    times = t0 + np.arange(100) * 70 * u.s
+
+    for _ in range(10):
+        while True:
+            orbit = sample_GEO_orbit(t0)
+            if norm(orbit.periapsis) > 1e7:
+                break
+
+        r0, v0 = ssapy.rv(orbit, times)
+        r1, v1 = ssapy.rv(
+            orbit,
+            times,
+            propagator=ssapy.LeapfrogPropagator(
+                ssapy.AccelKepler(), h=1
+            )
+        )
+
+        np.testing.assert_allclose(r0, r1, rtol=0, atol=5e2)
+        np.testing.assert_allclose(v0, v1, rtol=0, atol=5e-1)
+
+
+@timer
+def test_LeapfrogPropagator_LEO_vs_analytic():
+    np.random.seed(5772157)
+    t0 = Time("1982-03-14", scale="utc")
+    times = t0 + np.arange(0, 200) * 20 * u.s
+
+    for _ in range(10):
+        while True:
+            orbit = sample_LEO_orbit(t0)
+            if norm(orbit.periapsis) > 6475e3:
+                break
+
+        r0, v0 = ssapy.rv(orbit, times)
+        r1, v1 = ssapy.rv(
+            orbit,
+            times,
+            propagator=ssapy.LeapfrogPropagator(
+                ssapy.AccelKepler(), h=1
+            )
+        )
+
+        np.testing.assert_allclose(r0, r1, rtol=0, atol=1e3)
+        np.testing.assert_allclose(v0, v1, rtol=0, atol=1.0)
+
+
+@timer
+def test_Leapfrog4Propagator_GEO_vs_analytic():
+    np.random.seed(5772158)
+    t0 = Time("1982-03-14", scale="utc")
+    times = t0 + np.arange(100) * 70 * u.s
+
+    for _ in range(10):
+        while True:
+            orbit = sample_GEO_orbit(t0)
+            if norm(orbit.periapsis) > 1e7:
+                break
+
+        r0, v0 = ssapy.rv(orbit, times)
+        r1, v1 = ssapy.rv(
+            orbit,
+            times,
+            propagator=ssapy.Leapfrog4Propagator(
+                ssapy.AccelKepler(), h=1.0
+            )
+        )
+
+        np.testing.assert_allclose(r0, r1, rtol=0, atol=5e2)
+        np.testing.assert_allclose(v0, v1, rtol=0, atol=5e-1)
+
+
+@timer
+def test_Leapfrog4Propagator_LEO_vs_analytic():
+    np.random.seed(5772159)
+    t0 = Time("1982-03-14", scale="utc")
+    times = t0 + np.arange(0, 200) * 20 * u.s
+
+    for _ in range(10):
+        while True:
+            orbit = sample_LEO_orbit(t0)
+            if norm(orbit.periapsis) > 6475e3:
+                break
+
+        r0, v0 = ssapy.rv(orbit, times)
+        r1, v1 = ssapy.rv(
+            orbit,
+            times,
+            propagator=ssapy.Leapfrog4Propagator(
+                ssapy.AccelKepler(), h=1.0
+            )
+        )
+
+        np.testing.assert_allclose(r0, r1, rtol=0, atol=1e3)
+        np.testing.assert_allclose(v0, v1, rtol=0, atol=1.0)
+
+
+def test_LeapfrogPropagator_repr_and_eq():
+    a = ssapy.AccelKepler()
+    p1 = ssapy.LeapfrogPropagator(a, h=10.0)
+    p2 = ssapy.LeapfrogPropagator(a, h=10.0)
+    p3 = ssapy.LeapfrogPropagator(a, h=20.0)
+
+    assert repr(p1) == "LeapfrogPropagator({!r}, {!r})".format(a, 10.0)
+    assert p1 == p2
+    assert p1 != p3
+    assert hash(p1) == hash(p2)
+
+
+def test_Leapfrog4Propagator_repr_and_eq():
+    a = ssapy.AccelKepler()
+    p1 = ssapy.Leapfrog4Propagator(a, h=10.0)
+    p2 = ssapy.Leapfrog4Propagator(a, h=10.0)
+    p3 = ssapy.Leapfrog4Propagator(a, h=20.0)
+
+    assert repr(p1) == "Leapfrog4Propagator({!r}, {!r})".format(a, 10.0)
+    assert p1 == p2
+    assert p1 != p3
+    assert hash(p1) == hash(p2)
+
+
+@timer
+def test_Leapfrog4Propagator_better_than_LeapfrogPropagator():
+    np.random.seed(5772160)
+    t0 = Time("1982-03-14", scale="utc")
+    times = t0 + np.arange(100) * 70 * u.s
+
+    for _ in range(5):
+        while True:
+            orbit = sample_GEO_orbit(t0)
+            if norm(orbit.periapsis) > 1e7:
+                break
+
+        r0, v0 = ssapy.rv(orbit, times)
+
+        r_lf, v_lf = ssapy.rv(
+            orbit,
+            times,
+            propagator=ssapy.LeapfrogPropagator(
+                ssapy.AccelKepler(), h=70.0
+            )
+        )
+
+        r_lf4, v_lf4 = ssapy.rv(
+            orbit,
+            times,
+            propagator=ssapy.Leapfrog4Propagator(
+                ssapy.AccelKepler(), h=70.0
+            )
+        )
+
+        err_lf = np.max(np.linalg.norm(r_lf - r0, axis=1))
+        err_lf4 = np.max(np.linalg.norm(r_lf4 - r0, axis=1))
+
+        assert err_lf4 <= err_lf
