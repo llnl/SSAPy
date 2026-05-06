@@ -23,6 +23,7 @@ concurrency:
 
 env:
   CI_PROJECT_DIR: ${{ github.workspace }}
+  GIT_LFS_SKIP_SMUDGE: 1
 
 jobs:
   test:
@@ -38,7 +39,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: 'recursive'
-        lfs: true
+        lfs: false
         token: ${{ github.token }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
@@ -55,8 +56,8 @@ jobs:
         git submodule update --init --recursive
     
         # Install Git LFS and pull LFS objects
-        git lfs install
-        git lfs pull
+        # git lfs install
+        # git lfs pull
     
         # Upgrade pip and install Python dependencies
         python -m pip install --upgrade pip setuptools flake8
