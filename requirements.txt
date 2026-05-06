@@ -12,3 +12,8 @@ tqdm
 build
 cibuildwheel
 delocate
+ipyvolume
+ipython_genutils
+pytest-cov
+pytest-xdist
+flake8
