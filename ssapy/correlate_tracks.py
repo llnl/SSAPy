@@ -919,7 +919,7 @@ class TrackBase:
         else:
             # SVD seems more robust than direct np.linalg.det
             _, ss, _ = np.linalg.svd(2*np.pi*self.covar)
-            determinant = np.product(ss)
+            determinant = np.prod(ss)
             if determinant <= 0:
                 determinant = 1
                 if self.chi2 < 1e8:
