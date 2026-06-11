@@ -7,7 +7,7 @@ from astropy.time import Time
 from .orbit import Orbit
 from .propagator import KeplerianPropagator
 from .compute import dircos, radec, radec, radecRateObsToRV, rvObsToRaDecRate
-from .utils import norm, normed, normSq, cluster_emcee_walkers, unitAngle3
+from .utils import norm, normed, normSq, cluster_emcee_walkers, unitAngle3, _emcee_version_before_3
 from .constants import RGEO, VGEO, WGS84_EARTH_MU
 
 
@@ -974,7 +974,7 @@ class RVProbability:
         v = p[3:6]
         try:
             orbit = Orbit(r, v, self.epoch)
-        except:
+        except Exception:
             return -np.inf, -np.inf
 
         chilike, chiprior = self.chi(orbit)
@@ -1040,8 +1040,7 @@ class EmceeSampler:
         # Don't need emcee right here, but better to catch version
         # incompatibility in ctor than down below.
         import emcee
-        from distutils.version import LooseVersion
-        if LooseVersion(emcee.__version__) < LooseVersion("3.0"):
+        if _emcee_version_before_3(emcee.__version__):
             raise ValueError("emcee version at least 3.0rc2 required")
 
         self.probfn = probfn
@@ -1068,8 +1067,7 @@ class EmceeSampler:
             The log prior values for each step.
         """
         import emcee
-        from distutils.version import LooseVersion
-        if LooseVersion(emcee.__version__) < LooseVersion("3.0"):
+        if _emcee_version_before_3(emcee.__version__):
             raise ValueError("emcee version at least 3.0rc2 required")
         # Type for emcee 'blobs' metadata
         dtype = [("lnprior", float)]

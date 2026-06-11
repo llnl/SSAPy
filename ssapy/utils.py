@@ -3,6 +3,7 @@
 
 import sys
 import os
+import re
 import numpy as np
 from astropy.time import Time
 import astropy.units as u
@@ -10,6 +11,18 @@ from typing import Union, Tuple
 
 from . import datadir
 from .constants import RGEO, EARTH_RADIUS, MOON_RADIUS, WGS84_EARTH_OMEGA
+
+
+def _emcee_version_before_3(version_string):
+    """Return True if an emcee version string predates the 3.0 release.
+
+    Avoids ``distutils.version.LooseVersion``, which was removed from the
+    standard library in Python 3.12.
+    """
+    match = re.match(r"(\d+)", version_string)
+    if match is None:
+        return False
+    return int(match.group(1)) < 3
 
 try:
     import erfa
@@ -352,8 +365,7 @@ def cluster_emcee_walkers(
     The Astrophysical Journal, 745(2), 198.
     """
     import emcee
-    from distutils.version import LooseVersion
-    if LooseVersion(emcee.__version__) < LooseVersion("3.0"):
+    if _emcee_version_before_3(emcee.__version__):
         raise ValueError("emcee version at least 3.0rc2 required")
     if verbose:
         out = "Clustering emcee walkers with threshold multiplier {:3.2f}"
