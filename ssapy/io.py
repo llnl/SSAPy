@@ -239,9 +239,9 @@ def make_tle(a, e, i, pa, raan, trueAnomaly, t):
 
     if not isinstance(t, Time):
         t = Time(t, format='gps')
-    year, day, hour, min, sec = t.utc.yday.split(':')
+    year, day, hour, minute, sec = t.utc.yday.split(':')
 
-    day = float(day) + (float(hour) + (float(min) + float(sec) / 60) / 60) / 24
+    day = float(day) + (float(hour) + (float(minute) + float(sec) / 60) / 60) / 24
 
     line1 += "{:02d}".format(int(year) % 100)
     line1 += "{:012.8f}".format(day)
@@ -263,7 +263,7 @@ def make_tle(a, e, i, pa, raan, trueAnomaly, t):
 
     line2 += "{:8.4f} ".format(np.rad2deg(i % np.pi))
     line2 += "{:8.4f} ".format(np.rad2deg(raan % (2 * np.pi)))
-    line2 += "{:07d} ".format(int(e * 1e7))
+    line2 += "{:07d} ".format(round(e * 1e7))
     line2 += "{:8.4f} ".format(np.rad2deg(pa % (2 * np.pi)))
     meanAnomaly = _ellipticalEccentricToMeanAnomaly(
         _ellipticalTrueToEccentricAnomaly(
@@ -392,7 +392,7 @@ def parseB3Line(line):
         try:
             x = float(line[46:55])
             y = float(line[55:64])
-            z = float(line[65:73])
+            z = float(line[64:73])
         except ValueError:
             x = y = z = np.nan
     else:
@@ -552,7 +552,10 @@ def b3obs2pos(b3line):
             y_sat = b3line[55:64]
             z_sat = b3line[64:73]
         # Column 74 is blank
-        equinox = int(b3line[75])
+        if obs_type in (5, 9):
+            equinox = int(b3line[75])
+        else:
+            equinox = -999
     else:
         raise ValueError("B3OBS format error")
 

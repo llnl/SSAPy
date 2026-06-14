@@ -188,7 +188,7 @@ class Particles:
         ln_wts += self.ln_wts
 
         # Append particles and weights in anticipation of resampling / downsampling
-        self.particles = np.row_stack((self.particles, epoch_particles.move(self.epoch)))
+        self.particles = np.vstack((self.particles, epoch_particles.move(self.epoch)))
         self.ln_wts = np.append(ln_wts, epoch_ln_wts)
 
         if np.logaddexp.reduce(self.ln_wts) < -100.:

@@ -701,7 +701,7 @@ def radeczn(orbit, arc, **kw):
         try:
             _ = len(arc['satID'])
             scalararc = False
-        except:
+        except TypeError:
             scalararc = True
         meanMotion = orbit.meanMotion
         tt = arc['time'].gps
@@ -919,7 +919,7 @@ class TrackBase:
         else:
             # SVD seems more robust than direct np.linalg.det
             _, ss, _ = np.linalg.svd(2*np.pi*self.covar)
-            determinant = np.product(ss)
+            determinant = np.prod(ss)
             if determinant <= 0:
                 determinant = 1
                 if self.chi2 < 1e8:
@@ -1044,7 +1044,7 @@ class TrackBase:
             covar = np.diag([np.inf, np.inf, np.inf, np.inf])
         try:
             cinv = np.linalg.inv(covar)
-        except:
+        except np.linalg.LinAlgError:
             cinv = 1e-30
         measvec = np.array([arc0['ra'].to(u.rad).value,
                             arc0['dec'].to(u.rad).value,
