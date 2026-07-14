@@ -45,11 +45,10 @@ GEO = ("1 41866U 16071A   24015.50000000 -.00000267  00000-0  00000+0 0  9990",
 def _direct_sgp4_gcrf(tle, dt_minutes):
     sat = Satrec.twoline2rv(*tle)
     t0 = Time(sat.jdsatepoch, format="jd") + sat.jdsatepochF * u.d
-    rs = []
-    for dt in dt_minutes:
-        _, r, _ = sat.sgp4_tsince(dt)
-        rs.append(np.array(r) * 1e3)  # km -> m, TEME
-    return (teme_to_gcrf(t0.gps) @ np.array(rs).T).T
+    gps = t0.gps + np.asarray(dt_minutes, dtype=float) * 60.0
+    rs = np.array([np.array(sat.sgp4_tsince(dt)[1]) * 1e3 for dt in dt_minutes])
+    rot = teme_to_gcrf(gps)                      # per-output-time (vectorized)
+    return np.einsum("nij,nj->ni", rot, rs)
 
 
 def demo_path_a():

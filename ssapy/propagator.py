@@ -192,17 +192,21 @@ class SGP4Propagator(Propagator):
     Parameters
     ----------
     t : float or astropy.time.Time, optional
-        Reference time at which to compute frame transformation between GCRF
+        Reference time at which to compute the frame transformation between GCRF
         and TEME.  SGP4 calculations occur in the TEME frame, but useful input
-        and output is in the GCRF frame.  In principle, one could do the
-        transformation at every instant in time for which the orbit is queried.
-        However, the rate of change in the transformation is small, ~0.15 arcsec
-        per day, so here we just use a single transformation.
+        and output is in the GCRF frame.
+
+        If None (default), the transformation is computed at every output time.
+        This is the correct treatment: the rate of change is small (~0.15 arcsec
+        per day) but not negligible for precise work, and using a single epoch
+        leaves a growing frame error of ~2 m/day at LEO and ~27 m/day at GEO.
+
+        If a time is supplied, a single transformation at that fixed epoch is
+        used for the whole arc (faster, but only approximate).  Pass the orbit
+        epoch here to recover the legacy single-transformation behaviour.
 
         If float, then should correspond to GPS seconds;
         i.e., seconds since 1980-01-06 00:00:00 UTC
-
-        If None, then use the time of the orbit being propagated.
     truncate : bool, optional
         Truncate elements to precision of TLE ASCII format?  This may be
         required in order to reproduce the results of running sgp4 directly from
@@ -269,10 +273,21 @@ class SGP4Propagator(Propagator):
             vs.append(v)
         rs = np.array(rs)
         vs = np.array(vs)
-        tref = self.t if self.t is not None else orbit.t
-        rot = teme_to_gcrf(tref)
-        rs = np.dot(rot, rs.T).T
-        vs = np.dot(rot, vs.T).T
+        # SGP4 output is TEME *of date*, so the TEME->GCRF precession-nutation
+        # rotation must be evaluated at each output time.  Using one epoch-time
+        # rotation for the whole arc leaves a slowly growing frame error
+        # (~2 m/day at LEO, ~27 m/day at GEO) that would masquerade as
+        # propagator error when comparing against a GCRF ephemeris.  When
+        # ``self.t`` is set the caller has explicitly asked for a single fixed
+        # reference epoch (faster, approximate); honour it.
+        if self.t is not None:
+            rot = teme_to_gcrf(self.t)
+            rs = np.dot(rot, rs.T).T
+            vs = np.dot(rot, vs.T).T
+        else:
+            rot = teme_to_gcrf(np.asarray(time, dtype=float))
+            rs = np.einsum("nij,nj->ni", rot, rs)
+            vs = np.einsum("nij,nj->ni", rot, vs)
         rs *= 1e3  # km -> m
         vs *= 1e3  # km/s -> m/s
         return rs, vs
