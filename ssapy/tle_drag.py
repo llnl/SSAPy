@@ -209,7 +209,7 @@ def fit_drag(orbit, times, r_ref, propagator=None, harmonics=(4, 4),
 
     def _propagate(cd):
         orbit.propkw = propkw_from_cd_a_over_m(cd)
-        r = np.array([rv(orbit, t, propagator=propagator)[0] for t in times])
+        r, _ = rv(orbit, times, propagator=propagator)  # one integration, dense
         return r
 
     def _rms3d(r):
@@ -237,3 +237,156 @@ def fit_drag(orbit, times, r_ref, propagator=None, harmonics=(4, 4),
     return dict(cd_a_over_m=cd_fit, propkw=propkw, orbit=orbit,
                 propagator=propagator, rms_before=rms_before,
                 rms_after=rms_after, max_after=float(err.max()))
+
+
+def _rms3d(r, r_ref):
+    """RMS 3D position error [m] between two (N, 3) arrays."""
+    return float(np.sqrt(np.mean(np.sum((np.asarray(r) - np.asarray(r_ref)) ** 2,
+                                        axis=1))))
+
+
+def fit_orbit_drag(orbit, times, r_ref, v_ref=None, propagator=None,
+                   harmonics=(4, 4), cd_a_over_m0=None, solve_drag=True,
+                   cd_bounds=(1e-6, 1.0), pos_sigma=1.0, vel_sigma=1e-3,
+                   return_cov=False, verbose=False):
+    """Joint orbit-determination fit of the epoch state *and* the drag coefficient.
+
+    ``fit_drag`` solves for a single scalar ``Cd*A/m`` while holding the epoch
+    state fixed at the input orbit.  If that state is even slightly wrong (a
+    stale TLE, an initial guess, a maneuvering object), the state error is
+    absorbed into the fitted drag coefficient and biases it.  This routine
+    estimates the full 6-element GCRF epoch state (position + velocity) together
+    with ``Cd*A/m`` by least squares against a reference arc, so the two are
+    separated.
+
+    The forward model is the numerical propagator (two-body + geopotential +
+    Sun/Moon + Harris-Priester drag).  Position residuals are always used;
+    velocity residuals are added when ``v_ref`` is supplied.  Parameters are
+    internally scaled by their characteristic magnitudes so the very different
+    units (m, m/s, m^2/kg) stay well-conditioned.
+
+    Parameters
+    ----------
+    orbit : Orbit
+        Initial guess for the epoch state (e.g. from ``Orbit.fromTLETuple``).
+    times : array_like (m,)
+        GPS seconds at which the reference is sampled.  Should span a long
+        enough arc for drag to be observable (hours to a day at LEO).
+    r_ref : array_like (m, 3)
+        Reference GCRF positions [m] (owner ephemeris / precise orbit).
+    v_ref : array_like (m, 3), optional
+        Reference GCRF velocities [m/s].  If given, included in the fit.
+    propagator : Propagator, optional
+        Drag propagator; built via ``drag_propagator`` if None.
+    harmonics : 2-tuple of int, optional
+        Geopotential degree/order for the built propagator. Default (4, 4).
+    cd_a_over_m0 : float, optional
+        Initial ``Cd*A/m`` [m^2/kg]. Seeded from B* if None and available,
+        else 0.02.
+    solve_drag : bool, optional
+        If True (default) fit ``Cd*A/m`` jointly with the state (7 parameters);
+        if False fit only the 6-element state at fixed ``cd_a_over_m0``.
+    cd_bounds : 2-tuple, optional
+        (lower, upper) bounds on ``Cd*A/m``.
+    pos_sigma, vel_sigma : float, optional
+        Measurement 1-sigma for position [m] and velocity [m/s].  Only their
+        ratio matters for the fit; they also set the scale of ``cov``.
+    return_cov : bool, optional
+        If True, include the parameter covariance matrix in the result.
+    verbose : bool, optional
+        Print the 3D position RMS each iteration.
+
+    Returns
+    -------
+    dict
+        ``orbit`` (fitted epoch state as an Orbit), ``r`` / ``v`` (fitted epoch
+        position/velocity), ``cd_a_over_m``, ``propkw``, ``rms_before`` /
+        ``rms_after`` (3D position RMS [m] at the initial guess vs the fit),
+        ``max_after`` [m], ``success``, ``nfev``, and (if requested) ``cov``:
+        the parameter covariance ordered [x, y, z, vx, vy, vz, (Cd*A/m)].
+    """
+    from scipy.optimize import least_squares
+    from .orbit import Orbit
+    from .compute import rv
+
+    times = np.asarray(times, dtype=float)
+    r_ref = np.asarray(r_ref, dtype=float)
+    if v_ref is not None:
+        v_ref = np.asarray(v_ref, dtype=float)
+    if propagator is None:
+        propagator = drag_propagator(harmonics=harmonics)
+
+    t0 = orbit.t
+    mu = orbit.mu
+    r0 = np.asarray(orbit.r, dtype=float).ravel().copy()
+    v0 = np.asarray(orbit.v, dtype=float).ravel().copy()
+
+    if cd_a_over_m0 is None:
+        sat = getattr(orbit, "_sat", None)
+        seed = bstar_to_cd_a_over_m(sat.bstar) if sat is not None else 0.02
+        cd_a_over_m0 = seed if cd_bounds[0] < seed < cd_bounds[1] else 0.02
+
+    Lr = float(np.linalg.norm(r0)) or 1.0
+    Lv = float(np.linalg.norm(v0)) or 1.0
+
+    def _unpack(p):
+        r = p[0:3]
+        v = p[3:6]
+        cd = p[6] if solve_drag else cd_a_over_m0
+        return r, v, cd
+
+    def _model(p):
+        r, v, cd = _unpack(p)
+        o = Orbit(r, v, t0, mu=mu, propkw=propkw_from_cd_a_over_m(cd))
+        return rv(o, times, propagator=propagator)   # (m,3), (m,3)
+
+    def _resid(p):
+        rm, vm = _model(p)
+        res = ((rm - r_ref) / pos_sigma).ravel()
+        if v_ref is not None:
+            res = np.concatenate([res, ((vm - v_ref) / vel_sigma).ravel()])
+        if verbose:
+            print(f"  rms(3D pos) = {_rms3d(rm, r_ref):.3f} m")
+        return res
+
+    if solve_drag:
+        p0 = np.concatenate([r0, v0, [cd_a_over_m0]])
+        x_scale = np.array([Lr, Lr, Lr, Lv, Lv, Lv, cd_a_over_m0])
+        lb = [-np.inf] * 6 + [cd_bounds[0]]
+        ub = [np.inf] * 6 + [cd_bounds[1]]
+    else:
+        p0 = np.concatenate([r0, v0])
+        x_scale = np.array([Lr, Lr, Lr, Lv, Lv, Lv])
+        lb = [-np.inf] * 6
+        ub = [np.inf] * 6
+
+    rms_before = _rms3d(_model(p0)[0], r_ref)
+
+    opt = least_squares(_resid, p0, bounds=(lb, ub), x_scale=x_scale,
+                        method="trf", xtol=1e-12, ftol=1e-12)
+
+    r_fit, v_fit, cd_fit = _unpack(opt.x)
+    rm_fit, _ = _model(opt.x)
+    err = np.linalg.norm(rm_fit - r_ref, axis=1)
+
+    out = Orbit(r_fit, v_fit, t0, mu=mu,
+                propkw=propkw_from_cd_a_over_m(cd_fit))
+    result = dict(orbit=out, r=np.asarray(r_fit), v=np.asarray(v_fit),
+                  cd_a_over_m=float(cd_fit),
+                  propkw=propkw_from_cd_a_over_m(cd_fit),
+                  rms_before=rms_before, rms_after=float(np.sqrt(np.mean(err**2))),
+                  max_after=float(err.max()), success=bool(opt.success),
+                  nfev=int(opt.nfev))
+
+    if return_cov:
+        # Empirical parameter covariance: (J^T J)^-1 scaled by the reduced
+        # residual variance (matches scipy.optimize.curve_fit).  Robust to
+        # weak observability via the pseudo-inverse.
+        try:
+            J = opt.jac
+            dof = max(1, J.shape[0] - J.shape[1])
+            resid_var = 2.0 * opt.cost / dof
+            result["cov"] = np.linalg.pinv(J.T @ J) * resid_var
+        except Exception:
+            result["cov"] = None
+    return result

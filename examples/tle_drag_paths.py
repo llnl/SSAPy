@@ -97,6 +97,50 @@ def demo_path_b():
     print("outperform SGP4.")
 
 
+def demo_joint_fit():
+    print("\n" + "=" * 68)
+    print("PATH B (joint) -- estimate the epoch state AND drag together")
+    print("=" * 68)
+    from ssapy.tle_drag import (drag_propagator, propkw_from_cd_a_over_m,
+                                fit_drag, fit_orbit_drag)
+
+    # Self-consistent numerical truth: a known epoch state + known Cd*A/m,
+    # propagated by the numerical model (stands in for precise ephemeris).
+    prop = drag_propagator(harmonics=(4, 4))
+    o0 = Orbit.fromTLETuple(ISS)
+    t0 = o0.t
+    r_true, v_true = np.asarray(o0.r), np.asarray(o0.v)
+    cd_true = 5.0e-3
+    truth = Orbit(r_true, v_true, t0, propkw=propkw_from_cd_a_over_m(cd_true))
+    times = t0 + np.arange(0, 12 * 60 + 1, 30) * 60.0        # 12 h arc
+    r_ref, v_ref = rv(truth, times, propagator=prop)
+
+    # Start from a slightly WRONG epoch state (stale TLE / initial estimate).
+    dr, dv = np.array([150., -120., 90.]), np.array([0.12, -0.08, 0.10])
+    guess = Orbit(r_true + dr, v_true + dv, t0,
+                  propkw=propkw_from_cd_a_over_m(0.02))
+    print(f"\ntrue Cd*A/m = {cd_true:.3e} m^2/kg   "
+          f"initial state error |dr|={np.linalg.norm(dr):.0f} m, "
+          f"|dv|={np.linalg.norm(dv):.2f} m/s")
+
+    d = fit_drag(guess, times, r_ref, propagator=prop)
+    print("\ndrag-only (state frozen at the wrong guess):")
+    print(f"  Cd*A/m = {d['cd_a_over_m']:.3e}  "
+          f"({100*(d['cd_a_over_m']-cd_true)/cd_true:+.0f}%)   "
+          f"RMS(3D) {d['rms_after']:.1f} m")
+
+    j = fit_orbit_drag(guess, times, r_ref, v_ref=v_ref, propagator=prop)
+    print("\njoint (state + drag):")
+    print(f"  Cd*A/m = {j['cd_a_over_m']:.3e}  "
+          f"({100*(j['cd_a_over_m']-cd_true)/cd_true:+.2f}%)   "
+          f"RMS(3D) {j['rms_after']:.2e} m")
+    print(f"  recovered state error: |dr|={np.linalg.norm(j['r']-r_true):.2e} m, "
+          f"|dv|={np.linalg.norm(j['v']-v_true):.2e} m/s")
+    print("\nHolding a wrong state fixed forces the drag coefficient to absorb")
+    print("the state error. Solving for both recovers the true state and drag.")
+
+
 if __name__ == "__main__":
     demo_path_a()
     demo_path_b()
+    demo_joint_fit()
