@@ -1315,7 +1315,12 @@ def gcrf_to_teme(t):
     gst = erfa.gmst82(2400000.5, ut1)
     era = erfa.era00(2400000.5, ut1)
     c2i = erfa.c2i00b(2400000.5, mjd_tt)
-    return erfa.rxr(erfa.rv2m([0, 0, era - gst]), c2i)
+    # Equation-of-origins rotation vector [0, 0, era - gst].  Build it as a
+    # (..., 3) array so this works for scalar *and* array-valued t; a Python
+    # list [0, 0, era - gst] is ragged (and raises) when era - gst is an array.
+    w = np.zeros(np.shape(era) + (3,))
+    w[..., 2] = era - gst
+    return erfa.rxr(erfa.rv2m(w), c2i)
 
 
 def teme_to_gcrf(t):

@@ -52,6 +52,7 @@ def _countOrbit(orbit):
         if orbit.r.ndim == 1:  # scalar Orbit
             nOrbit = 1
             squeezeOrbit = True
+            _orig_scalar = orbit
             if 'kozaiMeanKeplerianElements' in orbit.__dict__:
                 kMKE = orbit.__dict__['kozaiMeanKeplerianElements']
             else:
@@ -67,6 +68,12 @@ def _countOrbit(orbit):
             # ought to retain other (all?) lazy_properties attributes too?
             if kMKE is not None:
                 orbit.kozaiMeanKeplerianElements = kMKE
+            # Preserve native SGP4 record (Path A) across scalar->vector
+            # promotion so SGP4Propagator can reproduce direct sgp4 exactly.
+            if hasattr(_orig_scalar, "_sat"):
+                orbit._sat = _orig_scalar._sat
+            if hasattr(_orig_scalar, "_tle"):
+                orbit._tle = _orig_scalar._tle
         else:  # vector Orbit
             nOrbit = orbit.r.shape[0]
             squeezeOrbit = False
