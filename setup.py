@@ -58,7 +58,7 @@ class CMakeBuild(build_ext):
 
 setup(
     name='ssapy',
-    version='1.1.5',
+    version='1.1.6',
     ext_modules=[CMakeExtension("ssapy._ssapy")],
     cmdclass={"build_ext": CMakeBuild},
     packages=find_packages(),
