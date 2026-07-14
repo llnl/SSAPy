@@ -17,7 +17,10 @@ def timer(f):
     return f2
 
 
-def checkAngle(a, b, rtol=0, atol=1e-14):
+def checkAngle(a, b, rtol=0, atol=1e-13):
+    # atol is 1e-13 rad (~0.1 nrad): tight enough to be physically exact but
+    # above the float64 round-off floor of the trig round-trips being tested,
+    # which otherwise flakes at ~1e-14 on some platforms/Python versions.
     diff = (a-b)%(2*np.pi)
     absdiff = np.min([np.abs(diff), np.abs(2*np.pi-diff)], axis=0)
     np.testing.assert_allclose(absdiff, 0, rtol=rtol, atol=atol)
