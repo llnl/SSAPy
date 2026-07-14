@@ -1,4 +1,5 @@
 import warnings
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -6,12 +7,31 @@ from sgp4.api import Satrec
 from astropy.time import Time
 from astropy import units as u
 
+import ssapy
 from ssapy import Orbit
 from ssapy.propagator import SGP4Propagator
 from ssapy.compute import rv
 from ssapy.utils import teme_to_gcrf
 from ssapy.tle_drag import (bstar_to_cd_a_over_m, numerical_from_tle,
                             _sgp4_reference_arc, fit_drag)
+
+
+def _is_lfs_pointer(path):
+    try:
+        with open(path, "rb") as f:
+            return f.readline().startswith(b"version https://git-lfs.github.com/spec/v1")
+    except Exception:
+        return False
+
+
+# The numerical drag propagator needs the (Git LFS) gravity + ephemeris data,
+# which is absent in CI; skip those tests there, as tests/test_accel.py does.
+HAS_EGM84 = not _is_lfs_pointer(Path(ssapy.datadir) / "egm84.egm.cof")
+HAS_DE430 = not _is_lfs_pointer(Path(ssapy.datadir) / "de430.bsp")
+HAS_MOON_PA = not _is_lfs_pointer(Path(ssapy.datadir) / "moon_pa_de440_200625.bpc")
+HAS_BODY_DATA = HAS_EGM84 and HAS_DE430 and HAS_MOON_PA
+needs_body_data = pytest.mark.skipif(
+    not HAS_BODY_DATA, reason="body data unavailable (Git LFS pointer)")
 
 ISS = ("1 25544U 98067A   24015.54791435  .00016717  00000-0  30074-3 0  9993",
        "2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.49514637123456")
@@ -66,6 +86,7 @@ def test_bstar_seed_is_physical_order():
     assert 1e-4 < cd < 1e-1
 
 
+@needs_body_data
 def test_path_b_fit_improves_residual():
     """Path B: fitting Cd*A/m against an arc reduces the residual and yields a
     sane physical coefficient (short arc for test speed)."""
@@ -101,6 +122,7 @@ def _light_drag_propagator():
                                            atol=(1e-2,) * 3 + (1e-5,) * 3))
 
 
+@needs_body_data
 def test_joint_fit_recovers_state_and_drag():
     """With a wrong epoch state, drag-only absorbs the error into Cd*A/m; the
     joint fit recovers the true state and coefficient instead."""
@@ -132,6 +154,7 @@ def test_joint_fit_recovers_state_and_drag():
     assert joint["cov"].shape == (7, 7)
 
 
+@needs_body_data
 def test_joint_fit_state_only_mode():
     """solve_drag=False fits the 6-element state at fixed drag (6 parameters)."""
     from ssapy.tle_drag import propkw_from_cd_a_over_m, fit_orbit_drag
