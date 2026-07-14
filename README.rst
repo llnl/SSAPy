@@ -218,7 +218,7 @@ style citations, see the comments in
 `CITATION.cff <https://github.com/LLNL/SSAPy/blob/main/CITATION.cff>`_.
 
 You may also cite the following publications (click
-`here <https://github.com/LLNL/SSAPy/blob/main/docs/source/citations.bib>`_
+`here <https://github.com/LLNL/SSAPy/blob/main/docs/source/refs.bib>`_
 for BibTeX entries):
 
 - Yeager, T., Pruett, K., & Schneider, M. (2022). *Unaided Dynamical Orbit Stability in the Cislunar Regime.* Poster presentation, Cislunar Security Conference, USA.
