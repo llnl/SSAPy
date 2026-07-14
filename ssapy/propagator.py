@@ -226,6 +226,14 @@ class SGP4Propagator(Propagator):
         if self.truncate:
             line1, line2 = make_tle(*orbit.kozaiMeanKeplerianElements, orbit.t)
             sat = Satrec.twoline2rv(line1, line2)
+        elif getattr(orbit, "_sat", None) is not None:
+            # Path A: the orbit was built from a TLE and still carries its
+            # native SGP4 record.  Propagating with it reproduces direct sgp4
+            # exactly, because B* and the mean-motion-rate terms are retained.
+            # (The reconstruction branch below rebuilds from drag-free Kozai
+            # elements with bstar=0 and therefore cannot match sgp4 for
+            # drag-sensitive LEO objects.)
+            sat = orbit._sat
         else:
             a, e, i, pa, raan, trueAnomaly = orbit.kozaiMeanKeplerianElements
             meanAnomaly = _ellipticalEccentricToMeanAnomaly(

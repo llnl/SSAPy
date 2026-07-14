@@ -704,6 +704,12 @@ class Orbit:
             )
             if kMKE is not None:
                 out.kozaiMeanKeplerianElements = kMKE
+            # Preserve native SGP4 record (Path A) so a TLE-derived orbit
+            # reproduces direct sgp4 after scalar/vector round-trips.
+            if hasattr(self, "_sat"):
+                out._sat = self._sat
+            if hasattr(self, "_tle"):
+                out._tle = self._tle
             # TODO: iterate through already-instantiated lazy_properties and
             # copy them over too.
             self._iter += 1
@@ -720,6 +726,11 @@ class Orbit:
                     propkw={k: v[idx] for k, v in self.propkw.items()})
         if kMKE is not None:
             out.kozaiMeanKeplerianElements = kMKE
+        # Preserve native SGP4 record (Path A) on indexing.
+        if hasattr(self, "_sat"):
+            out._sat = self._sat
+        if hasattr(self, "_tle"):
+            out._tle = self._tle
         return out
 
     def __hash__(self):
@@ -1065,6 +1076,7 @@ class Orbit:
         Orbit
         """
         from .io import _rvt_from_tle_tuple, parse_tle
+        from sgp4.api import Satrec
         # Should set Kozai elements here directly from TLE.
         a, e, i, pa, raan, trueAnomaly, t = parse_tle(tle)
         r, v, t2 = _rvt_from_tle_tuple(tle)
@@ -1076,6 +1088,12 @@ class Orbit:
         obj = Orbit(r, v, t, mu=EARTH_MU)
         obj.kozaiMeanKeplerianElements = a, e, i, pa, raan, trueAnomaly
         obj.propkw = propkw if propkw is not None else dict()
+        # Path A: retain the native SGP4 record (and raw lines) so that
+        # SGP4Propagator can reproduce direct-sgp4 results exactly, including
+        # the drag (B*) and mean-motion-rate terms that parse_tle discards.
+        # These are the *only* faithful way to propagate a TLE.
+        obj._tle = tuple(tle)
+        obj._sat = Satrec.twoline2rv(tle[0], tle[1])
         return obj
 
     def at(self, t, propagator=_KeplerianPropagator()):
