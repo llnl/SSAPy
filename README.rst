@@ -13,8 +13,8 @@ SSAPy - Space Situational Awareness for Python
 .. |codecov_badge| image:: https://codecov.io/gh/LLNL/SSAPy/branch/main/graph/badge.svg
    :target: https://codecov.io/gh/LLNL/SSAPy
 
-.. |joss_badge| image:: https://joss.theoj.org/papers/a629353cbdd8d64a861bb807e12c5d06/status.svg
-   :target: https://joss.theoj.org/papers/a629353cbdd8d64a861bb807e12c5d06
+.. |joss_badge| image:: https://joss.theoj.org/papers/10.21105/joss.08147/status.svg
+   :target: https://doi.org/10.21105/joss.08147
 
 .. |pypi_badge| image:: https://badge.fury.io/py/llnl-ssapy.svg
    :target: https://badge.fury.io/py/llnl-ssapy
@@ -59,6 +59,25 @@ SSAPy includes:
 - Support for multiple coordinate frames and coordinate transformations,
   including GCRF, IERS, GCRS Cartesian, TEME Cartesian, RA/Dec, NTW,
   zenith/azimuth, apparent positions, and orthogonal tangent plane coordinates
+
+SSAPy-Toolkit
+-------------
+
+SSAPy provides the core high-fidelity propagation and modeling engine. Many
+higher-level, analysis-ready capabilities built on top of it live in the
+companion project
+`SSAPy-Toolkit <https://github.com/LLNL/SSAPy-Toolkit>`_ (sometimes abbreviated
+*SSATK*), including:
+
+- Higher-level utilities and convenience workflows that wrap common SSAPy tasks
+- Plotting tools for orbit and analysis visualization
+- GCRF-to-ITRF and related coordinate-conversion helpers
+- Lambertian magnitude / brightness calculations
+- Additional related extensions
+
+If your work centers on plotting, dashboards, convenience utilities, or
+higher-level workflows, SSAPy-Toolkit is often the best place to start — and the
+natural home for contributions of that kind.
 
 Installation
 ------------
@@ -170,9 +189,32 @@ Many thanks go to SSAPy's other
 Citing SSAPy
 ------------
 
-On GitHub, you can copy a citation in APA or BibTeX format via the
-"Cite this repository" button. If you prefer MLA or Chicago style citations,
-see the comments in
+If you use SSAPy in your research, please cite the JOSS paper:
+
+- Meyers, J. E., Schneider, M. D., Ebert, J. T., Schlafly, E. F., Yeager, T.,
+  Perloff, A., Merl, D., Lifset, N., Bernstein, J., Dawson, W. A., Golovich, N.,
+  Higgins, D., McGill, P., Miller, C., & Pruett, K. (2025). *SSAPy - Space
+  Situational Awareness for Python.* Journal of Open Source Software, 10(111),
+  8147. `doi:10.21105/joss.08147 <https://doi.org/10.21105/joss.08147>`_
+
+BibTeX::
+
+    @article{Meyers2025,
+      doi       = {10.21105/joss.08147},
+      url       = {https://doi.org/10.21105/joss.08147},
+      year      = {2025},
+      publisher = {The Open Journal},
+      volume    = {10},
+      number    = {111},
+      pages     = {8147},
+      author    = {Meyers, Joshua E. and Schneider, Michael D. and Ebert, Julia T. and Schlafly, Edward F. and Yeager, Travis and Perloff, Alexx and Merl, Daniel and Lifset, Noah and Bernstein, Jason and Dawson, William A. and Golovich, Nathan and Higgins, Denvir and McGill, Peter and Miller, Caleb and Pruett, Kerianne},
+      title     = {SSAPy - Space Situational Awareness for Python},
+      journal   = {Journal of Open Source Software}
+    }
+
+To cite the software itself, you can also copy a citation in APA or BibTeX format
+via the "Cite this repository" button on GitHub. If you prefer MLA or Chicago
+style citations, see the comments in
 `CITATION.cff <https://github.com/LLNL/SSAPy/blob/main/CITATION.cff>`_.
 
 You may also cite the following publications (click
