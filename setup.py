@@ -1,4 +1,4 @@
-from setuptools import setup, Extension, find_packages
+from setuptools import setup, Extension, find_namespace_packages
 from setuptools.command.build_ext import build_ext
 import subprocess
 import sys
@@ -44,7 +44,7 @@ class CMakeBuild(build_ext):
 setup(
     ext_modules=[CMakeExtension("ssapy._ssapy")],
     cmdclass={"build_ext": CMakeBuild},
-    packages=find_packages(),
+    packages=find_namespace_packages(include=["ssapy", "ssapy.*"]),
     package_data={'ssapy': ['data/*']},
     zip_safe=False,
     include_package_data=True,
