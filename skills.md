@@ -11,7 +11,7 @@ installed from PyPI or cloned from GitHub.
 - Documentation: `https://software.llnl.gov/SSAPy/` or `https://LLNL.github.io/SSAPy/`
 - Companion toolkit: `ssapy-toolkit`, imported as `ssapy_toolkit`
 - Companion data package: `llnl-ssapy-data`, imported as `ssapy_data`
-- Minimum Python version: Python 3.8
+- Minimum Python version: Python 3.10
 
 ## Install and Import
 

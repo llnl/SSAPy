@@ -93,7 +93,7 @@ you may also want to install or explore
 Strict dependencies
 -------------------
 
-- `Python <http://docs.python-guide.org/en/latest/starting/installation/>`_ (3.8+)
+- `Python <http://docs.python-guide.org/en/latest/starting/installation/>`_ (3.10+)
 
 The following Python packages are installed automatically when you install SSAPy:
 
