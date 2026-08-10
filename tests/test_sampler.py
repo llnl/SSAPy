@@ -3,6 +3,7 @@ from astropy.time import Time
 import astropy.units as u
 from astropy.coordinates import Longitude, Latitude
 from astropy.table import QTable
+from types import SimpleNamespace
 import pytest
 
 import ssapy
@@ -150,7 +151,8 @@ def test_lightweight_sampler_helpers_and_translators():
     np.testing.assert_allclose(angle_param, angle_seed, rtol=0, atol=1e-12)
 
 
-def test_mh_sampler_acceptance_and_rejection_paths():
+def test_mh_sampler_acceptance_and_rejection_paths(monkeypatch):
+    monkeypatch.setattr(np.random, 'uniform', lambda *args, **kwargs: 0.99)
     initial = np.zeros((2, 6))
     proposals = [np.ones(6), -np.ones(6), np.ones(6) * 2, -np.ones(6) * 2]
 
@@ -199,6 +201,156 @@ def test_damper_helpers():
         ssapy.rvsampler.damper_deriv(chi, damp=2.0, derivnum=2),
         -0.25 * np.sign(chi) * (1 + np.abs(chi) / 2.0) ** (-1.5),
     )
+
+
+class _LinearOrbitProbability:
+    epoch = Time("J2000")
+
+    def chi(self, orbit):
+        if hasattr(orbit, 'r'):
+            return [np.hstack([orbit.r / 1e7, orbit.v / 1e4])]
+        return [np.asarray(orbit, dtype=float)]
+
+
+def test_least_squares_optimizer_translates_fit_options(monkeypatch):
+    import scipy.optimize
+
+    prob = _LinearOrbitProbability()
+    init = np.array([7000e3, 0.0, 0.0, 0.0, 7500.0, 0.0])
+    optimizer = ssapy.rvsampler.LeastSquaresOptimizer(
+        prob, init, ssapy.rvsampler.ParamOrbitRV)
+    np.testing.assert_allclose(
+        optimizer.resid(init), [0.7, 0.0, 0.0, 0.0, 0.75, 0.0])
+
+    captured = {}
+
+    def fake_least_squares(resid, par0, **kwargs):
+        captured['par0'] = par0.copy()
+        captured['kwargs'] = kwargs
+        return SimpleNamespace(
+            x=np.array([7000e3, 0.0, 0.0, 0.0, 20000.0, 0.0]),
+            jac=np.eye(6),
+            fun=resid(par0),
+            success=True,
+        )
+
+    monkeypatch.setattr(scipy.optimize, 'least_squares', fake_least_squares)
+
+    fit = optimizer.optimize(maxfev=12)
+
+    np.testing.assert_allclose(captured['par0'], init)
+    assert captured['kwargs']['max_nfev'] == 12
+    assert 'maxfev' not in captured['kwargs']
+    assert optimizer.result.success is False
+    assert optimizer.result.hithyperbolicorbit is True
+    assert optimizer.result.covar.shape == (6, 6)
+    np.testing.assert_allclose(optimizer.result.residual,
+                               [0.7, 0.0, 0.0, 0.0, 0.75, 0.0])
+    assert norm(fit[3:]) < 20000.0
+
+
+def test_lm_optimizer_jacobian_and_hyperbolic_guard(monkeypatch):
+    import lmfit
+
+    captured = []
+
+    def fake_minimize(resid, params, Dfun=None, **kwargs):
+        captured.append(Dfun)
+        return SimpleNamespace(params=params, success=True)
+
+    monkeypatch.setattr(lmfit, 'minimize', fake_minimize)
+
+    with pytest.warns(UserWarning, match='deprecated'):
+        optimizer = ssapy.rvsampler.LMOptimizer(
+            _LinearOrbitProbability(),
+            np.array([7000e3, 0.0, 0.0, 0.0, 20000.0, 0.0]),
+        )
+    fit = optimizer.optimize()
+
+    assert captured[-1].__self__ is optimizer
+    assert captured[-1].__func__ is optimizer._jac.__func__
+    assert optimizer.result.success is False
+    assert optimizer.result.hithyperbolicorbit is True
+    assert optimizer.result.covar.shape == (6, 6)
+    assert norm(fit[3:]) < 20000.0
+
+    with pytest.warns(UserWarning, match='deprecated'):
+        no_jac_optimizer = ssapy.rvsampler.LMOptimizer(
+            _LinearOrbitProbability(),
+            np.array([7000e3, 0.0, 0.0, 0.0, 7500.0, 0.0]),
+        )
+    no_jac_optimizer.optimize(usejac=False)
+    assert captured[-1] is None
+    assert not hasattr(no_jac_optimizer.result, 'covar')
+
+
+def test_lm_angular_optimizer_smoke_path(monkeypatch):
+    import lmfit
+
+    monkeypatch.setattr(
+        lmfit, 'minimize',
+        lambda resid, params, Dfun=None, **kwargs: SimpleNamespace(
+            params=params, success=True))
+
+    orbit = ssapy.Orbit(
+        np.array([7000e3, 0.0, 0.0]),
+        np.array([0.0, 7500.0, 0.0]),
+        Time("J2000"),
+    )
+    obs_pos = np.zeros(3)
+    obs_vel = np.zeros(3)
+    init_guess = ssapy.compute.rvObsToRaDecRate(
+        orbit.r, orbit.v, obs_pos, obs_vel)
+
+    with pytest.warns(UserWarning, match='deprecated'):
+        optimizer = ssapy.rvsampler.LMOptimizerAngular(
+            _LinearOrbitProbability(), init_guess, obs_pos, obs_vel)
+
+    fit = optimizer.optimize(usejac=False)
+    assert len(fit) == 6
+    assert not hasattr(optimizer.result, 'covar')
+
+
+def test_legacy_element_optimizers_with_mocked_lmfit(monkeypatch):
+    import lmfit
+
+    captured = []
+
+    def fake_minimize(resid, params, Dfun=None, **kwargs):
+        captured.append(Dfun)
+        return SimpleNamespace(params=params, success=True)
+
+    monkeypatch.setattr(lmfit, 'minimize', fake_minimize)
+
+    prob = _LinearOrbitProbability()
+    initel = np.array([4.2e7, 0.01, 0.02, 0.03, 0.04, 0.5])
+    sgp4_optimizer = ssapy.rvsampler.SGP4LMOptimizer(prob, initel)
+    sgp4_optimizer._getOrbit = lambda p: np.array(
+        [p[name].value for name in sgp4_optimizer.fieldnames]
+        if isinstance(p, dict) else p,
+        dtype=float,
+    )
+    assert sgp4_optimizer._jac(np.arange(1.0, 7.0)).shape == (6, 6)
+    sgp4_fit = sgp4_optimizer.optimize()
+    np.testing.assert_allclose(sgp4_fit, initel)
+    assert captured[-1].__self__ is sgp4_optimizer
+    assert captured[-1].__func__ is sgp4_optimizer._jac.__func__
+
+    with pytest.warns(UserWarning, match='deprecated'):
+        eq_optimizer = ssapy.rvsampler.EquinoctialLMOptimizer(
+            prob, np.array([4.2e7, 0.01, 0.02, 1.0, 1.0, 0.5]))
+    assert eq_optimizer._getOrbit(
+        np.array([4.2, 0.01, 0.02, 1.0, 1.0, 0.5])).e < 1.0
+    eq_optimizer._getOrbit = lambda p: np.array(
+        [p[name].value for name in eq_optimizer.fieldnames]
+        if isinstance(p, dict) else p,
+        dtype=float,
+    )
+    eq_fit = eq_optimizer.optimize()
+    assert eq_fit[0] == pytest.approx(4.2e7)
+    assert eq_optimizer.result.covar.shape == (6, 6)
+    assert captured[-1].__self__ is eq_optimizer
+    assert captured[-1].__func__ is eq_optimizer._jac.__func__
 
 
 @timer

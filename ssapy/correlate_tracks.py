@@ -1165,7 +1165,8 @@ class Track(TrackBase):
                 orbitattr=orbitattr)
         self.chi2 = chi2
         self.param = param
-        self.covar = getattr(res, 'covar', np.array([[np.inf]]))
+        nparam = 6 if orbitattr is None else 6 + len(orbitattr)
+        self.covar = getattr(res, 'covar', np.full((nparam, nparam), np.inf))
         self.priors = priors
         self.success = getattr(res, 'success', False)
 
@@ -1396,9 +1397,9 @@ class TrackGauss(TrackBase):
         chi2new, paramnew, resnew = fit_arc_with_gaussian_prior(
             arc, param, cinvcholfac, mode=self.mode,
             propagator=self.propagator, orbitattr=self.orbitattr)
-        covarnew = getattr(resnew, 'covar', np.array([[np.inf]]))
+        covarnew = getattr(resnew, 'covar', np.full((nparam, nparam), np.inf))
         if np.any(~np.isfinite(covarnew)):
-            covarnew = np.array([[np.inf]])
+            covarnew = np.full((nparam, nparam), np.inf)
         return TrackGauss(self.satIDs+newsatidlist, self.data,
                           paramnew, covarnew,
                           self.chi2+chi2new, mode=self.mode,
@@ -1949,7 +1950,7 @@ class MHT:
         hyps = list(set(sum([self.track2hyp[t] for t in newdeadtracks], [])))
         ntrack = [len(h.tracks) for h in hyps]
         maxntrack = max(ntrack)
-        idarr = np.zeros((maxntrack, len(hyps)), dtype='i4') - 1
+        idarr = np.zeros((maxntrack, len(hyps)), dtype=np.intp) - 1
         for i, hyp in enumerate(hyps):
             idarr[:ntrack[i], i] = [
                 id(t) if not getattr(t, 'dead', False) else -1
