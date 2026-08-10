@@ -1346,6 +1346,7 @@ class ParamOrbitTranslator():
     """Class for making parameters into Orbits and vice-versa."""
     def __init__(self, initparam, epoch, fixed=None, orbitattr=None):
         self.initParam = initparam
+        self.initparam = initparam
         self.fixed = fixed
         self.orbitattr = orbitattr if orbitattr is not None else []
         self.epoch = epoch

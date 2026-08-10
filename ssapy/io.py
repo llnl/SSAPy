@@ -340,8 +340,8 @@ b3dtype = np.dtype([
     ('y', np.float64),
     ('z', np.float64),
     ('slantRangeRate', np.float64),
-    ('type', np.int8),
-    ('equinoxType', np.int8)
+    ('type', np.int16),
+    ('equinoxType', np.int16)
 ])
 
 

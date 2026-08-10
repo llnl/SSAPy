@@ -52,6 +52,154 @@ def test_prior():
     orbit.e = 0.8
     np.testing.assert_allclose(eprior(orbit), -0.5*10**2, rtol=0, atol=1e-12)
 
+    # Exercise chi-output and object-property priors used by optimizers.
+    orbit.r = np.array([0, 0, 1.01e7])
+    orbit.v = np.array([-1.01e3, 0, 0])
+    orbit.a = 1.01e7
+    orbit.e = 0.71
+    orbit.ex = 0.2
+    orbit.ey = -0.4
+    orbit.propkw = {'area': 10.0}
+    np.testing.assert_allclose(rprior(orbit, chi=True), 1.0)
+    np.testing.assert_allclose(vprior(orbit, chi=True), 1.0)
+    np.testing.assert_allclose(aprior(orbit, chi=True), 1.0)
+    np.testing.assert_allclose(eprior(orbit, chi=True), 1.0)
+    eqprior = ssapy.rvsampler.EquinoctialExEyPrior(sigma=0.2)
+    np.testing.assert_allclose(eqprior(orbit, chi=True), [1.0, -2.0])
+    np.testing.assert_allclose(eqprior(orbit), [-0.5, -2.0])
+    logarea = ssapy.rvsampler.Log10AreaPrior(mean=0.0, sigma=0.5)
+    np.testing.assert_allclose(logarea(orbit, chi=True), 2.0)
+    np.testing.assert_allclose(logarea(orbit), -2.0)
+    area = ssapy.rvsampler.AreaPrior(mean=6.0, sigma=2.0)
+    np.testing.assert_allclose(area(orbit, chi=True), 2.0)
+    np.testing.assert_allclose(area(orbit), -2.0)
+
+
+def test_lightweight_sampler_helpers_and_translators():
+    np.random.seed(7)
+    center = np.array([1.0, 2.0, 3.0])
+    spread = np.array([0.1, 0.2, 0.3])
+    samples = ssapy.rvsampler.sample_ball(center, spread, nSample=4)
+    assert samples.shape == (4, 3)
+    with pytest.raises(AssertionError):
+        ssapy.rvsampler.sample_ball([1.0, 2.0], [1.0], nSample=1)
+
+    direct_samples = np.arange(18.0).reshape(3, 6)
+    direct = ssapy.DirectInitializer(direct_samples, replace=False)
+    assert direct(nSample=5).shape == (5, 6)
+    direct_replace = ssapy.DirectInitializer(direct_samples, replace=True)
+    assert direct_replace(nSample=5).shape == (5, 6)
+
+    proposal = ssapy.MVNormalProposal(np.eye(6) * 0.01)
+    assert proposal.propose(np.zeros(6)).shape == (6,)
+    rv_proposal = ssapy.RVSigmaProposal(2.0, 3.0)
+    np.testing.assert_allclose(np.diag(rv_proposal.cov), [4.0, 4.0, 4.0, 9.0, 9.0, 9.0])
+
+    translator = ssapy.rvsampler.ParamOrbitTranslator(
+        np.array([1.0, 2.0, 3.0, 4.0]), Time("J2000"),
+        fixed=np.array([True, False, True, False]), orbitattr=['log10area', 'mass']
+    )
+    np.testing.assert_allclose(translator.fullparam(np.zeros(4)), [1.0, 0.0, 3.0, 0.0])
+    np.testing.assert_allclose(translator.optimizeparam(np.arange(4.0)), [0.0, 2.0])
+    assert translator.get_propkw_from_fullparam([0, 0, 0, 0, 0, 0, 2.0, 5.0]) == {'area': 100.0, 'mass': 5.0}
+
+    class DummyOrbit:
+        propkw = {'area': 100.0, 'mass': 5.0}
+
+    np.testing.assert_allclose(translator.get_propkw_from_orbit(DummyOrbit()), [2.0, 5.0])
+    assert translator.input_param_translation([1, 2]) == [1, 2]
+    assert translator.output_covar_translation(np.eye(2)).shape == (2, 2)
+    with pytest.raises(NotImplementedError):
+        translator.param_to_orbit()
+    with pytest.raises(NotImplementedError):
+        translator.orbit_to_param()
+
+    rv_translator = ssapy.rvsampler.ParamOrbitRV(
+        np.zeros(7), Time("J2000"), orbitattr=['log10area']
+    )
+    orbit = rv_translator.param_to_orbit(np.array([1.0, 2.0, 3.0, 0.1, 0.2, 0.3, 1.0]))
+    np.testing.assert_allclose(orbit.r, [1.0, 2.0, 3.0])
+    np.testing.assert_allclose(orbit.v, [0.1, 0.2, 0.3])
+    assert orbit.propkw['area'] == 10.0
+    rv_param = rv_translator.orbit_to_param(orbit)
+    np.testing.assert_allclose(rv_param, [1.0, 2.0, 3.0, 0.1, 0.2, 0.3, 1.0])
+
+    eq_translator = ssapy.rvsampler.ParamOrbitEquinoctial(
+        np.array([4.2e7, 0.01, 0.02, 0.03, 0.04, 0.5]), Time("J2000")
+    )
+    translated = eq_translator.input_param_translation(np.array([4.2e7, 0.01, 0.02, 0.03, 0.04, 0.5]))
+    np.testing.assert_allclose(translated[0], 4.2)
+    covar = eq_translator.output_covar_translation(np.eye(6))
+    assert covar[0, 0] == 1e14
+    eq_orbit = eq_translator.param_to_orbit(np.array([4.2, 0.01, 0.02, 1.5, 0.0, 0.5]))
+    assert eq_orbit.e < 1.0
+    eq_param = eq_translator.orbit_to_param(eq_orbit)
+    assert len(eq_param) == 6
+
+    base_orbit = ssapy.Orbit(np.array([7000e3, 0.0, 0.0]), np.array([0.0, 7500.0, 0.0]), Time("J2000"))
+    init_obs_pos = np.zeros(3)
+    init_obs_vel = np.zeros(3)
+    angle_seed = ssapy.compute.rvObsToRaDecRate(base_orbit.r, base_orbit.v, init_obs_pos, init_obs_vel)
+    angle_translator = ssapy.rvsampler.ParamOrbitAngle(
+        np.array(angle_seed), base_orbit.t, init_obs_pos, init_obs_vel
+    )
+    angle_orbit = angle_translator.param_to_orbit(np.array(angle_seed))
+    np.testing.assert_allclose(angle_orbit.r, base_orbit.r, rtol=0, atol=1e-6)
+    np.testing.assert_allclose(angle_orbit.v, base_orbit.v, rtol=0, atol=1e-6)
+    angle_param = angle_translator.orbit_to_param(angle_orbit)
+    np.testing.assert_allclose(angle_param, angle_seed, rtol=0, atol=1e-12)
+
+
+def test_mh_sampler_acceptance_and_rejection_paths():
+    initial = np.zeros((2, 6))
+    proposals = [np.ones(6), -np.ones(6), np.ones(6) * 2, -np.ones(6) * 2]
+
+    class Initializer:
+        def __call__(self, n):
+            assert n == 2
+            return initial.copy()
+
+    class Proposer:
+        def __init__(self):
+            self.index = 0
+
+        def propose(self, p):
+            out = proposals[self.index].copy()
+            self.index += 1
+            return out
+
+    def probfn(p):
+        score = p[0]
+        return score, score / 10.0
+
+    sampler = ssapy.MHSampler(probfn, Initializer(), Proposer(), nChain=2)
+    sampler._step()
+    assert sampler.nStep == 2
+    assert sampler.nAccept == 1
+    assert sampler.acceptanceRatio == 0.5
+
+    chain, lnprob, lnprior = sampler.sample(nBurn=0, nStep=1)
+    assert chain.shape == (1, 2, 6)
+    assert lnprob.shape == (1, 2)
+    assert lnprior.shape == (1, 2)
+    assert sampler.nStep == 2
+
+
+def test_damper_helpers():
+    chi = np.array([-2.0, 0.0, 2.0])
+    damped = ssapy.rvsampler.damper(chi, damp=2.0)
+    assert damped[0] < 0
+    assert damped[1] == 0
+    assert damped[2] > 0
+    np.testing.assert_allclose(
+        ssapy.rvsampler.damper_deriv(chi, damp=2.0, derivnum=1),
+        (1 + np.abs(chi) / 2.0) ** (-0.5),
+    )
+    np.testing.assert_allclose(
+        ssapy.rvsampler.damper_deriv(chi, damp=2.0, derivnum=2),
+        -0.25 * np.sign(chi) * (1 + np.abs(chi) / 2.0) ** (-1.5),
+    )
+
 
 @timer
 def test_initializer():
