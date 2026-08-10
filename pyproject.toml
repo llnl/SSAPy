@@ -7,7 +7,7 @@ authors = [
 description = "A fast, flexible, high-fidelity orbital modeling and analysis tool for orbits spanning from low-Earth orbit into the cislunar regime."
 readme = "README.rst"
 requires-python = ">=3.8"
-license = { file = "LICENSE" }
+license = "MIT"
 
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -31,13 +31,26 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest",
+    "pytest-cov",
+    "pytest-timeout",
+    "pytest-xdist",
+    "flake8",
     "build",
     "cibuildwheel",
     "delocate",
 ]
 
 docs = [
-    "myst-parser",
+    "sphinx==7.1.2",
+    "sphinx-copybutton",
+    "myst-parser<4.0.0",
+    "sphinx-tabs",
+    "sphinx-automodapi",
+    "sphinx_rtd_theme",
+    "sphinxcontrib-bibtex",
+    "sphinx-autobuild",
+    "docutils<0.21",
+    "nbsphinx",
     "graphviz",
 ]
 
@@ -55,7 +68,7 @@ packages = ["ssapy"]
 include-package-data = true
 
 [tool.setuptools.package-data]
-ssapy = ["*.cpp", "*.h", "data/*", "*.so"]
+ssapy = ["*.cpp", "*.h", "data/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

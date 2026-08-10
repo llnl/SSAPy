@@ -32,6 +32,23 @@ def _getInterpolantContainer(orbit, propagator):
 _InterpolantCache = LRU_Cache(_getInterpolantContainer)
 
 
+__all__ = [
+    "KeplerianPropagator",
+    "Leapfrog4Propagator",
+    "LeapfrogPropagator",
+    "Propagator",
+    "RK4Propagator",
+    "RK78Propagator",
+    "RK8Propagator",
+    "RKPropagator",
+    "SGP4Propagator",
+    "SciPyPropagator",
+    "SeriesPropagator",
+    "default_numerical",
+    "impact_event",
+]
+
+
 class Propagator(ABC):
     """ Abstract base class for orbit propagators.
 
@@ -449,52 +466,27 @@ class SciPyPropagator(Propagator):
 
 
 class RKPropagator(Propagator, ABC):
-    """
-    Abstract base class for Runge-Kutta-based orbit propagators.
+    """Abstract base class for Runge-Kutta-based orbit propagators.
 
-    The `RKPropagator` class provides a framework for implementing orbit propagation 
-    using Runge-Kutta methods. Subclasses must override specific methods to define 
-    the propagation logic and interpolation behavior.
+    Subclasses implement :meth:`_prop` to define the propagation logic and set
+    ``_minPoints`` to the minimum number of cached states needed for spline
+    interpolation.
 
-    Attributes:
-        _minPoints (int): Minimum number of points required for interpolation. 
-            This should be overridden by subclasses.
+    Notes
+    -----
+    The :meth:`_getRVOne` method uses an interpolation cache to store computed
+    states, times, and spline objects, reducing redundant propagation work.
+    Spline interpolation is used for smooth querying of position and velocity.
 
-    Methods:
-        _prop():
-            Abstract method that subclasses must implement to define the propagation logic.
-        _getRVOne(orbit, tQuery):
-            Retrieves the position and velocity of an orbit at specified query times 
-            using interpolation.
+    Examples
+    --------
+    Subclasses provide a fixed-step propagation implementation::
 
-    Args:
-        orbit (Orbit): The orbit object containing initial conditions and propagation settings.
-        tQuery (numpy.ndarray): An array of times at which the position and velocity are queried.
-
-    Returns:
-        tuple: A tuple containing:
-            - r (numpy.ndarray): Position vectors at the query times.
-            - v (numpy.ndarray): Velocity vectors at the query times.
-
-    Notes:
-        - The `_getRVOne` method uses an interpolation cache to store computed states and times, 
-          minimizing redundant computations.
-        - The Runge-Kutta propagation logic must be implemented in the `_prop` method by subclasses.
-        - Spline interpolation is used for smooth querying of position and velocity data.
-        - The `container` object caches the interpolant data, including times, states, and spline objects.
-
-    Example:
-        Subclass implementation:
-```python
         class RK4Propagator(RKPropagator):
             _minPoints = 4
 
             def _prop(self, times, states, h, t_target, propkw):
-                # Implement RK4 propagation logic here
                 ...
-```
-    Raises:
-        NotImplementedError: If `_prop` is not overridden by a subclass.
     """
     _minPoints = None  # subclass should override
 

@@ -52,8 +52,8 @@ Initialize an orbit object.
     raan = np.radians(0)
     ta = np.radians(180)
 
-kElements = [a, e, i, pa, raan, ta]
-orbit = Orbit.fromKeplerianElements(*kElements, t=t0)
+    kElements = [a, e, i, pa, raan, ta]
+    orbit = Orbit.fromKeplerianElements(*kElements, t=t0)
 
 Set parameters of the satellite
 

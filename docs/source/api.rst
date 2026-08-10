@@ -29,5 +29,4 @@ and/or heavy dependencies.  Below lists the packages available in the ``ssapy`` 
       ssapy.plotUtils
       ssapy.propagator
       ssapy.rvsampler
-      ssapy.simple
       ssapy.utils

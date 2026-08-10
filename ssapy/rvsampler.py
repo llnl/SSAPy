@@ -11,16 +11,50 @@ from .utils import norm, normed, normSq, cluster_emcee_walkers, unitAngle3, _emc
 from .constants import RGEO, VGEO, WGS84_EARTH_MU
 
 
+__all__ = [
+    "APrior",
+    "AreaPrior",
+    "DirectInitializer",
+    "DistanceProjectionInitializer",
+    "EPrior",
+    "EmceeSampler",
+    "EquinoctialExEyPrior",
+    "EquinoctialLMOptimizer",
+    "GEOProjectionInitializer",
+    "GaussianRVInitializer",
+    "LMOptimizer",
+    "LMOptimizerAngular",
+    "LeastSquaresOptimizer",
+    "Log10AreaPrior",
+    "MHSampler",
+    "MVNormalProposal",
+    "ParamOrbitAngle",
+    "ParamOrbitEquinoctial",
+    "ParamOrbitRV",
+    "ParamOrbitTranslator",
+    "RPrior",
+    "RVProbability",
+    "RVSigmaProposal",
+    "SGP4LMOptimizer",
+    "VPrior",
+    "circular_guess",
+    "damper",
+    "damper_deriv",
+    "eq2kep",
+    "sample_ball",
+]
+
+
 # Priors
 class RPrior:
-    """Gaussian prior on distance from origin |r|.
+    """Gaussian prior on distance from origin ``|r|``.
 
     Parameters
     ----------
     rmean : float
-        Prior mean on |r| in meters.
+        Prior mean on ``|r|`` in meters.
     rsigma : float
-        Prior standard deviation on |r| in meters.
+        Prior standard deviation on ``|r|`` in meters.
 
     Attributes
     ----------
@@ -57,14 +91,14 @@ class RPrior:
 
 
 class VPrior:
-    """Gaussian prior on velocity magnitude |v|.
+    """Gaussian prior on velocity magnitude ``|v|``.
 
     Parameters
     ----------
     vmean : float
-        Prior mean on |v| in meters per second.
+        Prior mean on ``|v|`` in meters per second.
     vsigma : float
-        Prior standard deviation on |v| in meters per second.
+        Prior standard deviation on ``|v|`` in meters per second.
 
     Attributes
     ----------
@@ -781,16 +815,11 @@ class RVProbability:
 
     Parameters
     ----------
-    arc : QTable with one row per observation and columns:
-            'ra', 'dec' : Angle
-                Observed angular position in ICRS (topocentric).
-            'rStation_GCRF' : Quantity
-                Position of observer in GCRF.
-            'sigma' : Quantity
-                Isotropic uncertainty in observed angular position.
-            'time' : float or astropy.time.Time
-                Time of observation.  If float, then should correspond to GPS
-                seconds; i.e., seconds since 1980-01-06 00:00:00 UTC
+    arc : QTable
+        Observation table with one row per observation. Required columns are
+        ``ra`` and ``dec`` for topocentric ICRS angular position,
+        ``rStation_GCRF`` for the observer position in GCRF, ``sigma`` for the
+        isotropic angular uncertainty, and ``time`` for the observation time.
         The arc is a linked set of observations assumed to be of the same
         object.
     epoch : float or astropy.time.Time
@@ -1369,71 +1398,11 @@ class ParamOrbitTranslator():
 
 
 class ParamOrbitRV(ParamOrbitTranslator):
-    """
-    A class for translating orbital parameters in position-velocity (RV) form, 
-    including conversions between parameters and orbit objects.
+    """Translate between position-velocity parameters and orbit objects.
 
-    Inherits:
-    ---------
-    ParamOrbitTranslator : Base class providing foundational functionality 
-    for orbital parameter translation.
-
-    Methods:
-    --------
-    __init__(*args, **kwargs):
-        Initialize the `ParamOrbitRV` object, inheriting behavior from the 
-        `ParamOrbitTranslator` base class.
-
-    param_to_orbit(p):
-        Convert position-velocity (RV) parameters to an `Orbit` object.
-
-        Parameters:
-        -----------
-        p : array-like
-            Orbital parameters in position-velocity form. The first three 
-            elements represent the position vector (`r`), and the next three 
-            elements represent the velocity vector (`v`).
-
-        Returns:
-        --------
-        Orbit
-            An `Orbit` object created from the position (`r`) and velocity (`v`) 
-            vectors, along with propagation keywords.
-
-        Notes:
-        ------
-        - Additional propagation keywords are extracted from the full parameter set.
-        - The `Orbit` class is expected to support initialization with `r` and `v`.
-
-    orbit_to_param(orbit):
-        Convert an `Orbit` object to a list of position-velocity (RV) parameters 
-        and associated propagation keywords.
-
-        Parameters:
-        -----------
-        orbit : Orbit
-            An `Orbit` object containing position (`r`) and velocity (`v`) vectors.
-
-        Returns:
-        --------
-        numpy.ndarray
-            A concatenated array of position (`r`), velocity (`v`), and propagation 
-            keywords extracted from the orbit.
-
-    Notes:
-    ------
-    - This class assumes orbital parameters are represented in position-velocity form.
-    - The `Orbit` class is expected to provide attributes `r` and `v` for position 
-      and velocity vectors, respectively.
-
-    Example:
-    --------
-    >>> translator = ParamOrbitRV()
-    >>> params = [7000, 0, 0, 0, 7.5, 0]  # Example position-velocity parameters
-    >>> orbit = translator.param_to_orbit(params)
-    >>> new_params = translator.orbit_to_param(orbit)
-    >>> print(new_params)
-    [7000, 0, 0, 0, 7.5, 0]  # Example output matching input
+    The first three parameters are the position vector ``r`` and the next three
+    are the velocity vector ``v``. Any configured propagation keywords are
+    appended after those six parameters.
     """
     def __init__(self, *args, **kwargs):
         super(ParamOrbitRV, self).__init__(*args, **kwargs)
@@ -1454,98 +1423,11 @@ class ParamOrbitRV(ParamOrbitTranslator):
 
 
 class ParamOrbitEquinoctial(ParamOrbitTranslator):
-    """
-    A class for translating orbital parameters in equinoctial form, 
-    including input/output transformations and conversions between 
-    parameters and orbit objects.
+    """Translate between equinoctial parameters and orbit objects.
 
-    Inherits:
-    ---------
-    ParamOrbitTranslator : Base class providing foundational functionality 
-    for orbital parameter translation.
-
-    Methods:
-    --------
-    __init__(*args, **kwargs):
-        Initialize the `ParamOrbitEquinoctial` object, inheriting behavior 
-        from the `ParamOrbitTranslator` base class.
-
-    input_param_translation(p):
-        Transform input orbital parameters by scaling the first parameter 
-        (typically semi-major axis) for internal use.
-
-        Parameters:
-        -----------
-        p : array-like
-            Input orbital parameters.
-
-        Returns:
-        --------
-        numpy.ndarray
-            Transformed orbital parameters with the first element scaled.
-
-    output_covar_translation(covar):
-        Transform covariance matrix for output by scaling the first row 
-        and column (typically related to semi-major axis).
-
-        Parameters:
-        -----------
-        covar : array-like
-            Input covariance matrix.
-
-        Returns:
-        --------
-        numpy.ndarray
-            Transformed covariance matrix with scaled elements.
-
-    param_to_orbit(p):
-        Convert equinoctial orbital parameters to an `Orbit` object, 
-        ensuring constraints on eccentricity and semi-major axis.
-
-        Parameters:
-        -----------
-        p : array-like
-            Equinoctial orbital parameters.
-
-        Returns:
-        --------
-        Orbit
-            An `Orbit` object created from the equinoctial parameters.
-
-        Notes:
-        ------
-        - The semi-major axis (`p[0]`) is scaled and clipped to a minimum value of 1.
-        - The eccentricity vector (`p[3]`, `p[4]`) is normalized if its magnitude exceeds 0.999.
-        - Additional propagation keywords are extracted from the full parameter set.
-
-    orbit_to_param(orbit):
-        Convert an `Orbit` object to a list of equinoctial orbital parameters 
-        and associated propagation keywords.
-
-        Parameters:
-        -----------
-        orbit : Orbit
-            An `Orbit` object containing equinoctial elements.
-
-        Returns:
-        --------
-        list
-            A list of equinoctial orbital parameters and propagation keywords.
-
-    Notes:
-    ------
-    - This class assumes equinoctial orbital elements are used for parameterization.
-    - The `Orbit` class is expected to provide methods for handling equinoctial elements.
-    - Scaling factors (e.g., 1e7 for semi-major axis) are applied for numerical stability.
-
-    Example:
-    --------
-    >>> translator = ParamOrbitEquinoctial()
-    >>> params = [7000000, 0, 0, 0.01, 0.01, 0]  # Example equinoctial parameters
-    >>> orbit = translator.param_to_orbit(params)
-    >>> new_params = translator.orbit_to_param(orbit)
-    >>> print(new_params)
-    [7000000, 0, 0, 0.01, 0.01, 0]  # Example output matching input
+    The semimajor-axis-like parameter is scaled by ``1e7`` for numerical
+    stability during optimization. The eccentricity vector components are
+    clipped to keep generated orbits elliptical.
     """
     def __init__(self, *args, **kwargs):
         super(ParamOrbitEquinoctial, self).__init__(*args, **kwargs)
@@ -1583,95 +1465,33 @@ class ParamOrbitEquinoctial(ParamOrbitTranslator):
 
 
 class ParamOrbitAngle(ParamOrbitTranslator):
-    """
-    A class for translating orbital parameters in angle-based form, 
-    including conversions between angular parameters and orbit objects.
+    """Translate between angle-based orbital parameters and orbit objects.
 
-    Inherits:
-    ---------
-    ParamOrbitTranslator : Base class providing foundational functionality 
-    for orbital parameter translation.
+    Parameters
+    ----------
+    initparam : array-like
+        Initial orbital parameters.
+    epoch : float or astropy.time.Time
+        Epoch time for the orbit.
+    initObsPos : array-like
+        Initial observer position vector.
+    initObsVel : array-like
+        Initial observer velocity vector.
+    kwargs : dict
+        Additional keyword arguments passed to :class:`ParamOrbitTranslator`.
 
-    Attributes:
-    -----------
+    Attributes
+    ----------
     initObsPos : array-like
         Initial observer position vector used for angle-based calculations.
     initObsVel : array-like
         Initial observer velocity vector used for angle-based calculations.
 
-    Methods:
-    --------
-    __init__(initparam, epoch, initObsPos, initObsVel, **kwargs):
-        Initialize the `ParamOrbitAngle` object with initial parameters, 
-        epoch, observer position, and observer velocity.
-
-        Parameters:
-        -----------
-        initparam : array-like
-            Initial orbital parameters.
-        epoch : float
-            Epoch time for the orbit.
-        initObsPos : array-like
-            Initial observer position vector.
-        initObsVel : array-like
-            Initial observer velocity vector.
-        **kwargs : dict
-            Additional keyword arguments passed to the parent class.
-
-    param_to_orbit(p):
-        Convert angle-based orbital parameters to an `Orbit` object.
-
-        Parameters:
-        -----------
-        p : array-like
-            Orbital parameters in angle-based form. The first six elements 
-            represent angular parameters (e.g., right ascension, declination, 
-            and rates).
-
-        Returns:
-        --------
-        Orbit
-            An `Orbit` object created from the angular parameters, along with 
-            propagation keywords.
-
-        Notes:
-        ------
-        - The method `radecRateObsToRV` is used to convert angular parameters 
-          to position (`r`) and velocity (`v`) vectors.
-        - Additional propagation keywords are extracted from the full parameter set.
-
-    orbit_to_param(orbit):
-        Convert an `Orbit` object to a list of angle-based orbital parameters 
-        and associated propagation keywords.
-
-        Parameters:
-        -----------
-        orbit : Orbit
-            An `Orbit` object containing position (`r`) and velocity (`v`) vectors.
-
-        Returns:
-        --------
-        list
-            A list of angle-based orbital parameters (e.g., right ascension, 
-            declination, and rates) and propagation keywords.
-
-        Notes:
-        ------
-        - The method `rvObsToRaDecRate` is used to convert position (`r`) and 
-          velocity (`v`) vectors to angular parameters.
-        - Observer position and velocity are used in the conversion process.
-
-    Example:
-    --------
-    >>> initObsPos = [0, 0, 0]  # Example observer position
-    >>> initObsVel = [0, 0, 0]  # Example observer velocity
-    >>> translator = ParamOrbitAngle(initparam=[1, 2, 3, 4, 5, 6], epoch=2451545.0, 
-    ...                              initObsPos=initObsPos, initObsVel=initObsVel)
-    >>> params = [1, 2, 3, 4, 5, 6]  # Example angle-based parameters
-    >>> orbit = translator.param_to_orbit(params)
-    >>> new_params = translator.orbit_to_param(orbit)
-    >>> print(new_params)
-    [1, 2, 3, 4, 5, 6]  # Example output matching input
+    Notes
+    -----
+    :func:`ssapy.compute.radecRateObsToRV` converts angular parameters to
+    position and velocity vectors. :func:`ssapy.compute.rvObsToRaDecRate`
+    converts orbit position and velocity vectors back to angular parameters.
     """
     def __init__(self, initparam, epoch, initObsPos, initObsVel, **kwargs):
         super(ParamOrbitAngle, self).__init__(initparam, epoch, **kwargs)

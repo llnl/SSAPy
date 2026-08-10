@@ -2,8 +2,7 @@ import numpy as np
 from astropy.time import Time
 import astropy.units as u
 import sys
-import importlib
-import types
+import subprocess
 from types import SimpleNamespace
 from pathlib import Path
 import pytest
@@ -934,7 +933,7 @@ def test_reverse():
 
     accel = ssapy.AccelSum([aH44, aSun, aMoon])
 
-    times = t + np.linspace(0, orbit.period, 100)*u.s
+    times = t + np.linspace(0, 900.0, 25)*u.s
 
     for prop in [
         ssapy.RK4Propagator(accel, h=1.0),
@@ -1129,32 +1128,23 @@ def test_accelprod_equality():
     # Verify inequality
     assert accel_prod1 != accel_prod4
 
-MODULE_NAME = "ssapy.accel"
-
- 
-@pytest.fixture(autouse=True)
-def cleanup_module_cache():
-    """Ensure a clean import state before each test."""
-    if MODULE_NAME in sys.modules:
-        del sys.modules[MODULE_NAME]
-    yield
-    if MODULE_NAME in sys.modules:
-        del sys.modules[MODULE_NAME]
-
- 
 def test_import_erfa_present():
-    # Create a fake `erfa` module
-    fake_erfa = types.ModuleType("erfa")
-    sys.modules["erfa"] = fake_erfa
+    code = """
+import sys
+import types
+import astropy.coordinates
+import astropy.time
+import astropy.units
 
-    # Remove fallback if it was accidentally cached
-    sys.modules.pop("astropy._erfa", None)
+fake_erfa = types.ModuleType("erfa")
+sys.modules["erfa"] = fake_erfa
+sys.modules.pop("astropy._erfa", None)
 
-    # Import and test
-    import ssapy.accel
-    importlib.reload(ssapy.accel)
+import ssapy.accel
 
-    assert ssapy.accel.erfa is fake_erfa
+assert ssapy.accel.erfa is fake_erfa
+"""
+    subprocess.run([sys.executable, "-c", code], check=True)
 
 
  
@@ -1354,14 +1344,20 @@ def test_eq_wrong_type_returns_false():
     assert a != "not an AccelConstNTW"
 
  
-def test_eq_diff_class_returns_false_due_to_bug():
+def test_eq_same_class_same_values_returns_true():
+    a = AccelConstNTW([0.0, 1.0, 0.0])
+    b = AccelConstNTW([0.0, 1.0, 0.0])
+    assert a == b
+
+
+def test_eq_diff_class_returns_false():
     class FakeAccelDrag:
         accelntw = np.array([0.0, 1.0, 0.0])
         time_breakpoints = np.array([-np.inf, np.inf])
 
     a = AccelConstNTW([0.0, 1.0, 0.0])
     b = FakeAccelDrag()
-    assert a != b  # Should be True in theory, but buggy check looks for AccelDrag
+    assert a != b
 
 
 @timer

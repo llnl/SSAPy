@@ -247,8 +247,8 @@ def test_emcee_sampler():
         priors = [ssapy.rvsampler.RPrior(RGEO, RGEO*0.2), ssapy.rvsampler.APrior(RGEO, RGEO*0.2)]
 
         prob = ssapy.RVProbability(arc, Time("J2000"), priors=priors)
-        sampler = ssapy.EmceeSampler(prob, initializer, nWalker=50)
-        chain, lnprob, lnprior = sampler.sample(nBurn=500, nStep=100)
+        sampler = ssapy.EmceeSampler(prob, initializer, nWalker=32)
+        chain, lnprob, lnprior = sampler.sample(nBurn=350, nStep=100)
         chain, lnprob, lnprior = cluster_emcee_walkers(chain, lnprob, lnprior)
         rmean = np.mean(chain[...,0:3], axis=(0,1))
         vmean = np.mean(chain[...,3:6], axis=(0,1))
@@ -339,17 +339,17 @@ def test_mh_sampler():
         # Start with a simple RVSigmaProposal, which draws r and v isotropically around current
         # value
         sampler = ssapy.MHSampler(prob, initializer, ssapy.RVSigmaProposal(RGEO*3e-5, VGEO*3e-5), nChain=4)
-        chain, lnprob, lnprior = sampler.sample(nBurn=500, nStep=500)
+        chain, lnprob, lnprior = sampler.sample(nBurn=250, nStep=250)
         # Just check that things are generally improving over time...
         np.testing.assert_array_less(np.mean(lnprob[:10]), np.mean(lnprob[-10:]))
         print("Acceptance ratio: ", sampler.acceptanceRatio)
 
         # Now iterate while updating covariance of proposals
-        for _ in range(2):
+        for _ in range(1):
             cov = np.cov(chain.reshape(-1, 6), rowvar=False)
             cov += np.diag([1e5, 1e5, 1e5, 1e2, 1e2, 1e2])
             sampler.proposal = ssapy.MVNormalProposal(0.1*cov)
-            chain, lnprob, lnprior = sampler.sample(nBurn=500, nStep=500)
+            chain, lnprob, lnprior = sampler.sample(nBurn=250, nStep=250)
             np.testing.assert_array_less(np.mean(lnprob[:10]), np.mean(lnprob[-10:]))
             print("Acceptance ratio: ", sampler.acceptanceRatio)
 

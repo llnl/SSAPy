@@ -1,12 +1,18 @@
 import numpy as np
 from astropy.time import Time
 import astropy.units as u
+from pathlib import Path
 
 import ssapy
 from ssapy import utils
 from ssapy.utils import normed
 from .ssapy_test_helpers import checkSphere, timer
-from ssapy import utils
+
+
+def test_find_file_without_extension_finds_existing_file():
+    path = utils.find_file("pyproject.toml")
+    assert Path(path).name == "pyproject.toml"
+
 
 def test_wrap_and_num_wraps():
     angles = np.array([4, -4, np.pi * 3])

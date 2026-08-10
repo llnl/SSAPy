@@ -149,7 +149,7 @@ jobs:
     - name: Debug Python environment
       run: python -c "import ssapy; print('ssapy imported successfully')"
     - name: Build documentation
-      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.12
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
       run: |
         pip install -r docs/requirements.txt
 
@@ -170,7 +170,7 @@ jobs:
         cd ..
 
     - name: Deploy documentation
-      if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'release') && matrix.os == 'ubuntu-latest' && matrix.python-version == 3.12
+      if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'release') && matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
       uses: crazy-max/ghaction-github-pages@v4
       with:
         target_branch: gh-pages

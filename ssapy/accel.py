@@ -6,7 +6,7 @@ import numpy as np
 
 from .constants import EARTH_MU, EARTH_RADIUS
 from .utils import norm, sunPos, _gpsToTT, ntw_to_r
-from .ellipsoid import Ellipsoid
+from .ellipsoid import Ellipsoid as _Ellipsoid
 
 try:
     import erfa
@@ -128,7 +128,7 @@ class AccelProd(Accel):
 
 
 class AccelKepler(Accel):
-    """Keplerian acceleration.  I.e., force is proportional to 1/|r|^2.
+    """Keplerian acceleration.  I.e., force is proportional to ``1 / |r|^2``.
 
     Parameters
     ----------
@@ -363,7 +363,7 @@ class AccelDrag(Accel):
         self._t = None
         super().__init__()
         self.defaultkw = defaultkw
-        ellip = Ellipsoid()
+        ellip = _Ellipsoid()
         self.atm = _ssapy.HarrisPriester(ellip, n=6.0)
 
     def __call__(self, r, v, t, _T=None, **kwargs):
@@ -474,6 +474,6 @@ class AccelConstNTW(Accel):
         ))
 
     def __eq__(self, rhs):
-        if not isinstance(rhs, AccelDrag):
+        if not isinstance(rhs, AccelConstNTW):
             return False
         return (np.all(self.accelntw == rhs.accelntw) and np.all(self.time_breakpoints == rhs.time_breakpoints))

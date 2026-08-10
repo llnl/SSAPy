@@ -93,6 +93,7 @@ def test_path_b_fit_improves_residual():
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         orb0, _ = _sgp4_reference_arc(ISS, [0.0])
+        original_propkw = dict(orb0.propkw)
         t0 = orb0.t
         times = t0 + np.arange(0, 3 * 60 + 1, 30) * 60.0   # 3 h, 30-min steps
         _, r_ref = _sgp4_reference_arc(ISS, times)
@@ -100,6 +101,8 @@ def test_path_b_fit_improves_residual():
     assert res["rms_after"] <= res["rms_before"]
     assert 1e-4 < res["cd_a_over_m"] < 1e-1
     assert set(res["propkw"]) == {"area", "mass", "CD", "CR"}
+    assert orb0.propkw == original_propkw
+    assert res["orbit"] is not orb0
 
 
 def _numerical_truth_arc(propagator, cd_true, hours=6, step_min=60):

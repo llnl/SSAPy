@@ -36,6 +36,34 @@ priorvolume = dict(rv=(2*40*10**6)**3*(2*7000)**3*1.0,
 
                    )
 
+__all__ = [
+    "CircVelocityPrior",
+    "GaussPrior",
+    "Hypothesis",
+    "MHT",
+    "Track",
+    "TrackBase",
+    "TrackGauss",
+    "VolumeDistancePrior",
+    "ZeroRadialVelocityPrior",
+    "combinatoric_lnprior",
+    "data_for_satellite",
+    "fit_arc",
+    "fit_arc_blind",
+    "fit_arc_blind_via_track",
+    "fit_arc_with_gaussian_prior",
+    "iterate_mht",
+    "make_optimizer",
+    "make_param_guess",
+    "orbit_to_param",
+    "param_to_orbit",
+    "radeczn",
+    "summarize_tracklet",
+    "summarize_tracklets",
+    "time_ordered_satIDs",
+    "wrap_angle_difference",
+]
+
 # dead tracks: want to prune hypotheses that differ only by dead tracks.
 # every time a track dies, do the N^2 search for equality among all of the
 # hypotheses it includes?
@@ -86,12 +114,13 @@ class CircVelocityPrior:
 
 
 class ZeroRadialVelocityPrior:
-    """Gaussian prior that v_R = 0.
+    """Gaussian prior that ``v_R = 0``.
 
     Parameters
     ----------
     sigma : float
-        Prior standard deviation on np.dot(v, r)/|v|/|r|, dimensionless.
+        Prior standard deviation on ``np.dot(v, r) / |v| / |r|``,
+        dimensionless.
 
     Attributes
     ----------
@@ -407,7 +436,7 @@ def fit_arc_blind(arc, verbose=False, mode='rv', priors=None, propagator=None,
         any extra keywords to pass to the optimizer
     factor : float
         factor for geometrically increasing time baseline (default 2)
-    **kw : dict
+    kwargs : dict
         any extra keywords to pass to optimizer.optimize()
     """
     assert factor >= 1, "Geometric factor must be greater than or equal to 1"
@@ -504,7 +533,7 @@ def fit_arc(arc, guess,
         Names of orbit attributes used for propagation (mass, area, ...)
     optimizerkw : dict
         any extra keywords to pass to the optimizer
-    **kw : dict
+    kwargs : dict
         any extra keywords to pass to optimizer.optimize()
     """
     if priors is None:
@@ -575,7 +604,7 @@ def fit_arc_with_gaussian_prior(arc, mu, cinvcholfac, verbose=False,
         fit (mass, area, cr, cd, ...)
     optimizerkw : dict
         any extra keywords to pass to the optimizer
-    **kw : dict
+    kwargs : dict
         any extra keywords to pass to optimizer.optimize()
     """
     nparam = 6 + (0 if orbitattr is None else len(orbitattr))
@@ -650,43 +679,26 @@ def wrap_angle_difference(dl, wrap, center=0.5):
 
 
 def radeczn(orbit, arc, **kw):
-    """
-    Computes right ascension, declination, range, proper motions, range rate, and mean anomaly wrap for a given orbit and observation arc.
+    """Compute right ascension, declination, range, rates, and anomaly wraps.
 
-    Parameters:
-    -----------
+    Parameters
+    ----------
     orbit : object or list of objects
-        Orbital object(s) containing orbital parameters. Must include:
-        - `meanMotion`: Mean motion of the orbit (scalar or array-like).
-        - `t`: Epoch time of the orbit.
-        - `r` (optional): Orbital position vector (used to determine scalar or array-like orbit).
+        Orbital object(s) containing orbital parameters. Must include
+        ``meanMotion`` and ``t``. May include ``r`` to determine scalar or
+        array-like orbit handling.
     arc : structured array
-        Observation arc containing time and station data. Must include:
-        - `'time'`: Observation times (assumed to have a `.gps` attribute).
-        - `'rStation_GCRF'`: Position of the station in the GCRF frame (in meters).
-        - `'vStation_GCRF'`: Velocity of the station in the GCRF frame (in meters per second).
-        - `'satID'` (optional): Satellite IDs (used to determine scalar or array-like arc).
-    **kw : dict, optional
-        Additional keyword arguments to pass to the `ssapy.compute.radec` function.
+        Observation arc containing ``time``, ``rStation_GCRF``, and
+        ``vStation_GCRF`` fields. May include ``satID`` to determine scalar or
+        array-like arc handling.
+    kwargs : dict, optional
+        Additional keyword arguments passed to :func:`ssapy.compute.radec`.
 
-    Returns:
-    --------
+    Returns
+    -------
     tuple
-        A tuple containing the following computed values:
-        - `rr` : ndarray
-            Right ascension values (in radians).
-        - `dd` : ndarray
-            Declination values (in radians).
-        - `zz` : ndarray
-            Range values (distance from observer to object, in meters).
-        - `pmrr` : ndarray
-            Proper motion in right ascension (in radians per second).
-        - `pmdd` : ndarray
-            Proper motion in declination (in radians per second).
-        - `dzzdt` : ndarray
-            Range rate (rate of change of range, in meters per second).
-        - `nwrap` : ndarray
-            Mean anomaly wrap values, computed as `meanMotion * (arc['time'].gps - orbit.t)`.
+        Tuple containing ``rr``, ``dd``, ``zz``, ``pmrr``, ``pmdd``, ``dzzdt``,
+        and ``nwrap`` arrays.
     """
     
     rr, dd, zz, pmrr, pmdd, dzzdt = ssapy.compute.radec(
@@ -1724,7 +1736,7 @@ class MHT:
             Last tracklet to consider
         verbose : bool
             print extra progress information while running
-        **kw : dict
+        kwargs : dict
             extra keyword arguments to pass to MHT.prune.
         """
         tsatid = self.satids
@@ -2204,7 +2216,7 @@ def iterate_mht(data, oldmht, nminlength=20, trimends=2, **kw):
         Minimum length of satellite tracks to be included in the new hypotheses. Tracks shorter than this length are excluded. Default is 20.
     trimends : int, optional
         Number of observations to trim from both ends of each track. This helps refine the tracks by removing edge data. Default is 2.
-    **kw : dict
+    kwargs : dict
         Additional keyword arguments passed to the `MHT.run()` method.
 
     Returns:

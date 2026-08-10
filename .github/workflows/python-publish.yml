@@ -28,11 +28,14 @@ jobs:
           sudo apt-get install build-essential git git-lfs cmake
           git lfs install
           git lfs pull
-          python -m pip install --upgrade pip build
+          python -m pip install --upgrade pip build twine
           python -m pip install -r requirements.txt
           
       - name: Build source distribution
         run: python -m build --sdist
+
+      - name: Check distributions
+        run: python -m twine check dist/*
         
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1

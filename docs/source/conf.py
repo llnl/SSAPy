@@ -11,6 +11,8 @@ import ssapy
 project = 'SSAPy'
 copyright = '2018, Lawrence Livermore National Security, LLC'
 author = 'Michael Schneider, Josh Meyers, Edward Schlafly, Julia Ebert, Travis Yeager, et al.'
+version = ssapy.__version__
+release = ssapy.__version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

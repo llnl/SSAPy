@@ -1,9 +1,8 @@
 import numpy as np
 from astropy.time import Time
 import pytest
-import importlib
 import sys
-import types
+import subprocess
 
 from ssapy.compute import groundTrack, radecRateObsToRV
 
@@ -50,24 +49,20 @@ def test_radecRateObsToRV_requires_obsPos():
         radecRateObsToRV(ra, dec, slantRange)
 
 
-MODULE_NAME = "ssapy.compute"
-
-
-@pytest.fixture(autouse=True)
-def cleanup_module_cache():
-    if MODULE_NAME in sys.modules:
-        del sys.modules[MODULE_NAME]
-    yield
-    if MODULE_NAME in sys.modules:
-        del sys.modules[MODULE_NAME]
-
-
 def test_import_erfa_present():
-    fake_erfa = types.ModuleType("erfa")
-    sys.modules["erfa"] = fake_erfa
-    sys.modules.pop("astropy._erfa", None)
+    code = """
+import sys
+import types
+import astropy.coordinates
+import astropy.time
+import astropy.units
 
-    import ssapy.compute
-    importlib.reload(ssapy.compute)
+fake_erfa = types.ModuleType("erfa")
+sys.modules["erfa"] = fake_erfa
+sys.modules.pop("astropy._erfa", None)
 
-    assert ssapy.compute.erfa is fake_erfa
+import ssapy.compute
+
+assert ssapy.compute.erfa is fake_erfa
+"""
+    subprocess.run([sys.executable, "-c", code], check=True)
