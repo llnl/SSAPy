@@ -821,8 +821,11 @@ def ntw_to_r(r, v, ntw, relative=False):
     tvec = normed(v)
     wvec = normed(np.cross(r, v))
     nvec = normed(np.cross(tvec, wvec))
-    mat = np.array([nvec, tvec, wvec])
-    ret = np.dot(ntw, mat)
+    ret = (
+        ntw[..., 0, None] * nvec
+        + ntw[..., 1, None] * tvec
+        + ntw[..., 2, None] * wvec
+    )
     if not relative:
         ret += r
     return ret
@@ -1097,7 +1100,7 @@ def sigma_points(f, x, C, scale=1, fixed_dimensions=None):
     if fixed_dimensions is None:
         fixed = np.zeros(len(x), dtype='bool')
     else:
-        fixed = np.array(fixed_dimensions).astype('bool') is not False
+        fixed = np.array(fixed_dimensions, dtype=bool)
     free = ~fixed
     # sqrtC = linalg.sqrtm(C)
     sqrtdiag = np.sqrt(np.diag(C))
@@ -1142,7 +1145,7 @@ def unscented_transform_mean_covar(f, x, C, scale=1):
     fsigma = sigma_points(f, x, C, scale=scale)
     mean = fsigma[0]
     dmean = fsigma[1:, ...] - mean[:, ...]
-    covar = np.cov(dmean, ddof=0)
+    covar = np.cov(dmean, rowvar=False, ddof=0)
     return mean, covar
 
 

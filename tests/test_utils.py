@@ -1,9 +1,11 @@
 import numpy as np
+import pytest
 from astropy.time import Time
 import astropy.units as u
 from pathlib import Path
 
 import ssapy
+from ssapy.constants import EARTH_RADIUS
 from ssapy import utils
 from ssapy.utils import normed
 from .ssapy_test_helpers import checkSphere, timer
@@ -20,6 +22,13 @@ def test_wrap_and_num_wraps():
     assert np.all((-np.pi <= wrapped) & (wrapped <= np.pi))
 
     assert utils.num_wraps(np.pi * 5) == 2
+    assert utils.num_wraps(720 * u.deg) == 2
+
+
+def test_emcee_version_parser_handles_unknown_versions():
+    assert utils._emcee_version_before_3("2.2.1") is True
+    assert utils._emcee_version_before_3("3.0.0") is False
+    assert utils._emcee_version_before_3("not-a-version") is False
 
 
 def test_norm_functions():
@@ -75,6 +84,24 @@ def test_lru_cache():
     assert cached(2) == 4
     assert len(hits) == 1  # Cached
 
+    cached(3)
+    cached.resize(3)
+    cached(4)
+    assert len(cached.cache) == 3
+    cached.resize(1)
+    assert len(cached.cache) == 1
+    cached.resize(1)
+    assert len(cached.cache) == 1
+    with pytest.raises(ValueError):
+        cached.resize(-1)
+
+    uncached = utils.LRU_Cache(f, maxsize=0)
+    assert uncached(5) == 10
+    assert uncached(5) == 10
+    assert hits[-2:] == [5, 5]
+    with pytest.raises(ValueError):
+        utils.LRU_Cache(f, maxsize=-1)
+
 
 def test_lazy_property():
     class Foo:
@@ -82,9 +109,125 @@ def test_lazy_property():
         def val(self):
             return 42
     f = Foo()
+    assert isinstance(Foo.__dict__['val'].__get__(None, Foo), utils.lazy_property)
     assert f.val == 42
     f.__dict__['val'] = 100
     assert f.val == 100
+
+
+def test_sigma_and_unscented_branches():
+    np.random.seed(0)
+    x = np.array([1.0, 2.0])
+    C = np.diag([4.0, 9.0])
+    samples = utils.sample_points(x, C, 5, sqrt=True)
+    assert samples.shape == (5, 2)
+
+    sigma = utils.sigma_points(None, np.array([1.0, 2.0, 3.0]), np.eye(2), fixed_dimensions=[False, True, False])
+    assert sigma.shape == (5, 3)
+    np.testing.assert_allclose(sigma[:, 1], 2.0)
+
+    mean, covar = utils.unscented_transform_mean_covar(lambda pts: pts, x, np.eye(2))
+    np.testing.assert_allclose(mean, x)
+    assert covar.shape == (2, 2)
+
+
+def test_ntw_cartesian_round_trip():
+    r = np.array([[7000.0, 0.0, 0.0]])
+    v = np.array([[0.0, 7.5, 1.0]])
+    offset = np.array([[5.0, 10.0, 15.0]])
+
+    ntw = utils.rv_to_ntw(r, v, r + offset)
+    np.testing.assert_allclose(utils.ntw_to_r(r, v, ntw), r + offset)
+    np.testing.assert_allclose(utils.ntw_to_r(r, v, ntw, relative=True), offset)
+
+
+def test_small_coordinate_and_angle_helpers(capsys):
+    np.testing.assert_allclose(utils.unit_vector(np.array([3.0, 4.0, 0.0])), [0.6, 0.8, 0.0])
+    np.testing.assert_allclose(utils.get_angle([1, 0, 0], [0, 0, 0], [0, 1, 0]), [np.pi / 2])
+    assert np.isclose(utils.dms_to_rad("30d00m00s"), np.pi / 6)
+    np.testing.assert_allclose(utils.dms_to_deg(["30d00m00s", "-30d00m00s"]), [30.0, -30.0])
+    assert utils.rad0to2pi(-np.pi / 2) == 3 * np.pi / 2
+    assert utils.deg0to360([-10, 0, 370]) == [350, 0, 10]
+    assert utils.deg0to360(-10) == 350
+    assert utils.deg0to360array([-10, 370]) == [350, 10]
+    assert utils.deg90to90([-100, 100, 45]) == [-10, 10, 45]
+    assert utils.deg90to90(-100) == -10
+    assert utils.deg90to90array([100, -100]) == [10, 80]
+
+    az, el, radius = utils.cart2sph_deg(1.0, 1.0, 1.0)
+    assert np.isclose(az, 45.0)
+    assert np.isclose(el, 35.264389682754654)
+    assert np.isclose(radius, np.sqrt(3.0))
+    cyl_radius, theta, z = utils.cart_to_cyl(1.0, 1.0, 2.0)
+    assert np.isclose(cyl_radius, np.sqrt(2.0))
+    assert np.isclose(theta, np.pi / 4)
+    assert z == 2.0
+
+    assert np.isclose(utils.lonlat_distance(0.0, 0.0, 0.0, np.pi / 2), EARTH_RADIUS * np.pi / 2)
+    assert utils.altitude_to_zenithangle(30.0) == 60.0
+    assert utils.zenithangle_to_altitude(60.0) == 30.0
+    assert np.isclose(utils.altitude_to_zenithangle(np.pi / 6, deg=False), np.pi / 3)
+    assert np.isclose(utils.zenithangle_to_altitude(np.pi / 3, deg=False), np.pi / 6)
+    assert utils.rightascension_to_hourangle(30.0, 2.0) == "0:0:0"
+    assert utils.rightascension_to_hourangle("02:00:00", "01:00:00").count(":") == 2
+
+    assert utils.dms_to_dd("12:30:00") == 12.5
+    assert utils.dms_to_dd(["12:30:00", "-12:30:00"]) == [12.5, -12.5]
+    assert utils.dd_to_dms(-12.5) == "-12:30:0"
+    assert utils.hms_to_dd("12:00:00") == 180.0
+    assert utils.hms_to_dd(["12:00:00", "01:30:00"]) == [180.0, 22.5]
+    assert utils.dd_to_hms(-180.0) == "12:0:0"
+    assert "cannot be negative" in capsys.readouterr().out
+
+
+def test_ecliptic_equatorial_helpers_and_class_extension():
+    xyz = (1.0, 2.0, 3.0)
+    ecliptic = utils.equatorial_xyz_to_ecliptic_xyz(*xyz)
+    np.testing.assert_allclose(utils.ecliptic_xyz_to_equatorial_xyz(*ecliptic), xyz)
+
+    lon, lat = utils.xyz_to_ecliptic(0.0, 1.0, 0.0, degrees=True)
+    assert np.isclose(lon, 90.0)
+    assert np.isclose(lat, 0.0)
+    ra, dec = utils.xyz_to_equatorial(0.0, 1.0, 0.0, degrees=True)
+    assert np.isclose(ra, 90.0)
+    assert np.isclose(dec, 0.0)
+    ra2, dec2 = utils.ecliptic_xyz_to_equatorial(1.0, 0.0, 0.0, degrees=True)
+    assert np.isclose(ra2, 0.0)
+    assert np.isclose(dec2, 0.0)
+    lon2, lat2 = utils.equatorial_to_ecliptic(0.0, 0.0, degrees=True)
+    assert np.isclose(lon2, 0.0)
+    assert np.isclose(lat2, 0.0)
+    ra3, dec3 = utils.ecliptic_to_equatorial(0.0, 0.0, degrees=True)
+    assert np.isclose(ra3, 0.0)
+    assert np.isclose(dec3, 0.0)
+
+    assert utils.isAttributeSafeToTransfer("__doc__", None) is False
+    assert utils.isAttributeSafeToTransfer("new_method", object()) is True
+
+    class _ContinueClassTarget:
+        existing = "kept"
+
+    setattr(__import__(__name__, fromlist=["_ContinueClassTarget"]), "_ContinueClassTarget", _ContinueClassTarget)
+
+    @utils.continueClass
+    class _ContinueClassTarget:
+        @classmethod
+        def added(cls):
+            return cls.existing
+
+    assert _ContinueClassTarget.added() == "kept"
+
+
+def test_gps_to_tt_and_interpolate_points_between():
+    t = Time(0.0, format="gps")
+    assert np.isclose(utils._gpsToTT(t), utils._gpsToTT(0.0))
+
+    points = np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+    interpolated = utils.interpolate_points_between(points, 2)
+    np.testing.assert_allclose(
+        interpolated,
+        [[1.0, 2.0, 3.0], [1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [4.0, 5.0, 6.0], [4.0, 5.0, 6.0]],
+    )
 
 
 @timer

@@ -7,6 +7,29 @@ from astropy.table import QTable
 import ssapy
 from ssapy.constants import RGEO, VGEO
 
+
+class _FakeIOD:
+    def __init__(self, name, lnlike_by_theta=None):
+        self.name = name
+        self.lnlike_by_theta = lnlike_by_theta or {}
+        self.fused = []
+        self.reset = False
+        self.particles = np.array([[float(name), float(name) + 1.0, float(name) + 2.0]])
+        self.ln_wts = np.array([0.0])
+
+    @property
+    def lnlike(self):
+        return lambda theta: self.lnlike_by_theta.get(theta, -1.0)
+
+    def draw_orbit(self):
+        return f"theta-{self.name}"
+
+    def fuse(self, other):
+        self.fused.append(other.name)
+
+    def reset_to_pseudo_prior(self):
+        self.reset = True
+
 def _create_iods_small(num_epochs=2, num_obs_per_track=3, nBurn=10, nStep=10):
     from ssapy.rvsampler import RPrior, APrior
     np.random.seed(42)
@@ -51,3 +74,84 @@ def test_model_selector_params_normalize():
     p.normalize()
     for i in range(3):
         assert np.isclose(np.sum(p[i]), 1.0)
+
+
+def test_selector_params_repr_indexing_and_binary_helpers():
+    params = ssapy.ModelSelectorParams(4, 4, init_val=2.0)
+    np.testing.assert_allclose(params.params, np.tril(np.ones((4, 4)) * 2.0))
+    np.testing.assert_allclose(params[0], [2.0])
+    params[2] = [0.1, 0.2, 0.7]
+    np.testing.assert_allclose(params[2], [0.1, 0.2, 0.7])
+    assert "2.000" in repr(params)
+
+    selectors = ssapy.BinarySelectorParams(3, 3, init_value=0, dtype=int)
+    selectors.params[:] = [[1, 0, 0], [1, 0, 0], [0, 0, 0]]
+
+    assert repr(selectors).splitlines()[0] == "1\t0\t0"
+    np.testing.assert_array_equal(selectors.get_linked_track_indices(0), [0, 1])
+    np.testing.assert_array_equal(selectors.get_unlinked_track_indices(), [1, 2])
+
+
+def test_linker_lightweight_state_transitions(tmp_path):
+    iods = [_FakeIOD(0), _FakeIOD(1), _FakeIOD(2)]
+    linker = ssapy.Linker(iods, num_orbits=3)
+    default_linker = ssapy.Linker(iods[:2])
+
+    assert "Linker(num_tracks=3, num_orbits=3)" in repr(linker)
+    np.testing.assert_array_equal(linker.orbit_selectors.params[:, 0], [1, 1, 1])
+    assert default_linker.num_orbits == 2
+
+    np.random.seed(0)
+    p_orbit = linker.sample_Porbit_conditional_dist(2)
+    assert p_orbit.shape == (3,)
+    assert np.isclose(np.sum(p_orbit), 1.0)
+
+    linker.iods[1].lnlike_by_theta = {"theta-0": -1000.0, "theta-1": -1001.0}
+    np.random.seed(0)
+    selector = linker.sample_orbit_selectors_from_data_conditional(1, verbose=False)
+    assert selector.shape == (2,)
+    assert np.sum(selector) == 1
+
+    np.random.seed(0)
+    selector = linker.sample_orbit_selectors_from_data_conditional(1, verbose=True)
+    assert selector.shape == (2,)
+    assert np.sum(selector) == 1
+
+    linker.iods[1].lnlike_by_theta = {"theta-0": 0.0, "theta-1": -5.0}
+    np.random.seed(0)
+    selector = linker.sample_orbit_selectors_from_data_conditional(1, verbose=False)
+    assert selector.shape == (2,)
+    assert np.sum(selector) == 1
+
+    linker.orbit_selectors.params[:] = [[1, 0, 0], [1, 0, 0], [0, 0, 0]]
+    assert linker.update_orbit_parameters() is None
+    assert iods[0].fused == [1]
+    assert iods[1].reset is True
+    assert iods[2].reset is True
+
+    out = tmp_path / "link_step"
+    linker.save_step(str(out))
+    assert (tmp_path / "link_step_orbit_selectors.txt").exists()
+    assert (tmp_path / "link_step_p_orbit.txt").exists()
+    assert (tmp_path / "link_step_particles_0.txt").exists()
+
+    calls = []
+
+    def fake_selector(track_ndx, verbose=True):
+        selector = np.zeros(track_ndx + 1, dtype=int)
+        selector[0] = 1
+        return selector
+
+    def fake_p_orbit(track_ndx):
+        return np.ones(track_ndx + 1) / (track_ndx + 1)
+
+    linker.sample_orbit_selectors_from_data_conditional = fake_selector
+    linker.sample_Porbit_conditional_dist = fake_p_orbit
+    linker.update_orbit_parameters = lambda: calls.append("update")
+    assert linker.update_params_using_carlin_chib(verbose=True) is None
+    assert calls == ["update"]
+
+    calls = []
+    linker.update_params_using_carlin_chib = lambda: calls.append("step")
+    assert linker.sample(nStep=3) is None
+    assert calls == ["step", "step", "step"]
