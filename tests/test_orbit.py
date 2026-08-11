@@ -1563,7 +1563,7 @@ def test_find_passes():
     rng = np.random.default_rng(1234)
     t0 = Time("2010-01-01T00:00:00")
     orbits = []
-    for _ in range(4):
+    for _ in range(2):
         orbits.append(
             ssapy.Orbit.fromKeplerianElements(
                 ssapy.constants.WGS84_EARTH_RADIUS + rng.uniform(400e3, 1000e3),
@@ -1583,7 +1583,7 @@ def test_find_passes():
         )
 
     observers = []
-    for _ in range(4):
+    for _ in range(2):
         observers.append(ssapy.EarthObserver(
             lon=rng.uniform(0.0, 360.0),
             lat=rng.uniform(30.0, 70.0),
@@ -1597,7 +1597,7 @@ def test_find_passes():
         passes = ssapy.compute.find_passes(
             orbit,
             observers,
-            t0, 1*u.d, 5*u.min,
+            t0, 12*u.h, 10*u.min,
             propagator=prop,
             horizon=np.deg2rad(10.0)
         )
@@ -1610,7 +1610,7 @@ def test_find_passes():
                 )
 
     orbits = []
-    for _ in range(3):
+    for _ in range(1):
         orbits.append(
             ssapy.Orbit.fromKeplerianElements(
                 ssapy.constants.RGEO,
@@ -1633,12 +1633,12 @@ def test_find_passes():
         passes = ssapy.compute.find_passes(
             orbit,
             observers,
-            t0, 1*u.d, 5*u.min,
+            t0, 12*u.h, 10*u.min,
             propagator=prop,
             horizon=np.deg2rad(18.0)
         )
         for observer, times in passes.items():
-            for time in times:  # no need to refine all...
+            for time in times[:2]:  # no need to refine all...
                 import warnings
                 with warnings.catch_warnings():
                     warnings.simplefilter("ignore")

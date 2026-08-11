@@ -1,5 +1,5 @@
 Name, Supported Versions, Notes, Requirement Reason
-Python, 3.8--3.11, , Interpreter
+Python, 3.10--3.12, , Interpreter
 C/C++ Compilers, , , Building software
 make, , , Build software
 git, , , Manage software repositories

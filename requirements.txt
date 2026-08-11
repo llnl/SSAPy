@@ -8,6 +8,7 @@ emcee
 lmfit
 sgp4
 pytest
+pytest-timeout
 tqdm
 build
 cibuildwheel

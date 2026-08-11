@@ -10,15 +10,32 @@ from .constants import EARTH_RADIUS, EARTH_MU
 from .propagator import KeplerianPropagator
 from .utils import (
     norm, normed, unitAngle3, LRU_Cache, lb_to_unit, sunPos, _gpsToTT,
-    iers_interp
+    iers_interp as _iers_interp
 )
 from .orbit import Orbit
-from .ellipsoid import Ellipsoid
+from .ellipsoid import Ellipsoid as _Ellipsoid
 
 try:
     import erfa
 except ImportError:
     import astropy._erfa as erfa
+
+
+__all__ = [
+    "HashableArrayContainer",
+    "altaz",
+    "dircos",
+    "earthShadowCoords",
+    "find_passes",
+    "groundTrack",
+    "quickAltAz",
+    "radec",
+    "radecRate",
+    "radecRateObsToRV",
+    "refine_pass",
+    "rv",
+    "rvObsToRaDecRate",
+]
 
 
 def _doSqueeze(squeezeOrbit, squeezeTime, *args):
@@ -353,7 +370,7 @@ def groundTrack(orbit, time, propagator=KeplerianPropagator(), format='geodetic'
 
     # Reverse the math in EarthObserver.getRV
     mjd_tt = _gpsToTT(time)
-    d_ut1_tt_mjd, pmx, pmy = iers_interp(time)
+    d_ut1_tt_mjd, pmx, pmy = _iers_interp(time)
     pn = erfa.pnm80(2400000.5, mjd_tt)
     gst = erfa.gst94(2400000.5, mjd_tt + d_ut1_tt_mjd)
     cg, sg = np.cos(gst), np.sin(gst)
@@ -384,7 +401,7 @@ def groundTrack(orbit, time, propagator=KeplerianPropagator(), format='geodetic'
     if format == 'cartesian':
         return _doSqueeze(squeezeOrbit, squeezeTime, x, y, z)
     elif format == 'geodetic':
-        ellipsoid = Ellipsoid()
+        ellipsoid = _Ellipsoid()
         lon, lat, height = ellipsoid.cartToSphere(x, y, z)
         return _doSqueeze(squeezeOrbit, squeezeTime, lon, lat, height)
 
@@ -1018,11 +1035,11 @@ def find_passes(
     Returns passes even if they occur during the daytime or if the satellite is
     not illuminated by the sun.  The only criterion for a successful "pass" is
     for the topocentric altitude of the satellite to be above the input
-    `horizon`.  More details about a pass can subsequently be obtained by
-    running the `refine_passes` function.
+    ``horizon``.  More details about a pass can subsequently be obtained by
+    running the ``refine_passes`` function.
 
-    Note this function is only suitable for `EarthObserver`s and not
-    `OrbitalObserver`s.
+    Note this function is only suitable for ``EarthObserver`` instances and not
+    ``OrbitalObserver`` instances.
 
     Parameters
     ----------
@@ -1052,8 +1069,8 @@ def find_passes(
     Returns
     -------
     passDict : dict
-        keys are `EarthObserver`s.
-        values are lists (possibly empty) of `astropy.Time` corresponding to
+        keys are ``EarthObserver`` instances.
+        values are lists (possibly empty) of ``astropy.Time`` corresponding to
         visible passes of the satellite.  Only one time is returned per pass,
         so multiple times in the return list indicate multiple distinct passes.
     """
@@ -1106,35 +1123,33 @@ def refine_pass(
         Minimum altitude for which to consider a satellite "visible".
         If float, then should be in radians.
     maxSpan : float or Quantity, optional
-        Maximum amount of time before or after `time` to search for
+        Maximum amount of time before or after ``time`` to search for
         rise/set times, or time of max altitude.
         If float, then seconds.
 
     Returns
     -------
     dict
-        Key/values are:
-        tStart : Time
-            Time at which Orbit rises above horizon
-        tEnd : Time
-            Time at which Orbit rises above horizon
-        tMaxAlt : Time
-            Time Orbit passes through maximum altitude
-        maxAlt : Quantity
-            Maximum altitude
-        duration : Quantity
-            Duration of pass.
-        illumAtStart : bool
-            Is satellite illuminated at `tStart`?
-        illumAtEnd : bool
-            Is satellite illuminated at `tEnd`?
-        tTerminator : Time or None
-            If illumAtStart != illumAtEnd, then time satellite passes through
-            cylindrical terminator shadow.  Otherwise, None.
-        sunAltStart : Quantity
-            Altitude of sun at `tStart`
-        sunAltEnd : Quantity
-            Altitude of sun at `tEnd`
+        Dictionary with these keys:
+
+        - ``tStart`` (:class:`~astropy.time.Time`): Time at which Orbit rises
+          above horizon.
+        - ``tEnd`` (:class:`~astropy.time.Time`): Time at which Orbit falls
+          below horizon.
+        - ``tMaxAlt`` (:class:`~astropy.time.Time`): Time Orbit passes through
+          maximum altitude.
+        - ``maxAlt`` (:class:`~astropy.units.Quantity`): Maximum altitude.
+        - ``duration`` (:class:`~astropy.units.Quantity`): Duration of pass.
+        - ``illumAtStart`` (bool): Whether satellite is illuminated at
+          ``tStart``.
+        - ``illumAtEnd`` (bool): Whether satellite is illuminated at ``tEnd``.
+        - ``tTerminator`` (:class:`~astropy.time.Time` or None): Time satellite
+          passes through the cylindrical terminator shadow when illumination
+          changes during the pass.
+        - ``sunAltStart`` (:class:`~astropy.units.Quantity`): Altitude of sun at
+          ``tStart``.
+        - ``sunAltEnd`` (:class:`~astropy.units.Quantity`): Altitude of sun at
+          ``tEnd``.
     """
     from scipy.optimize import bisect, minimize_scalar
     import astropy.units as u

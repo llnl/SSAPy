@@ -145,8 +145,9 @@ Computing Considerations
     - vectorization
     - orbit sampling and propagation for error estimation (rvsampling)
         - Linking observations together
+
 When propagating multiple orbits, make sure to leverage SSAPy's vectorization.
-For instance, the :class:`.Orbit` class can represents either a single scalar orbit or a vector of orbits.
+For instance, the :class:`.Orbit` class can represent either a single scalar orbit or a vector of orbits.
 
 .. _def-other-codes:
 

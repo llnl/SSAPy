@@ -195,6 +195,7 @@ def fit_drag(orbit, times, r_ref, propagator=None, harmonics=(4, 4),
         [m] at the seed vs the fit), and ``max_after`` (max error [m]).
     """
     from scipy.optimize import least_squares
+    from .orbit import Orbit
     from .compute import rv
 
     times = np.asarray(times, dtype=float)
@@ -207,9 +208,13 @@ def fit_drag(orbit, times, r_ref, propagator=None, harmonics=(4, 4),
         seed = bstar_to_cd_a_over_m(sat.bstar) if sat is not None else 0.02
         cd_a_over_m0 = seed if bounds[0] < seed < bounds[1] else 0.02
 
+    work_orbit = Orbit(np.asarray(orbit.r).copy(), np.asarray(orbit.v).copy(),
+                       orbit.t, mu=orbit.mu,
+                       propkw=dict(getattr(orbit, "propkw", {})))
+
     def _propagate(cd):
-        orbit.propkw = propkw_from_cd_a_over_m(cd)
-        r, _ = rv(orbit, times, propagator=propagator)  # one integration, dense
+        work_orbit.propkw = propkw_from_cd_a_over_m(cd)
+        r, _ = rv(work_orbit, times, propagator=propagator)
         return r
 
     def _rms3d(r):
@@ -233,8 +238,11 @@ def fit_drag(orbit, times, r_ref, propagator=None, harmonics=(4, 4),
     rms_after = float(np.sqrt(np.mean(err ** 2)))
 
     propkw = propkw_from_cd_a_over_m(cd_fit)
-    orbit.propkw = dict(propkw)
-    return dict(cd_a_over_m=cd_fit, propkw=propkw, orbit=orbit,
+    fitted_orbit = Orbit(np.asarray(orbit.r).copy(), np.asarray(orbit.v).copy(),
+                         orbit.t, mu=orbit.mu, propkw=dict(propkw))
+    if hasattr(orbit, "_sat"):
+        fitted_orbit._sat = orbit._sat
+    return dict(cd_a_over_m=cd_fit, propkw=propkw, orbit=fitted_orbit,
                 propagator=propagator, rms_before=rms_before,
                 rms_after=rms_after, max_after=float(err.max()))
 

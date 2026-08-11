@@ -26,7 +26,7 @@ into the cislunar regime.
 For higher-level utilities, convenience workflows, plotting tools, GCRF-to-ITRF
 coordinate conversion helpers, Lambertian magnitude / brightness calculations,
 and related extensions, see the companion project
-`SSAPy-Toolkit <https://github.com/llnl/SSAPy-Toolkit>`_.
+`SSAPy-Toolkit <https://github.com/llnl/SSAPy-Toolkit>`__.
 
 SSAPy includes:
 
@@ -66,7 +66,7 @@ SSAPy-Toolkit
 SSAPy provides the core high-fidelity propagation and modeling engine. Many
 higher-level, analysis-ready capabilities built on top of it live in the
 companion project
-`SSAPy-Toolkit <https://github.com/LLNL/SSAPy-Toolkit>`_ (sometimes abbreviated
+`SSAPy-Toolkit <https://github.com/LLNL/SSAPy-Toolkit>`__ (sometimes abbreviated
 *SSATK*), including:
 
 - Higher-level utilities and convenience workflows that wrap common SSAPy tasks
@@ -88,12 +88,12 @@ section of the documentation.
 
 If you are looking for higher-level utilities or plotting-oriented workflows,
 you may also want to install or explore
-`SSAPy-Toolkit <https://github.com/llnl/SSAPy-Toolkit>`_.
+`SSAPy-Toolkit <https://github.com/llnl/SSAPy-Toolkit>`__.
 
 Strict dependencies
 -------------------
 
-- `Python <http://docs.python-guide.org/en/latest/starting/installation/>`_ (3.8+)
+- `Python <http://docs.python-guide.org/en/latest/starting/installation/>`_ (3.10+)
 
 The following Python packages are installed automatically when you install SSAPy:
 
@@ -137,7 +137,7 @@ targeting the ``main`` branch of the
 For work that primarily concerns plotting, dashboards, convenience utilities,
 or higher-level workflows, please also consider whether the contribution belongs
 in the companion repository
-`SSAPy-Toolkit <https://github.com/llnl/SSAPy-Toolkit>`_.
+`SSAPy-Toolkit <https://github.com/llnl/SSAPy-Toolkit>`__.
 
 Your PR must pass SSAPy's required CI checks. For local testing guidance,
 documentation builds, and Git workflow tips, see the

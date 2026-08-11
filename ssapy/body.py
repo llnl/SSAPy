@@ -4,9 +4,9 @@ Classes representing celestial bodies.
 
 import erfa
 import numpy as np
-from .utils import _gpsToTT, iers_interp
+from .utils import _gpsToTT, iers_interp as _iers_interp
 from .constants import EARTH_MU, EARTH_RADIUS, MOON_MU, SUN_MU, MERCURY_MU, VENUS_MU, MARS_MU, JUPITER_MU, SATURN_MU, URANUS_MU, NEPTUNE_MU, MERCURY_RADIUS, VENUS_RADIUS, MARS_RADIUS, JUPITER_RADIUS, SATURN_RADIUS, URANUS_RADIUS, NEPTUNE_RADIUS
-from .gravity import HarmonicCoefficients
+from .gravity import HarmonicCoefficients as _HarmonicCoefficients
 
 
 class EarthOrientation:
@@ -40,7 +40,7 @@ class EarthOrientation:
             mjd_tt = _gpsToTT(t)
             if self._t is None or np.abs(t - self._t) > self.recalc_threshold:
                 self._t = t
-                self._dut1, _, _ = iers_interp(t)
+                self._dut1, _, _ = _iers_interp(t)
                 self._T = erfa.pnm80(2400000.5, mjd_tt)
             gst = erfa.gst94(2400000.5, mjd_tt + self._dut1)
             _E = erfa.rxr(erfa.rv2m([0, 0, gst]), self._T)
@@ -250,7 +250,7 @@ def get_body(name, model=None):
                 mu=EARTH_MU,
                 radius=EARTH_RADIUS,
                 orientation=EarthOrientation(),
-                harmonics=HarmonicCoefficients.fromEGM("EGM84")
+                harmonics=_HarmonicCoefficients.fromEGM("EGM84")
             )
         else:
             if model == "1984" or model == "84":
@@ -263,7 +263,7 @@ def get_body(name, model=None):
                 mu=EARTH_MU,
                 radius=EARTH_RADIUS,
                 orientation=EarthOrientation(),
-                harmonics=HarmonicCoefficients.fromEGM(model)
+                harmonics=_HarmonicCoefficients.fromEGM(model)
             )
     elif name.lower() == "moon":
         return Body(
@@ -271,7 +271,7 @@ def get_body(name, model=None):
             radius=1737.4e3,
             position=MoonPosition(),
             orientation=MoonOrientation(),
-            harmonics=HarmonicCoefficients.fromTAB("gggrx_1200a_sha.tab")
+            harmonics=_HarmonicCoefficients.fromTAB("gggrx_1200a_sha.tab")
         )
     elif name.lower() == "sun":
         return Body(

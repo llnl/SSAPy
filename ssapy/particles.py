@@ -161,11 +161,13 @@ class Particles:
     def reweight(self, epoch_particles):
         """ Reweight particles using cross-epoch likelihoods
 
-        The weights for the kth particle are,
+        The weights for the kth particle are::
+
             w_k = log(Prod_i L_(d_i | theta_k) / L(d_j | theta_k))
                 = Sum_{i /= j} log(L(d_i | theta_k))
-        where j is the current epoch, theta are the particle parameters, and d_i is the data from
-        epoch i.
+
+        where ``j`` is the current epoch, ``theta`` are the particle
+        parameters, and ``d_i`` is the data from epoch ``i``.
 
         Parameters
         ----------
@@ -205,7 +207,8 @@ class Particles:
 
         Returns
         -------
-            None. Side effect is to update the internal particles state.
+        None
+            Side effect is to update the internal particles state.
         """
         # TODO: Decide if resampling is really required here?
         self.particles, wts = utils.resample(self.particles,

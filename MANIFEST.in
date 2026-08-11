@@ -11,5 +11,4 @@ recursive-include pybind11/include/ *
 include pybind11/CMakeLists.txt
 include pybind11/LICENSE
 recursive-include pybind11/tools *
-recursive-include ssapy *.so
 recursive-include ssapy/data *

@@ -110,7 +110,7 @@ authors:
   orcid: "https://orcid.org/0000-0003-2632-572X"
   email: "golovich1@llnl.gov"
 title: "Space Situational Awareness for Python"
-version: 1.0
+version: 1.1.6
 doi: 10.11578/dc.20240417.1
 date-released: 2023-11-08
 url: "https://github.com/LLNL/SSAPy"

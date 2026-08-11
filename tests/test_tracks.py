@@ -3,16 +3,20 @@ from astropy.time import Time
 from astropy import units as u
 import math
 from functools import partial
+from types import SimpleNamespace
 import pytest
+from astropy.table import QTable
 
 import ssapy
+import ssapy.correlate_tracks as ct
 from ssapy.constants import EARTH_MU, RGEO
 from ssapy.correlate_tracks import (
     CircVelocityPrior, ZeroRadialVelocityPrior, GaussPrior, VolumeDistancePrior,
     orbit_to_param, make_param_guess, make_optimizer, fit_arc_blind, fit_arc,
     fit_arc_with_gaussian_prior, data_for_satellite, wrap_angle_difference,
     radeczn, param_to_orbit, Track, TrackGauss,TrackBase, MHT, summarize_tracklet,
-    summarize_tracklets, iterate_mht, fit_arc_blind_via_track, Hypothesis, time_ordered_satIDs
+    summarize_tracklets, iterate_mht, fit_arc_blind_via_track, Hypothesis,
+    time_ordered_satIDs, combinatoric_lnprior
 )
 from ssapy.orbit import Orbit
 from ssapy import propagator, rvsampler
@@ -104,6 +108,54 @@ def test_orbit_to_param_and_back(mode):
     np.testing.assert_allclose(recovered.v, original.v, atol=1e-6)
 
 
+def test_param_guess_and_orbitattr_branches():
+    orbit = sample_GEO_orbit(t=1000)
+    arc = QTable()
+    arc['time'] = Time([900.0, 1100.0], format='gps')
+    arc['ra'] = [0.1, 0.2] * u.rad
+    arc['dec'] = [0.3, 0.4] * u.rad
+    arc['rStation_GCRF'] = np.zeros((2, 3)) * u.m
+    arc['vStation_GCRF'] = np.zeros((2, 3)) * u.m / u.s
+
+    rvguess = np.hstack([orbit.r, orbit.v])
+    rv_guess = make_param_guess(rvguess, arc, mode='rv', orbitattr=['log10area', 'cr'])
+    assert rv_guess[-3:-1] == [-1, 1]
+    assert np.isclose(rv_guess[-1], 1000.0)
+
+    eq_guess = make_param_guess(rvguess, arc, mode='equinoctial')
+    assert len(eq_guess) == 7
+
+    angle_guess = make_param_guess(rvguess, arc, mode='angle')
+    assert len(angle_guess) == 13
+    with pytest.raises(ValueError, match='unrecognized mode'):
+        make_param_guess(rvguess, arc, mode='bad')
+
+    arc['pmra'] = [1e-6, 2e-6] * u.rad / u.s
+    pm_angle_guess = make_param_guess(rvguess, arc, mode='angle')
+    assert pm_angle_guess[6] == arc['time'][0].gps
+
+    with_attr = ssapy.Orbit(orbit.r, orbit.v, orbit.t, propkw={'area': 100.0, 'cr': 1.5})
+    param = orbit_to_param(with_attr, mode='rv', orbitattr=['log10area', 'cr'])
+    np.testing.assert_allclose(param[6:8], [2.0, 1.5])
+    recovered = param_to_orbit(param, mode='rv', orbitattr=['log10area', 'cr'])
+    assert recovered.propkw['area'] == 100.0
+    assert recovered.propkw['cr'] == 1.5
+
+    fitonly = orbit_to_param(with_attr, mode='rv', orbitattr=['log10area'], fitonly=True)
+    assert fitonly.shape == (7,)
+
+    r_station = np.zeros(3)
+    v_station = np.zeros(3)
+    angle_param = orbit_to_param(orbit, mode='angle', rStation=r_station, vStation=v_station)
+    angle_orbit = param_to_orbit(angle_param, mode='angle')
+    np.testing.assert_allclose(angle_orbit.r, orbit.r, rtol=0, atol=2e-6)
+    np.testing.assert_allclose(angle_orbit.v, orbit.v, rtol=0, atol=1e-6)
+    with pytest.raises(ValueError, match='unknown mode'):
+        orbit_to_param(orbit, mode='bad')
+    with pytest.raises(ValueError, match='unknown mode'):
+        param_to_orbit(param, mode='bad')
+
+
 @pytest.mark.parametrize("input_angle, wrap_range, center, expected", [
     (3, 2 * math.pi, 0.5, (3 + math.pi) % (2 * math.pi) - math.pi),
     (3, 360, 0.25, (3 + 0.25 * 360) % 360 - 0.25 * 360),
@@ -125,11 +177,19 @@ def test_circ_velocity_prior_properties():
     assert isinstance(prior, CircVelocityPrior)
     assert math.isclose(prior.sigma, 0.2)
 
+    orbit = sample_GEO_orbit(t=0)
+    chi = prior(orbit, distance=RGEO, chi=True)[0]
+    np.testing.assert_allclose(prior(orbit, distance=RGEO)[0], -0.5 * chi**2)
+
  
 def test_zero_radial_velocity_prior_properties():
     prior = ZeroRadialVelocityPrior(sigma=0.3)
     assert isinstance(prior, ZeroRadialVelocityPrior)
     assert math.isclose(prior.sigma, 0.3)
+
+    orbit = sample_GEO_orbit(t=0)
+    chi = prior(orbit, distance=RGEO, chi=True)[0]
+    np.testing.assert_allclose(prior(orbit, distance=RGEO)[0], -0.5 * chi**2)
 
  
 def test_gauss_prior_properties():
@@ -139,6 +199,9 @@ def test_gauss_prior_properties():
     prior = GaussPrior(mu, cinv, translator)
     assert np.array_equal(prior.mu, mu)
     assert np.array_equal(prior.cinvcholfac, cinv)
+    orbit = sample_LEO_orbit(t=0)
+    np.testing.assert_allclose(prior(orbit, chi=True), np.ones(6))
+    np.testing.assert_allclose(prior(orbit), -0.5 * np.ones(6))
 
  
 def test_volume_distance_prior_behavior():
@@ -146,3 +209,597 @@ def test_volume_distance_prior_behavior():
     orbit = sample_LEO_orbit(t=0)
     logprob = prior(orbit, 7000e3)
     assert isinstance(logprob, float)
+    assert prior(orbit, 7000e3, chi=True) >= 0.0
+
+
+def test_satellite_selection_and_time_ordering(sample_data):
+    selected = data_for_satellite(sample_data, [-1, 1, 3])
+    assert set(selected['satID']) <= {1, 3}
+    with pytest.raises(ValueError, match="satID 99 not found"):
+        data_for_satellite(sample_data, [99])
+
+    timed = QTable()
+    timed['satID'] = sample_data['satID']
+    timed['time'] = Time([t.gps for t in sample_data['time']], format='gps')
+    forward = time_ordered_satIDs(timed, order='forward')
+    backward, times = time_ordered_satIDs(timed, with_time=True, order='backward')
+    assert forward[0] == timed['satID'][np.argmin(timed['time'].gps)]
+    assert backward[0] == timed['satID'][np.argmax(timed['time'].gps)]
+    assert len(times) == len(backward)
+
+
+def test_radeczn_wrap_branches(monkeypatch):
+    arc = QTable()
+    arc['time'] = Time([10.0, 20.0], format='gps')
+    arc['rStation_GCRF'] = np.zeros((2, 3)) * u.m
+    arc['vStation_GCRF'] = np.zeros((2, 3)) * u.m / u.s
+    arc['satID'] = [1, 2]
+
+    def fake_radec(*args, **kwargs):
+        return tuple(np.arange(2.0) + i for i in range(6))
+
+    monkeypatch.setattr(ssapy.compute, 'radec', fake_radec)
+
+    class FakeOrbit:
+        def __init__(self, mean_motion, t):
+            self.meanMotion = mean_motion
+            self.t = t
+
+    out = radeczn([FakeOrbit(0.1, 0.0), FakeOrbit(0.2, 5.0)], arc)
+    assert len(out) == 7
+    np.testing.assert_allclose(out[-1][0], [1.0, 2.0])
+
+    class VectorOrbit:
+        meanMotion = np.array([0.1, 0.2])
+        t = np.array([0.0, 5.0])
+        r = np.zeros((2, 3))
+
+    out = radeczn(VectorOrbit(), arc)
+    assert out[-1].shape == (2, 2)
+    np.testing.assert_allclose(out[-1][1], [1.0, 3.0])
+
+
+def test_tracklet_summaries_and_combinatoric_prior():
+    one = QTable()
+    one['satID'] = [1]
+    one['time'] = Time([0.0], format='gps')
+    one['ra'] = [10.0] * u.deg
+    one['dec'] = [20.0] * u.deg
+    one['sigma'] = [1.0] * u.arcsec
+    one['rStation_GCRF'] = np.zeros((1, 3)) * u.m
+    one['vStation_GCRF'] = np.full((1, 3), np.nan) * u.m / u.s
+    meanpos, dmeanpos, pm, dpm = summarize_tracklet(one)
+    assert meanpos[0][0] == one['ra'][0]
+    assert dmeanpos[0][0] == one['sigma'][0]
+    assert pm == (0.0, 0.0)
+    assert dpm == (np.inf, np.inf)
+
+    many = QTable()
+    many['satID'] = [2, 2, 1, 1]
+    many['time'] = Time([10.0, 20.0, 0.0, 5.0], format='gps')
+    many['ra'] = [10.0, 10.001, 30.0, 30.001] * u.deg
+    many['dec'] = [20.0, 20.001, 40.0, 40.001] * u.deg
+    many['sigma'] = [1.0, 1.0, 2.0, 2.0] * u.arcsec
+    many['rStation_GCRF'] = np.array([[0, 0, 0], [10, 0, 0], [5, 0, 0], [7, 0, 0]], dtype=float) * u.m
+    many['vStation_GCRF'] = np.array([[np.nan, np.nan, np.nan], [np.nan, np.nan, np.nan], [1, 0, 0], [1, 0, 0]], dtype=float) * u.m / u.s
+    summary = summarize_tracklets(many, posuncfloor=1e-6 * u.deg, pmuncfloor=1e-9 * u.deg / u.s)
+    assert len(summary) == 2
+    for field in ['dra', 'ddec', 'pmra', 'pmdec', 'dpmra', 'dpmdec', 't_baseline']:
+        assert field in summary.colnames
+    assert np.all(summary['dra'] > 0 * u.deg)
+
+    assert np.isfinite(combinatoric_lnprior(nsat=10, ntrack=3, ndet=5))
+
+
+def test_hypothesis_bookkeeping_and_difference(capsys):
+    class FakeTrack:
+        def __init__(self, name, sat_ids, lnprob):
+            self.name = name
+            self.satIDs = sat_ids
+            self.lnprob = lnprob
+
+        def __repr__(self):
+            return f"FakeTrack({self.name})"
+
+    track_a = FakeTrack('a', [1, 2], -1.0)
+    track_b = FakeTrack('b', [3], -2.0)
+    track_c = FakeTrack('c', [4], -3.0)
+
+    hypothesis = Hypothesis([track_a], nsat=20)
+    assert hypothesis.ntracklet() == 2
+    assert 'Hypothesis with 1 tracks' in repr(hypothesis)
+    assert 'FakeTrack(a)' in hypothesis.summarize(verbose=True)
+
+    appended = Hypothesis.addto(hypothesis, track_b)
+    assert appended.tracks == [track_a, track_b]
+    replaced = Hypothesis.addto(appended, track_c, oldtrack=track_a)
+    assert replaced.tracks == [track_c, track_b]
+
+    replaced.difference(appended)
+    output = capsys.readouterr().out
+    assert 'Tracks only in 1' in output
+    assert 'Tracks only in 2' in output
+
+
+def _minimal_track_table(satids=(1,), gps=(0.0,), measurements=False):
+    table = QTable()
+    table['satID'] = np.asarray(satids)
+    table['time'] = Time(np.asarray(gps, dtype=float), format='gps')
+    table['rStation_GCRF'] = np.zeros((len(satids), 3)) * u.m
+    table['vStation_GCRF'] = np.zeros((len(satids), 3)) * u.m / u.s
+    if measurements:
+        table['ra'] = np.full(len(satids), 0.1) * u.rad
+        table['dec'] = np.full(len(satids), 0.2) * u.rad
+        table['pmra'] = np.full(len(satids), 1e-4) * u.rad / u.s
+        table['pmdec'] = np.full(len(satids), -2e-4) * u.rad / u.s
+        table['dra'] = np.full(len(satids), 1e-5) * u.rad
+        table['ddec'] = np.full(len(satids), 1e-5) * u.rad
+        table['dpmra'] = np.full(len(satids), 1e-7) * u.rad / u.s
+        table['dpmdec'] = np.full(len(satids), 1e-7) * u.rad / u.s
+    return table
+
+
+def _positive_sigma_cloud(center, delta=0.1):
+    sigma = [np.asarray(center, dtype=float)]
+    for i in range(6):
+        high = sigma[0].copy()
+        low = sigma[0].copy()
+        high[i] += delta
+        low[i] -= delta
+        sigma.extend([high, low])
+    return np.asarray(sigma)
+
+
+def test_trackbase_predict_keeps_fixed_epoch_dimension():
+    class LinearTrack(TrackBase):
+        def propagaterdz(self, param, arc0=None, return_nwrap=False):
+            self.seen_param = np.asarray(param)
+            rows = [param[:, 0], param[:, 1], param[:, 2], param[:, 3]]
+            if return_nwrap:
+                rows.append(param[:, 4])
+            return np.asarray(rows)
+
+    data = _minimal_track_table()
+    track = LinearTrack([1], data, volume=10.0)
+    track.param = np.array([0.1, 0.2, 1e-4, -2e-4, 3.0, 4.0, 100.0])
+    track.covar = np.eye(6) * 1e-4
+
+    mean, covar, sigma = track.predict(
+        data[0], return_sigma=True, return_nwrap=False)
+
+    np.testing.assert_allclose(mean, track.param[:4])
+    assert covar.shape == (4, 4)
+    assert sigma.shape == (4, 13)
+    np.testing.assert_allclose(track.seen_param[:, 6], 100.0)
+
+
+def test_trackbase_lnprob_gate_and_repr():
+    class GateTrack(TrackBase):
+        def predict(self, arc0, return_sigma=False, return_nwrap=True):
+            assert return_nwrap is True
+            mean = np.array([0.1, 0.2, 1e-4, -2e-4, 0.0])
+            covar = np.diag([1e-8, 1e-8, 1e-12, 1e-12, 0.25])
+            return mean, covar
+
+    data = _minimal_track_table(measurements=True)
+    track = GateTrack([1], data, volume=10.0)
+    track.chi2 = 2.0
+    track.covar = np.eye(6) * 0.25
+
+    determinant = np.prod(np.linalg.svd(2 * np.pi * track.covar)[1])
+    expected = -np.log(track.volume) + 0.5 * np.log(determinant) - 1.0
+    assert track.lnprob == pytest.approx(expected)
+    assert 'Track, chi2:' in repr(track)
+
+    chi2, nwrapsig = track.gate(data[0:1], return_nwrap=True)
+    assert chi2 == pytest.approx(0.0, abs=1e-20)
+    assert nwrapsig == pytest.approx(0.5)
+
+    broad = GateTrack([1], data, volume=10.0)
+    broad.chi2 = 0.0
+    broad.covar = np.full((6, 6), np.inf)
+    assert broad.lnprob == pytest.approx(-np.log(10.0))
+
+
+def test_track_uses_fitters_and_gaussian_approximation(monkeypatch):
+    data = _minimal_track_table([1, 2, 3, 4], [0.0, 10.0, 20.0, 30.0])
+    calls = []
+    param = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 0.0])
+
+    def fake_fit_arc_blind(arc, **kwargs):
+        calls.append(('blind', tuple(arc['satID']), kwargs['mode']))
+        return 4.0, param.copy(), SimpleNamespace(covar=np.eye(6), success=True)
+
+    def fake_fit_arc(arc, guess, **kwargs):
+        calls.append(('fit', tuple(arc['satID']), tuple(guess), kwargs['mode']))
+        return 5.0, param + 1.0, SimpleNamespace(covar=np.eye(6) * 2, success=True)
+
+    monkeypatch.setattr(ct, 'fit_arc_blind', fake_fit_arc_blind)
+    monkeypatch.setattr(ct, 'fit_arc', fake_fit_arc)
+
+    track = Track([1], data)
+    assert track.success is True
+    assert track.gaussian_approximation() is track
+
+    added = track.addto(2)
+    assert added.satIDs == [1, 2]
+    assert calls[-1][0] == 'fit'
+
+    long_track = Track([1, 2, 3, 4], data)
+    gaussian = long_track.gaussian_approximation()
+    assert isinstance(gaussian, TrackGauss)
+
+    replacement_propagator = object()
+    refit_gaussian = long_track.gaussian_approximation(
+        propagator=replacement_propagator)
+    assert isinstance(refit_gaussian, TrackGauss)
+    assert refit_gaussian.propagator is replacement_propagator
+    assert any(call[0] == 'blind' for call in calls)
+
+
+def test_track_missing_fit_covar_uses_parameter_sized_fallback(monkeypatch):
+    data = _minimal_track_table([1, 2, 3, 4], [0.0, 10.0, 20.0, 30.0])
+    param = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 0.0])
+
+    monkeypatch.setattr(
+        ct, 'fit_arc_blind',
+        lambda arc, **kwargs: (4.0, param.copy(), SimpleNamespace(success=True)))
+
+    track = Track([1, 2, 3, 4], data)
+    assert track.covar.shape == (6, 6)
+    assert np.all(~np.isfinite(track.covar))
+
+    gaussian = track.gaussian_approximation()
+    assert isinstance(gaussian, TrackGauss)
+    assert gaussian.covar.shape == (6, 6)
+    assert gaussian.chi2 >= 1e9
+
+
+def test_trackgauss_update_at_and_missing_addto_covar(monkeypatch):
+    data = _minimal_track_table([1, 2], [0.0, 20.0])
+    start = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 0.0])
+    track = TrackGauss([1], data, start.copy(), np.eye(6) * 0.01, 7.0)
+
+    track.update(Time(0.0, format='gps'))
+    np.testing.assert_allclose(track.param, start)
+
+    class OrbitCloud:
+        def __init__(self, sigma):
+            self.sigma = sigma
+
+        def at(self, t, propagator=None):
+            return SimpleNamespace(t=t, propagator=propagator)
+
+    def fake_param_to_orbit(sigma, mode='rv', orbitattr=None):
+        return OrbitCloud(sigma)
+
+    def fake_orbit_to_param(orbit, mode='rv', rStation=None, vStation=None,
+                            orbitattr=None):
+        assert not isinstance(rStation, u.Quantity)
+        center = np.array([2.0, 3.0, 4.0, 5.0, 6.0, 7.0, orbit.t.gps])
+        return _positive_sigma_cloud(center)
+
+    monkeypatch.setattr(ct, 'param_to_orbit', fake_param_to_orbit)
+    monkeypatch.setattr(ct, 'orbit_to_param', fake_orbit_to_param)
+
+    track.update(Time(10.0, format='gps'),
+                 rStation=np.ones(3) * u.m,
+                 vStation=np.ones(3) * u.m / u.s)
+    assert track.param[6] == pytest.approx(10.0)
+    assert track.covar.shape == (6, 6)
+
+    shifted = track.at(Time(20.0, format='gps'),
+                       rStation=np.ones(3) * u.m,
+                       vStation=np.ones(3) * u.m / u.s)
+    assert isinstance(shifted, TrackGauss)
+    assert shifted.param[6] == pytest.approx(20.0)
+    assert track.param[6] == pytest.approx(10.0)
+
+    def fake_fit_arc_with_gaussian_prior(arc, param, cinvcholfac, **kwargs):
+        assert tuple(arc['satID']) == (2,)
+        return 3.0, np.array([9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 20.0]), SimpleNamespace()
+
+    monkeypatch.setattr(ct, 'fit_arc_with_gaussian_prior',
+                        fake_fit_arc_with_gaussian_prior)
+    added = track.addto(2)
+    assert added.satIDs == [1, 2]
+    assert added.covar.shape == (6, 6)
+    assert np.all(~np.isfinite(added.covar))
+    assert added.chi2 >= 1e9
+
+
+class _FakeMHTTrack:
+    def __init__(self, satids, lnprob=-1.0, chi2=0.0,
+                 gate_result=(1.0, 0.1), added_chi2_delta=1.0):
+        self.satIDs = list(satids)
+        self.lnprob = lnprob
+        self.chi2 = chi2
+        self.times = np.asarray(self.satIDs, dtype=float) - 1.0
+        self.gate_result = gate_result
+        self.added_chi2_delta = added_chi2_delta
+        self.updated = False
+
+    def __repr__(self):
+        return f"FakeMHTTrack({self.satIDs})"
+
+    def update(self, *args, **kwargs):
+        self.updated = True
+
+    def gate(self, arc, return_nwrap=False):
+        return self.gate_result
+
+    def addto(self, satid):
+        self.added_track = _FakeMHTTrack(
+            self.satIDs + [satid], lnprob=self.lnprob + 0.5,
+            chi2=self.chi2 + self.added_chi2_delta)
+        return self.added_track
+
+    def gaussian_approximation(self, propagator=None):
+        self.approximated_with = propagator
+        return self
+
+
+def test_fit_arc_blind_via_track_reset_and_approximate(monkeypatch, capsys):
+    data = _minimal_track_table([1, 2, 3], [0.0, 10.0, 20.0])
+    constructed = []
+
+    class FakeSequentialTrack(_FakeMHTTrack):
+        def __init__(self, satids, data, **kwargs):
+            super().__init__(list(satids), lnprob=-1.0, chi2=0.0)
+            self.data = data
+            self.kwargs = kwargs
+            constructed.append(self)
+
+        def gate(self, arc, return_nwrap=False):
+            if self.satIDs == [1]:
+                return 1.0, np.pi
+            return 2.0, 0.01
+
+        def addto(self, satid):
+            new_ids = self.satIDs + list(satid)
+            return FakeSequentialTrack(new_ids, self.data, **self.kwargs)
+
+    monkeypatch.setattr(ct, 'Track', FakeSequentialTrack)
+
+    with pytest.raises(AssertionError, match='Geometric factor'):
+        fit_arc_blind_via_track(data, factor=0.5)
+
+    tracks = fit_arc_blind_via_track(
+        data, reset_if_too_uncertain=True, approximate=True,
+        verbose=True, factor=1)
+
+    assert [track.satIDs for track in tracks] == [[1], [2], [2, 3]]
+    assert tracks[-1].approximated_with is None
+    assert constructed[0].kwargs['propagator'] is None
+    assert 'resetting' in capsys.readouterr().out
+
+
+def test_mht_run_orders_tracklets_and_prunes(capsys):
+    mht = object.__new__(MHT)
+    mht.satids = [1, 2, 3]
+    live = _FakeMHTTrack([1])
+    dead = _FakeMHTTrack([2])
+    dead.dead = True
+    mht.track2hyp = {live: [], dead: []}
+    mht.nfit = 4
+    mht.hypotheses = [Hypothesis([], nsat=10)]
+    calls = []
+    mht.add_tracklet = lambda satid: calls.append(('add', satid))
+    mht.prune = lambda satid, **kwargs: calls.append(('prune', satid, kwargs))
+
+    MHT.run(mht, first=0, last=2, verbose=True, order='backward', pkeep=0.5)
+
+    assert calls == [
+        ('add', 2), ('prune', 2, {'pkeep': 0.5}),
+        ('add', 1), ('prune', 1, {'pkeep': 0.5}),
+    ]
+    assert 'Tracklet' in capsys.readouterr().out
+
+
+def test_mht_add_tracklet_skip_gate_and_refit_branches(monkeypatch, capsys):
+    data = _minimal_track_table([9], [10.0])
+    same_time = _FakeMHTTrack([1], lnprob=-1.0)
+    same_time.times = np.array([data['time'].gps[0]])
+    already_dead = _FakeMHTTrack([2], lnprob=-2.0)
+    already_dead.dead = True
+    out_of_gate = _FakeMHTTrack([3], lnprob=-3.0, gate_result=(100.0, 0.01))
+    poor_refit = _FakeMHTTrack([4], lnprob=-4.0, gate_result=(0.0, 0.01),
+                               added_chi2_delta=100.0)
+    hypothesis = Hypothesis([same_time, already_dead, out_of_gate, poor_refit],
+                            nsat=10)
+    truth = {1: 'X', 2: 'Y', 3: 'A', 4: 'B', 9: 'A'}
+    mht = MHT(data, nsat=10, truth=truth, hypotheses=[hypothesis])
+
+    singleton = _FakeMHTTrack([9], lnprob=-0.25)
+    monkeypatch.setattr(ct, 'Track', lambda satids, data, **kwargs: singleton)
+
+    mht.add_tracklet(9)
+
+    assert same_time.updated is False
+    assert already_dead.updated is False
+    assert out_of_gate.updated is True
+    assert poor_refit.updated is True
+    assert poor_refit.added_track not in mht.track2hyp
+    assert singleton in mht.track2hyp
+    assert mht.nfit == 1
+    output = capsys.readouterr().out
+    assert 'warning, excluding real track by gate' in output
+
+
+def test_mht_prune_noop_and_empty_keep_error():
+    short_track = _FakeMHTTrack([1, 2], lnprob=0.0)
+    short_hyp = Hypothesis([short_track], nsat=20)
+    short_hyp.lnprob = 0.0
+    mht = object.__new__(MHT)
+    mht.hypotheses = [short_hyp]
+    mht.track2hyp = {short_track: [short_hyp]}
+    np.testing.assert_array_equal(mht.prune_tracks(2, nconfirm=5), [True])
+
+    mht.prune_tracks = lambda satid, nconfirm=6: np.array([False])
+    mht.prune_stale_hypotheses = lambda newdead: np.array([True])
+    mht._newly_dead_tracks = []
+    mht.truth = None
+    with pytest.raises(ValueError, match='should not be possible'):
+        mht.prune(2, nconfirm=1)
+
+
+def test_mht_add_tracklet_updates_gated_tracks_and_singletons(monkeypatch):
+    data = _minimal_track_table([1, 2], [0.0, 10.0])
+    existing = _FakeMHTTrack([1], lnprob=-1.0)
+    hypothesis = Hypothesis([existing], nsat=10)
+    mht = MHT(data, nsat=10, hypotheses=[hypothesis], approximate=True)
+    created = []
+
+    def fake_track(satids, data, **kwargs):
+        track = _FakeMHTTrack(satids, lnprob=-0.25)
+        created.append((track, kwargs.get('propagator')))
+        return track
+
+    monkeypatch.setattr(ct, 'Track', fake_track)
+
+    mht.add_tracklet(2)
+
+    assert existing.updated is True
+    assert existing.added_track in mht.track2hyp
+    assert existing.added_track.approximated_with is mht.propagator
+    assert created[0][1] is None
+    assert created[0][0] in mht.track2hyp
+    assert len(mht.hypotheses) == 2
+    assert mht.nfit == 1
+
+
+def test_mht_add_tracklet_marks_tracks_dead_when_wrap_uncertain(monkeypatch):
+    data = _minimal_track_table([1, 2], [0.0, 10.0])
+    dying = _FakeMHTTrack([1], lnprob=-1.0, gate_result=(1.0, np.pi))
+    hypothesis = Hypothesis([dying], nsat=10)
+    mht = MHT(data, nsat=10, hypotheses=[hypothesis])
+
+    monkeypatch.setattr(
+        ct, 'Track',
+        lambda satids, data, **kwargs: _FakeMHTTrack(satids, lnprob=-0.25))
+
+    mht.add_tracklet(2)
+
+    assert dying.dead is True
+    assert mht._newly_dead_tracks == [dying]
+    assert mht.nfit == 0
+
+
+def test_mht_prune_tracks_and_stale_hypotheses():
+    best_track = _FakeMHTTrack([1, 2, 3, 4, 5], lnprob=0.0)
+    partial_track = _FakeMHTTrack([1, 2, 5], lnprob=-1.0)
+    best_hyp = Hypothesis([best_track], nsat=20)
+    partial_hyp = Hypothesis([partial_track], nsat=20)
+    best_hyp.lnprob = 0.0
+    partial_hyp.lnprob = -1.0
+
+    mht = object.__new__(MHT)
+    mht.hypotheses = [best_hyp, partial_hyp]
+    mht.track2hyp = {best_track: [best_hyp], partial_track: [partial_hyp]}
+
+    keep = mht.prune_tracks(5, nconfirm=2)
+    np.testing.assert_array_equal(keep, [True, False])
+
+    live = _FakeMHTTrack([10], lnprob=0.0)
+    dead_low = _FakeMHTTrack([11], lnprob=-10.0)
+    dead_high = _FakeMHTTrack([12], lnprob=-1.0)
+    dead_low.dead = True
+    dead_high.dead = True
+    low_hyp = Hypothesis([live, dead_low], nsat=20)
+    high_hyp = Hypothesis([live, dead_high], nsat=20)
+    low_hyp.lnprob = -10.0
+    high_hyp.lnprob = -1.0
+    mht.hypotheses = [low_hyp, high_hyp]
+    mht.track2hyp = {dead_low: [low_hyp], dead_high: [high_hyp]}
+
+    keep = mht.prune_stale_hypotheses([dead_low, dead_high])
+    np.testing.assert_array_equal(keep, [False, True])
+
+    np.testing.assert_array_equal(
+        mht.prune_stale_hypotheses([]), [True, True])
+
+
+def test_mht_prune_and_consistency_checks(monkeypatch):
+    tracks = [_FakeMHTTrack([i], lnprob=-float(i)) for i in range(3)]
+    hypotheses = [Hypothesis([track], nsat=20) for track in tracks]
+    for i, hypothesis in enumerate(hypotheses):
+        hypothesis.lnprob = -float(i)
+
+    mht = object.__new__(MHT)
+    mht.hypotheses = hypotheses
+    mht.track2hyp = {track: [hypothesis]
+                     for track, hypothesis in zip(tracks, hypotheses)}
+    mht._newly_dead_tracks = []
+    mht.truth = None
+    mht.prune_tracks = lambda satid, nconfirm=6: np.array([True, True, False])
+    mht.prune_stale_hypotheses = lambda newdead: np.array([True, False, True])
+
+    mht.prune(0, nkeepmax=3, pkeep=1e-9, nconfirm=2)
+    assert mht.hypotheses == [hypotheses[0]]
+    assert list(mht.track2hyp) == [tracks[0]]
+
+    assert MHT.flag_inconsistency({tracks[0]: [hypotheses[0]]},
+                                  [hypotheses[0]]) == 0
+    monkeypatch.setattr(ct.pdb, 'set_trace', lambda: None)
+    assert MHT.flag_inconsistency({tracks[0]: []}, [hypotheses[0]]) == 10
+
+
+def test_iterate_mht_trims_long_tracks_and_runs_new_mht(monkeypatch):
+    data = _minimal_track_table([1, 2, 3, 4, 5, 6],
+                                [0.0, 1.0, 2.0, 3.0, 4.0, 5.0])
+
+    class IterTrack(_FakeMHTTrack):
+        def __init__(self, satids, data, **kwargs):
+            super().__init__(satids, lnprob=-0.5, chi2=8.0)
+            self.data = data
+            self.param = kwargs.get('guess', np.arange(7.0))
+            self.priors = kwargs.get('priors')
+            self.mode = kwargs.get('mode', 'rv')
+            self.propagator = kwargs.get('propagator')
+            self.orbitattr = kwargs.get('orbitattr')
+
+    long_track = IterTrack([1, 2, 3, 4], data)
+    short_track = IterTrack([5], data)
+    dead_track = IterTrack([6, 7, 8, 9], data)
+    dead_track.dead = True
+    low_hyp = Hypothesis([short_track], nsat=50)
+    best_hyp = Hypothesis([long_track, short_track, dead_track], nsat=50)
+    low_hyp.lnprob = -10.0
+    best_hyp.lnprob = 1.0
+
+    class FakeOldMHT:
+        hypotheses = [low_hyp, best_hyp]
+        nsat = 50
+        propagator = object()
+        mode = 'rv'
+        approximate = True
+        priors = ['prior']
+        truth = {1: 'A'}
+        orbitattr = ['cr']
+
+    created = {}
+
+    class FakeNewMHT:
+        def __init__(self, data_arg, **kwargs):
+            created['data'] = data_arg
+            created['kwargs'] = kwargs
+            self.run_kwargs = None
+
+        def run(self, **kwargs):
+            self.run_kwargs = kwargs
+
+    monkeypatch.setattr(ct, 'Track', IterTrack)
+    monkeypatch.setattr(ct, 'MHT', FakeNewMHT)
+
+    newmht = iterate_mht(data, FakeOldMHT(), nminlength=2, trimends=1,
+                         first=2, last=5)
+
+    initial_track = created['kwargs']['hypotheses'][0].tracks[0]
+    assert initial_track.satIDs == [2, 3]
+    assert initial_track.approximated_with is None
+    np.testing.assert_array_equal(
+        created['kwargs']['fitonly'],
+        np.array([True, False, False, True, True, True]),
+    )
+    assert created['kwargs']['approximate'] is True
+    assert newmht.run_kwargs == {'first': 2, 'last': 5}

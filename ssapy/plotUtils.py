@@ -2,11 +2,15 @@
 Utility functions for plotting.
 """
 from .constants import EARTH_RADIUS, MOON_RADIUS
-from .utils import find_file, Time
+from .utils import find_file
 
 import numpy as np
+from astropy.time import Time
 from PIL import Image as PILImage
 import ipyvolume as ipv
+
+
+__all__ = ["draw_earth", "draw_moon", "load_earth_file", "load_moon_file"]
 
 
 def load_earth_file():

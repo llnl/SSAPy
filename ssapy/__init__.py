@@ -1,4 +1,7 @@
 import os
+
+__version__ = "1.1.6"
+
 datadir = os.path.join(os.path.dirname(__file__), "data")
 
 from . import _ssapy

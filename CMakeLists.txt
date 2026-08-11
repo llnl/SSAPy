@@ -6,7 +6,7 @@ cmake_policy(SET CMP0048 NEW)  # Project version policy
 cmake_policy(SET CMP0063 NEW)  # Visibility preset policy
 
 # Project settings
-project(ssapy VERSION 1.0 LANGUAGES CXX)
+project(ssapy VERSION 1.1.6 LANGUAGES CXX)
 
 # Compiler settings
 set(CMAKE_CXX_STANDARD 17)                # Use C++17 standard
