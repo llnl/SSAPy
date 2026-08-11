@@ -74,18 +74,18 @@ jobs:
     - name: Install dependencies (MacOS)
       if: matrix.os == 'macOS-latest'
       run: |
-        # Update Homebrew; only install missing formulae (avoid tap conflicts)
-        brew update
-        brew list --formula git >/dev/null 2>&1 || brew install git
-        brew list --formula cmake >/dev/null 2>&1 || brew install cmake
-        brew list --formula git-lfs >/dev/null 2>&1 || brew install git-lfs
+        # Use the actions/setup-python toolchain and avoid Homebrew updates,
+        # which can fail CI when the hosted runner's brew state is stale.
+        python -m pip install --upgrade pip setuptools flake8 cmake
 
-        # Make LFS usable in this headless environment
-        git lfs install --skip-repo
+        # Make LFS usable if the runner already has it, but do not require
+        # Homebrew just for CI wheel/import checks.
+        if command -v git-lfs >/dev/null 2>&1; then
+          git lfs install --skip-repo
+        fi
         git config --global credential.helper ""   # avoid Keychain prompts
 
         # Use the actions/setup-python toolchain consistently
-        python -m pip install --upgrade pip setuptools flake8
         python -m pip install -r requirements.txt
 
         PYTHON_VERSION=$(python -c "import sys; print(f'cp{sys.version_info.major}{sys.version_info.minor}')")
