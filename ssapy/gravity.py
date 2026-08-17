@@ -154,7 +154,7 @@ class HarmonicCoefficients:
                 lat_ref_deg
             ) = np.array(f.readline().replace(',', ' ').split()).astype(float)
         n_max = min(int(n_max1), n_max)
-        m_max = min(int(m_max1), m_max)
+        m_max = min(int(m_max1), m_max, n_max)
 
         # read array (TODO: only read relevant rows)
         max_rows = (n_max + 2) * (n_max + 1) // 2 + 2
