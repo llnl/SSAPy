@@ -192,7 +192,9 @@ class Linker(object):
         if np.all(lnL < -500.):  # Likelihoods are all small - reset to equal linking probabilities
             prob_k = np.ones(n) * 0.5
         else:
-            prob_k = np.exp(lnL + np.log(self.p_orbit[track_ndx]))
+            log_prob_k = lnL + np.log(self.p_orbit[track_ndx])
+            log_prob_k -= np.max(log_prob_k)
+            prob_k = np.exp(log_prob_k)
         prob_k /= np.sum(prob_k)
         if verbose:
             print("prob_k:", prob_k)
