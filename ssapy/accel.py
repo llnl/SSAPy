@@ -224,7 +224,21 @@ class AccelSolRad(Accel):
         kw = dict()
         kw.update(self.defaultkw)
         kw.update(kwargs)
-        rr = r - sunPos(t)
+        r = np.asarray(r, dtype=float)
+        r_sun = sunPos(t)
+
+        # Cylindrical Earth-shadow approximation from the model description:
+        # an object is eclipsed when it is behind Earth relative to the Sun and
+        # its perpendicular distance from the Sun-Earth axis is within Earth's
+        # radius.
+        sun_hat = r_sun / norm(r_sun)
+        axial = np.dot(r, sun_hat)
+        if axial < 0:
+            cross_axis = r - axial * sun_hat
+            if norm(cross_axis) <= EARTH_RADIUS:
+                return np.zeros_like(r)
+
+        rr = r - r_sun
         P0 = 4.56e-6  # Solar rad pressure [N/m^2]   MG eqn (3.69)
         AU2 = 2.2379522708536898e22  # 1 AU squared [m^2]
         # MG (3.75)
