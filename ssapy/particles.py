@@ -277,4 +277,5 @@ class Particles:
         mean : (6,) array_like
             Weighted mean of the particle values (3*m, 3*m/s)
         """
-        return np.average(self.particles, axis=0, weights=np.exp(self.ln_wts))
+        weights = utils.get_normed_weights(self.ln_wts)
+        return np.average(self.particles, axis=0, weights=weights)
