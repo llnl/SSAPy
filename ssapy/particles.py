@@ -105,6 +105,8 @@ class Particles:
     def reset_to_pseudo_prior(self):
         self.particles = self.initial_particles.copy()
         self.ln_wts = self.initial_ln_wts.copy()
+        self._orbits = None
+        self._lnpriors = None
 
     @property
     def epoch(self):
@@ -192,6 +194,8 @@ class Particles:
         # Append particles and weights in anticipation of resampling / downsampling
         self.particles = np.vstack((self.particles, epoch_particles.move(self.epoch)))
         self.ln_wts = np.append(ln_wts, epoch_ln_wts)
+        self._orbits = None
+        self._lnpriors = None
 
         if np.logaddexp.reduce(self.ln_wts) < -100.:
             status = False
