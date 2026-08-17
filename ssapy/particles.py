@@ -220,14 +220,14 @@ class Particles:
         # Reset the stored orbits array
         self._orbits = None
 
-        # Down-sample (without replacement) from the current particle list if
-        # the requested number of particles does not match the current number.
-        if self.particles.shape[0] > self.num_particles:
-            ndx = np.random.choice(self.particles.shape[0], size=num_particles, replace=False)
+        available = self.particles.shape[0]
+        if num_particles > available:
+            raise ValueError("Requested more particles than we have")
+        if num_particles < available:
+            ndx = np.random.choice(available, size=num_particles, replace=False)
             self.particles = self.particles[ndx, ]
             self.ln_wts = self.ln_wts[ndx]
-        elif self.num_particles > self.particles.shape[0]:
-            raise ValueError("Requested more particles than we have")
+        self.num_particles = self.particles.shape[0]
         return None
 
     def fuse(self, epoch_particles, verbose=False):
