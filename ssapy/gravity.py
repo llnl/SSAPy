@@ -298,7 +298,7 @@ class AccelHarmonic(_Accel):
             self.m_max = m_max
         self._harmonic = _ssapy.AccelHarmonic(
             self.body.mu,
-            self.body.radius,
+            self.body.harmonics.radius,
             self.body.harmonics.CS.shape[0],
             self.body.harmonics.CS.ctypes.data
         )
