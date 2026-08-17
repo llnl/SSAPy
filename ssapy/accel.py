@@ -462,7 +462,7 @@ class AccelConstNTW(Accel):
         ind = np.searchsorted(self.time_breakpoints, t)
         off = (ind % 2) == 0
         if off:
-            return 0
+            return np.zeros(3)
         else:
             return ntw_to_r(r, v, self.accelntw, relative=True)
 
