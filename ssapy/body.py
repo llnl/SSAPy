@@ -9,6 +9,32 @@ from .constants import EARTH_MU, EARTH_RADIUS, MOON_MU, SUN_MU, MERCURY_MU, VENU
 from .gravity import HarmonicCoefficients as _HarmonicCoefficients
 
 
+def _close_if_possible(obj):
+    close = getattr(obj, "close", None)
+    if close is not None:
+        close()
+
+
+class _KernelBacked:
+    def close(self):
+        kernel = getattr(self, "kernel", None)
+        if kernel is not None:
+            _close_if_possible(kernel)
+            self.kernel = None
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        self.close()
+
+    def __del__(self):
+        try:
+            self.close()
+        except Exception:
+            pass
+
+
 class EarthOrientation:
     """Orientation of earth in GCRF.  This is a callable class that returns the
     orientation matrix at a given time.
@@ -47,7 +73,7 @@ class EarthOrientation:
         return _E
 
 
-class MoonOrientation:
+class MoonOrientation(_KernelBacked):
     """Orientation of moon in GCRF.  This is a callable class that returns the
     orientation matrix at a given time.
     """
@@ -98,7 +124,7 @@ class MoonOrientation:
         return out
 
 
-class MoonPosition:
+class MoonPosition(_KernelBacked):
     """Position of moon in GCRF.  This is a callable class that returns the
     position vector at a given time.
     """
@@ -129,7 +155,7 @@ class MoonPosition:
         return pos * 1e3
 
 
-class SunPosition:
+class SunPosition(_KernelBacked):
     """Position of sun in GCRF.  This is a callable class that returns the
     position vector at a given time.
     """
@@ -162,7 +188,7 @@ class SunPosition:
         return pos * 1e3
 
 
-class PlanetPosition:
+class PlanetPosition(_KernelBacked):
     """Position of a planet in GCRF.  This is a callable class that returns the
     position vector at a given time.
     """
@@ -226,6 +252,23 @@ class Body:
         self.position = position
         self.orientation = orientation
         self.harmonics = harmonics
+
+    def close(self):
+        _close_if_possible(self.position)
+        if self.orientation is not self.position:
+            _close_if_possible(self.orientation)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        self.close()
+
+    def __del__(self):
+        try:
+            self.close()
+        except Exception:
+            pass
 
 
 def get_body(name, model=None):

@@ -1,8 +1,10 @@
 import numpy as np
 import astropy.units as u
 from astropy.time import Time
+import pytest
 
 import ssapy
+import ssapy.orbit_solver as orbit_solver
 from ssapy.utils import normed
 from .ssapy_test_helpers import timer, checkAngle
 
@@ -270,6 +272,143 @@ def test_MG_2_6():
     np.testing.assert_allclose(orbit.pa, omega_ref, atol=1e-5, rtol=0)
     np.testing.assert_allclose(orbit.raan, Omega_ref, atol=1e-5, rtol=0)
     np.testing.assert_allclose(orbit.meanAnomaly, M0_ref, atol=1e-5, rtol=0)
+
+
+def test_two_position_solver_edge_branches(monkeypatch):
+    class ProbeSolver(ssapy.TwoPosOrbitSolver):
+        def _getP(self):
+            return ssapy.TwoPosOrbitSolver._getP(self)
+
+    with pytest.raises(NotImplementedError):
+        ProbeSolver(
+            np.array([7000e3, 0.0, 0.0]),
+            np.array([0.0, 7000e3, 0.0]),
+            0.0,
+            10.0,
+        )._getP()
+
+    gauss = object.__new__(ssapy.GaussTwoPosOrbitSolver)
+    gauss.kappa = gauss.sigma = gauss.tau = gauss.mu = 1.0
+    gauss.eps = 0.0
+    gauss.maxiter = 1
+    gauss.m = 1.0
+    gauss.ell = 2.0
+    assert np.isfinite(ssapy.GaussTwoPosOrbitSolver._getP(gauss))
+    gauss.ell = 1.0
+    assert np.isfinite(ssapy.GaussTwoPosOrbitSolver._getP(gauss))
+
+    danchick = object.__new__(ssapy.DanchickTwoPosOrbitSolver)
+    danchick.kappa = danchick.sigma = danchick.tau = danchick.mu = 1.0
+    danchick.eps = 1e-12
+    danchick.maxiter = 20
+    danchick.m = 1.0
+    danchick.ell = 0.0
+    danchick.cos2f = -1.0
+    assert np.isfinite(ssapy.DanchickTwoPosOrbitSolver._getP(danchick))
+
+    danchick.maxiter = 3
+    danchick.m = 10.0
+    danchick.ell = 0.0
+    monkeypatch.setattr(ssapy.DanchickTwoPosOrbitSolver, 'X', staticmethod(lambda g: 1.0))
+    monkeypatch.setattr(ssapy.DanchickTwoPosOrbitSolver, 'dXdg', staticmethod(lambda g: 0.0))
+    with pytest.raises(RuntimeError, match='Invalid x'):
+        ssapy.DanchickTwoPosOrbitSolver._getP(danchick)
+
+    danchick.cos2f = np.nan
+    with pytest.raises(ValueError, match='Invalid value of cos2f'):
+        ssapy.DanchickTwoPosOrbitSolver._getP(danchick)
+
+    monkeypatch.undo()
+    danchick = object.__new__(ssapy.DanchickTwoPosOrbitSolver)
+    danchick.kappa = danchick.sigma = danchick.tau = danchick.mu = 1.0
+    danchick.eps = 1e-12
+    danchick.maxiter = 1
+    danchick.m = 3.0
+    danchick.ell = 1.0
+    danchick.cos2f = 1.0
+    calls = {'n': 0}
+    real_sqrt = np.sqrt
+
+    def fake_sqrt(x):
+        calls['n'] += 1
+        if calls['n'] <= 2:
+            return 1.0
+        return real_sqrt(x)
+
+    monkeypatch.setattr(np, 'sqrt', fake_sqrt)
+    with pytest.raises(RuntimeError, match='Invalid x'):
+        ssapy.DanchickTwoPosOrbitSolver._getP(danchick)
+
+
+def test_shefer_static_and_error_branches(monkeypatch):
+    val, grad = ssapy.SheferTwoPosOrbitSolver.X(-0.25 * u.one)
+    assert np.isfinite(val)
+    assert np.isfinite(grad)
+
+    val0, grad0 = ssapy.SheferTwoPosOrbitSolver.X(0.0)
+    np.testing.assert_allclose([val0, grad0], [4.0 / 3.0, 8.0 / 5.0])
+    assert np.isinf(ssapy.SheferTwoPosOrbitSolver.X(1.0))
+
+    shefer = object.__new__(ssapy.SheferTwoPosOrbitSolver)
+    shefer.lam = 0
+    shefer.rbar = 10.0
+    shefer.kappa = 2.0
+    shefer.tau = 1.0
+    shefer.mu = 1.0
+    shefer.eps = 1e-12
+    shefer.maxiter = 10
+
+    monkeypatch.setattr(np, 'roots', lambda poly: np.array([1.0, 2.0, -3.0]))
+    with pytest.raises(RuntimeError, match='more than one positive'):
+        ssapy.SheferTwoPosOrbitSolver._getInitialXGuess(shefer)
+
+    monkeypatch.setattr(np, 'roots', lambda poly: np.array([-1.0, -2.0, -3.0]))
+    with pytest.raises(RuntimeError, match='no positive real roots'):
+        ssapy.SheferTwoPosOrbitSolver._getInitialXGuess(shefer)
+
+    monkeypatch.setattr(np, 'roots', lambda poly: np.array([1.0, 2.0, -3.0]))
+    with pytest.raises(RuntimeError, match='more than one positive'):
+        ssapy.SheferTwoPosOrbitSolver._getInitialXiGuess(shefer)
+
+    monkeypatch.setattr(np, 'roots', lambda poly: np.array([-1.0, -2.0, -3.0]))
+    with pytest.raises(RuntimeError, match='no positive real roots'):
+        ssapy.SheferTwoPosOrbitSolver._getInitialXiGuess(shefer)
+
+
+def test_shefer_robust_failure_and_three_angle_time_conversion(monkeypatch):
+    shefer = object.__new__(ssapy.SheferTwoPosOrbitSolver)
+    shefer.robust = True
+    shefer.r1 = np.array([10.0, 0.0, 0.0])
+    shefer.r2 = np.array([0.0, 10.0, 0.0])
+    shefer.t1 = 10.0
+    shefer.t2 = 20.0
+    fake_orbit = object()
+
+    monkeypatch.setattr(orbit_solver.TwoPosOrbitSolver, 'solve', lambda self: fake_orbit)
+    monkeypatch.setattr(orbit_solver, 'rv', lambda orbit, t: (np.zeros(3), np.zeros(3)))
+    monkeypatch.setattr(shefer, '_getAllP', lambda: [1.0, 2.0])
+    monkeypatch.setattr(shefer, '_finishOrbit', lambda p: fake_orbit)
+
+    with pytest.raises(RuntimeError, match='Cannot find orbit'):
+        ssapy.SheferTwoPosOrbitSolver.solve(shefer)
+
+    t1 = Time(1.0, format='gps')
+    t2 = Time(2.0, format='gps')
+    t3 = Time(3.0, format='gps')
+    solver = ssapy.ThreeAngleOrbitSolver(
+        np.array([1.0, 0.0, 0.0]),
+        np.array([0.0, 1.0, 0.0]),
+        np.array([0.0, 0.0, 1.0]),
+        np.zeros(3),
+        np.ones(3),
+        np.ones(3) * 2,
+        t1,
+        t2,
+        t3,
+    )
+    assert solver.t1 == pytest.approx(t1.gps)
+    assert solver.t2 == pytest.approx(t2.gps)
+    assert solver.t3 == pytest.approx(t3.gps)
 
 
 if __name__ == '__main__':

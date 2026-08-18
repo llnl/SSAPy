@@ -118,7 +118,7 @@ class TwoPosOrbitSolver(metaclass=abc.ABCMeta):
     # The main part that varies between methods (i.e., subclasses)
     @abc.abstractmethod
     def _getP(self):
-        pass
+        raise NotImplementedError
 
     def solve(self):
         p = self._getP()
@@ -261,7 +261,7 @@ class DanchickTwoPosOrbitSolver(TwoPosOrbitSolver):
                 niter += 1
             eta = 1 + (self.ell + x) * self.X(np.arccos(1 - 2 * x))
         else:
-            raise "Invalid value of cos2f"
+            raise ValueError("Invalid value of cos2f")
 
         # Shefer (2)
         p = (0.5 * eta * self.kappa * self.sigma / self.tau)**2 / self.mu
@@ -513,11 +513,11 @@ class SheferTwoPosOrbitSolver(TwoPosOrbitSolver):
             roots = np.roots(poly)
             # There should be exactly one positive real root.
             w = np.where((np.abs(roots.imag) < 3e-16) & (roots.real > 0))
-            if len(w) > 1:
+            if len(w[0]) > 1:
                 raise RuntimeError(
                     "Found more than one positive, real root!  {}".format(roots)
                 )
-            if len(w) == 0:
+            if len(w[0]) == 0:
                 raise RuntimeError(
                     "Found no positive real roots!  {}".format(roots))
             y = roots[w][0].real
@@ -538,10 +538,10 @@ class SheferTwoPosOrbitSolver(TwoPosOrbitSolver):
         roots = np.roots(poly)
         # There should be exactly one positive real root.
         w = np.where((np.abs(roots.imag) < 3e-16) & (roots.real > 0))
-        if len(w) > 1:
+        if len(w[0]) > 1:
             raise RuntimeError(
                 "Found more than one positive, real root!  {}".format(roots))
-        if len(w) == 0:
+        if len(w[0]) == 0:
             raise RuntimeError(
                 "Found no positive real roots!  {}".format(roots))
         y = roots[w][0].real

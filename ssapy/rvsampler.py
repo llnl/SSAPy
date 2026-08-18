@@ -688,8 +688,7 @@ def circular_guess(arc, indices=[0, 1]):
         ra[0], dec[0], rRange, muAlpha, muDelta, vlos, rStation, vGroundSky)
     # ignores light-time correction, etc.
     if np.any(~np.isfinite(rGuess+vGuess)):
-        import pdb
-        pdb.set_trace()
+        raise RuntimeError("circular_guess produced a non-finite state vector")
 
     return np.concatenate([rGuess, vGuess]), epoch
 

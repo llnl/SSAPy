@@ -2108,12 +2108,9 @@ def summarize_tracklets(data, posuncfloor=None, pmuncfloor=None):
                  ('dpmra', u.deg/u.s, None),
                  ('dpmdec', u.deg/u.s, None),
                  ('t_baseline', u.s, None)]
-    for field, unit, dim in newfields:
+    for field, unit, _ in newfields:
         dtype = 'f8' if unit is not None else 'object'
-        if dim is None:
-            data[field] = np.zeros(len(data), dtype=dtype)*unit
-        else:
-            data[field] = np.zeros((len(data), dim), dtype=dtype)*unit
+        data[field] = np.zeros(len(data), dtype=dtype)*unit
     for f, l in zip(first, last):
         meanpos, dmeanpos, pm, dpm = summarize_tracklet(data[s[f:l]])
         r0 = np.mean(data['rStation_GCRF'][s[f:l], :], axis=0)

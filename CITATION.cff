@@ -1,116 +1,102 @@
-# If you are referencing SSAPy in a publication, please use the DOI
-# described here.
+# This file describes the SSAPy software citation. The author list is intended
+# to reflect software development and stewardship across the inherited internal
+# history and the public GitHub repository. It is not derived from a hard
+# public commit-count threshold, and squash/merge authorship is not treated as
+# original implementation authorship.
 #
-# MLA:
+# SSAPy also has a JOSS paper:
 #
+# Meyers, J. E., Schneider, M. D., Ebert, J. T., Schlafly, E. F., Yeager, T.,
+# Perloff, A., Merl, D., Lifset, N., Bernstein, J., Dawson, W. A., Golovich, N.,
+# Higgins, D., McGill, P., Miller, C., & Pruett, K. (2025). SSAPy - Space
+# Situational Awareness for Python. Journal of Open Source Software, 10(111),
+# 8147. https://doi.org/10.21105/joss.08147
 #
-# Schlafly, Edward, Yeager, Travis, Pruett, Kerianne, Schneider, Michael, Ebert, Julia, Merl, Daniel, Lifset, Noah,
-# Armstrong, Robert, Dawson, William, Meyers, Joshua, Perloff, Alexx, and Golovich, Nathan.
-# Space Situational Awareness for Python. Computer Software. https://github.com/LLNL/SSAPy.
-# USDOE National Nuclear Security Administration (NNSA). 08 Nov. 2023. Web. doi:10.11578/dc.20240417.1.
-#
-# APA:
-#
-# Schlafly, Edward, Yeager, Travis, Pruett, Kerianne, Schneider, Michael, Ebert, Julia, Merl, Daniel, Lifset, Noah,
-# Armstrong, Robert, Dawson, William, Meyers, Joshua, Perloff, Alexx, & Golovich, Nathan. (2023, November 08).
-# Space Situational Awareness for Python. [Computer software]. https://github.com/LLNL/SSAPy.
-# https://doi.org/10.11578/dc.20240417.1.
-#
-# Chicago:
-#
-# Schlafly, Edward, Yeager, Travis, Pruett, Kerianne, Schneider, Michael, Ebert, Julia, Merl, Daniel, Lifset, Noah,
-# Armstrong, Robert, Dawson, William, Meyers, Joshua, Perloff, Alexx, and Golovich, Nathan.
-# "Space Situational Awareness for Python." Computer software. November 08, 2023. https://github.com/LLNL/SSAPy.
-# https://doi.org/10.11578/dc.20240417.1.
-#
-# Or, in BibTeX:
-#
-# @misc{ doecode_126106,
-# title = {Space Situational Awareness for Python},
-# author = {Schlafly, Edward and Yeager, Travis and Pruett, Kerianne and Schneider, Michael and Ebert, Julia and Merl,
-#           Daniel and Lifset, Noah and Armstrong, Robert and Dawson, William and Meyers, Joshua and Perloff, Alexx and
-#           Golovich, Nathan},
-# abstractNote = {SSAPy is a python package allowing for fast and precise orbital modeling. SSAPy is designed with
-#                 speed and accuracy in mind and offers the following capabilities: - A variety of integrators,
-#                 including Runge-Kutta, SciPy, SGP4, etc. - Customizable force propagation models, including a variety
-#                 of Earth gravity models, lunar gravity, radiation pressure, etc. - Multiple-hypothesis tracking (MHT)
-#                 UCT linker - Vectorized computations - Short arc probabilistic orbit determination - Conjunction
-#                 probability estimation - Uncertainty quantification - Monte Carlo data fusion - Support for multiple
-#                 coordinate frames (with coordinate frame conversions)},
-# doi = {10.11578/dc.20240417.1},
-# url = {https://doi.org/10.11578/dc.20240417.1},
-# howpublished = {[Computer Software] \url{https://doi.org/10.11578/dc.20240417.1}},
-# year = {2023},
-# month = {nov}
-# }
-#
-# And here's the CITATION.cff format:
-#
+# The JOSS paper has its own fixed publication author order. The software
+# metadata below reflects repository authorship and maintenance.
+
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
-authors:
-- family-names: "Schlafly"
-  given-names: "Edward"
-  affiliation: "Space Telescope Science Institute"
-  orcid: "https://orcid.org/0000-0002-3569-7421"
-  email: "eschlafly@stsci.edu"
-- family-names: "Yeager"
-  given-names: "Travis"
-  affiliation: "Lawrence Livermore National Laboratory"
-  orcid: "https://orcid.org/0000-0002-2582-0190"
-  email: "yeager7@llnl.gov"
-- family-names: "Pruett"
-  given-names: "Kerianne"
-  affiliation: "Lawrence Livermore National Laboratory"
-  orcid: "https://orcid.org/0000-0002-2911-8657"
-  email: "pruett6@llnl.gov"
-- family-names: "Schneider"
-  given-names: "Michael"
-  affiliation: "Lawrence Livermore National Laboratory"
-  orcid: "https://orcid.org/0000-0002-8505-7094"
-  email: "schneider42@llnl.gov"
-- family-names: "Ebert"
-  given-names: "Julia"
-  affiliation: "Fleet Robotics"
-  orcid: "https://orcid.org/0000-0002-1975-772X"
-  email: "julia@juliaebert.com"
-- family-names: "Merl"
-  given-names: "Daniel"
-  affiliation: "Lawrence Livermore National Laboratory"
-  orcid: "https://orcid.org/0000-0003-4196-5354"
-  email: "merl1@llnl.gov"
-- family-names: "Lifset"
-  given-names: "Noah"
-  affiliation: "The University of Texas at Austin"
-  orcid: "https://orcid.org/0000-0003-3397-7021"
-  email: ""
-- family-names: "Armstrong"
-  given-names: "Robert"
-  affiliation: "Lawrence Livermore National Laboratory"
-  orcid: "https://orcid.org/0000-0002-6911-1038"
-  email: "armstrong46@llnl.gov"
-- family-names: "Dawson"
-  given-names: "William"
-  affiliation: "Lawrence Livermore National Laboratory"
-  orcid: "https://orcid.org/0000-0003-0248-6123"
-  email: "dawson29@llnl.gov"
-- family-names: "Meyers"
-  given-names: "Joshua"
-  affiliation: "SLAC National Accelerator Laboratory"
-  orcid: "https://orcid.org/0000-0002-2308-4230"
-  email: "jmeyers3@stanford.edu"
-- family-names: "Perloff"
-  given-names: "Alexx"
-  affiliation: "Lawrence Livermore National Laboratory"
-  orcid: "https://orcid.org/0000-0001-5230-0396"
-  email: "perloff11@llnl.gov"
-- family-names: "Golovich"
-  given-names: "Nathan"
-  affiliation: "Lawrence Livermore National Laboratory"
-  orcid: "https://orcid.org/0000-0003-2632-572X"
-  email: "golovich1@llnl.gov"
+message: "If you use SSAPy software, please cite the software metadata below. The related JOSS paper may also be cited separately."
 title: "Space Situational Awareness for Python"
 version: 1.1.7
 doi: 10.11578/dc.20240417.1
 date-released: 2023-11-08
 url: "https://github.com/LLNL/SSAPy"
+authors:
+- family-names: "Meyers"
+  given-names: "Joshua E."
+  affiliation: "SLAC National Accelerator Laboratory"
+  orcid: "https://orcid.org/0000-0002-2308-4230"
+  email: "jmeyers3@stanford.edu"
+- family-names: "Yeager"
+  given-names: "Travis"
+  affiliation: "Lawrence Livermore National Laboratory"
+  orcid: "https://orcid.org/0000-0002-2582-0190"
+  email: "yeager7@llnl.gov"
+- family-names: "Schneider"
+  given-names: "Michael"
+  affiliation: "Lawrence Livermore National Laboratory"
+  orcid: "https://orcid.org/0000-0002-8505-7094"
+  email: "schneider42@llnl.gov"
+- family-names: "Schlafly"
+  given-names: "Edward"
+  affiliation: "Space Telescope Science Institute"
+  orcid: "https://orcid.org/0000-0002-3569-7421"
+  email: "eschlafly@stsci.edu"
+- family-names: "Ebert"
+  given-names: "Julia"
+  affiliation: "Fleet Robotics"
+  orcid: "https://orcid.org/0000-0002-1975-772X"
+  email: "julia@juliaebert.com"
+- family-names: "Higgins"
+  given-names: "Denvir"
+  affiliation: "Lawrence Livermore National Laboratory"
+  orcid: "https://orcid.org/0000-0002-7579-1092"
+- family-names: "Bernstein"
+  given-names: "Jason"
+  affiliation: "Lawrence Livermore National Laboratory"
+  orcid: "https://orcid.org/0000-0002-3391-5931"
+- family-names: "Merl"
+  given-names: "Daniel"
+  affiliation: "Lawrence Livermore National Laboratory"
+  orcid: "https://orcid.org/0000-0003-4196-5354"
+  email: "merl1@llnl.gov"
+- family-names: "Goumiri"
+  given-names: "Imène"
+- family-names: "Armstrong"
+  given-names: "Robert"
+  affiliation: "Lawrence Livermore National Laboratory"
+  orcid: "https://orcid.org/0000-0002-6911-1038"
+  email: "armstrong46@llnl.gov"
+- family-names: "Lifset"
+  given-names: "Noah"
+  affiliation: "The University of Texas at Austin"
+  orcid: "https://orcid.org/0000-0003-3397-7021"
+- family-names: "Perloff"
+  given-names: "Alexx"
+  affiliation: "Lawrence Livermore National Laboratory"
+  orcid: "https://orcid.org/0000-0001-5230-0396"
+  email: "perloff11@llnl.gov"
+- family-names: "McGill"
+  given-names: "Peter"
+  affiliation: "Lawrence Livermore National Laboratory"
+  orcid: "https://orcid.org/0000-0002-1052-6749"
+- family-names: "Golovich"
+  given-names: "Nathan"
+  affiliation: "Lawrence Livermore National Laboratory"
+  orcid: "https://orcid.org/0000-0003-2632-572X"
+  email: "golovich1@llnl.gov"
+- family-names: "Pruett"
+  given-names: "Kerianne"
+  affiliation: "Lawrence Livermore National Laboratory"
+  orcid: "https://orcid.org/0000-0002-2911-8657"
+  email: "pruett6@llnl.gov"
+- family-names: "Miller"
+  given-names: "Caleb"
+  affiliation: "Lawrence Livermore National Laboratory"
+  orcid: "https://orcid.org/0000-0001-6249-0031"
+- family-names: "Dawson"
+  given-names: "William A."
+  affiliation: "Lawrence Livermore National Laboratory"
+  orcid: "https://orcid.org/0000-0003-0248-6123"
+  email: "dawson29@llnl.gov"

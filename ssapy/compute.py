@@ -841,7 +841,8 @@ def radecRate(
                   "ssapy.compute.radec(..., rate=True)")
     ra, dec, slant, raRate, decRate, slantRate = radec(
         orbit, time, obsPos=obsPos, obsVel=obsVel, observer=observer,
-        propagator=propagator, obsAngleCorrection=obsAngleCorrection
+        propagator=propagator, obsAngleCorrection=obsAngleCorrection,
+        rate=True
     )
 
     return raRate, decRate, slantRate

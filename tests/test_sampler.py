@@ -203,6 +203,116 @@ def test_damper_helpers():
     )
 
 
+def _circular_guess_arc():
+    time = Time("J2000")
+    orbit = ssapy.Orbit.fromKeplerianElements(
+        RGEO,
+        1e-6,
+        1e-5,
+        0.1,
+        0.2,
+        0.3,
+        time,
+    )
+    observer = ssapy.EarthObserver(lon=22.0, lat=33.0, elevation=300.0)
+    times = time + np.array([0.0, 10.0]) * u.s
+    ra, dec, _ = ssapy.radec(orbit, times, observer=observer)
+    r_station, v_station = observer.getRV(times)
+
+    arc = QTable()
+    arc['ra'] = Longitude(ra * u.rad)
+    arc['dec'] = Latitude(dec * u.rad)
+    arc['time'] = times
+    arc['rStation_GCRF'] = r_station * u.m
+    arc['vStation_GCRF'] = v_station * u.m / u.s
+    return orbit, arc
+
+
+def test_circular_guess_recovers_synthetic_circular_orbit():
+    orbit, arc = _circular_guess_arc()
+
+    state, epoch = ssapy.circular_guess(arc)
+    r_expected, v_expected = ssapy.rv(orbit, epoch)
+
+    np.testing.assert_allclose(state[:3], r_expected, rtol=0, atol=20.0)
+    np.testing.assert_allclose(state[3:], v_expected, rtol=0, atol=2e-3)
+
+
+def test_circular_guess_uses_proper_motion_columns():
+    orbit, arc = _circular_guess_arc()
+    dt = (arc['time'][1] - arc['time'][0]).to(u.s).value
+    pmra = (((arc['ra'][1] - arc['ra'][0]).to(u.rad).value + np.pi) % (2 * np.pi) - np.pi)
+    pmra *= np.cos(arc['dec'][0].to(u.rad).value) / dt
+    pmdec = (arc['dec'][1] - arc['dec'][0]).to(u.rad).value / dt
+
+    arcpm = QTable()
+    arcpm['ra'] = [arc['ra'][0]]
+    arcpm['dec'] = [arc['dec'][0]]
+    arcpm['time'] = Time([arc['time'][0]])
+    arcpm['rStation_GCRF'] = [arc['rStation_GCRF'][0]]
+    arcpm['vStation_GCRF'] = [arc['vStation_GCRF'][0]]
+    arcpm['pmra'] = [pmra] * u.rad / u.s
+    arcpm['pmdec'] = [pmdec] * u.rad / u.s
+
+    state, epoch = ssapy.circular_guess(arcpm)
+    r_expected, v_expected = ssapy.rv(orbit, epoch)
+
+    np.testing.assert_allclose(state[:3], r_expected, rtol=0, atol=20.0)
+    np.testing.assert_allclose(state[3:], v_expected, rtol=0, atol=2e-3)
+
+
+def test_circular_guess_edge_guards(monkeypatch):
+    arc = QTable()
+    arc['ra'] = Longitude([0.0, 0.0] * u.rad)
+    arc['dec'] = Latitude([0.0, 0.0] * u.rad)
+    arc['time'] = Time([0.0, 0.0], format='gps')
+    arc['rStation_GCRF'] = np.zeros((2, 3)) * u.m
+    arc['vStation_GCRF'] = np.zeros((2, 3)) * u.m / u.s
+
+    with np.errstate(divide='ignore', invalid='ignore'):
+        state, epoch = ssapy.circular_guess(arc)
+    np.testing.assert_allclose(state[:3], [200000.0, 0.0, 0.0])
+    np.testing.assert_allclose(state[3:], [0.0, 0.0, 0.0])
+    assert epoch.gps == pytest.approx(0.0)
+
+    _, real_arc = _circular_guess_arc()
+
+    import scipy.optimize
+
+    monkeypatch.setattr(
+        scipy.optimize,
+        'root_scalar',
+        lambda fn, bracket: SimpleNamespace(root=300000.0),
+    )
+
+    def reflected_leastsq(fn, x0, args=(), full_output=False):
+        fn(args[0] + 1.0, *args)
+        return np.array([500000.0]), None, None, '', 1
+
+    monkeypatch.setattr(scipy.optimize, 'leastsq', reflected_leastsq)
+    state, _ = ssapy.circular_guess(real_arc)
+    assert np.all(np.isfinite(state))
+
+    monkeypatch.setattr(
+        scipy.optimize,
+        'root_scalar',
+        lambda fn, bracket: SimpleNamespace(root=1.0e7),
+    )
+    monkeypatch.setattr(
+        scipy.optimize,
+        'leastsq',
+        lambda fn, x0, args=(), full_output=False:
+            (np.array([5.0e6]), None, None, '', 1),
+    )
+    monkeypatch.setattr(
+        ssapy.rvsampler,
+        'radecRateObsToRV',
+        lambda *args, **kwargs: (np.full(3, np.nan), np.zeros(3)),
+    )
+    with pytest.raises(RuntimeError, match='non-finite state vector'):
+        ssapy.circular_guess(real_arc)
+
+
 class _LinearOrbitProbability:
     epoch = Time("J2000")
 
@@ -311,6 +421,41 @@ def test_lm_angular_optimizer_smoke_path(monkeypatch):
     assert not hasattr(optimizer.result, 'covar')
 
 
+def test_lm_angular_optimizer_jacobian_and_hyperbolic_guard(monkeypatch):
+    import lmfit
+    import warnings
+
+    monkeypatch.setattr(
+        lmfit, 'minimize',
+        lambda resid, params, Dfun=None, **kwargs: SimpleNamespace(
+            params=params, success=True))
+
+    obs_pos = np.zeros(3)
+    obs_vel = np.zeros(3)
+    init_guess = np.array([0.0, 0.0, 7000e3, 0.0, 0.0, 20000.0])
+
+    with pytest.warns(UserWarning, match='deprecated'):
+        optimizer = ssapy.rvsampler.LMOptimizerAngular(
+            _LinearOrbitProbability(), init_guess, obs_pos, obs_vel)
+
+    with warnings.catch_warnings():
+        warnings.filterwarnings(
+            'ignore',
+            message='invalid value encountered in sqrt',
+            category=RuntimeWarning,
+        )
+        assert optimizer._getOrbit(init_guess).r.shape == (3,)
+        assert optimizer._resid(init_guess).shape == (6,)
+        assert optimizer._jac(init_guess).shape == (6, 6)
+
+        fit = optimizer.optimize(usejac=True)
+
+    assert len(fit) == 6
+    assert optimizer.result.success is False
+    assert optimizer.result.hithyperbolicorbit is True
+    assert optimizer.result.covar.shape == (6, 6)
+
+
 def test_legacy_element_optimizers_with_mocked_lmfit(monkeypatch):
     import lmfit
 
@@ -325,6 +470,10 @@ def test_legacy_element_optimizers_with_mocked_lmfit(monkeypatch):
     prob = _LinearOrbitProbability()
     initel = np.array([4.2e7, 0.01, 0.02, 0.03, 0.04, 0.5])
     sgp4_optimizer = ssapy.rvsampler.SGP4LMOptimizer(prob, initel)
+    kep = ssapy.rvsampler.eq2kep(initel)
+    np.testing.assert_allclose(kep[:2], [4.2e7, np.hypot(0.03, 0.04)])
+    assert sgp4_optimizer._getOrbit(initel).r.shape == (3,)
+    assert sgp4_optimizer._getOrbit(sgp4_optimizer.p).r.shape == (3,)
     sgp4_optimizer._getOrbit = lambda p: np.array(
         [p[name].value for name in sgp4_optimizer.fieldnames]
         if isinstance(p, dict) else p,
@@ -341,6 +490,7 @@ def test_legacy_element_optimizers_with_mocked_lmfit(monkeypatch):
             prob, np.array([4.2e7, 0.01, 0.02, 1.0, 1.0, 0.5]))
     assert eq_optimizer._getOrbit(
         np.array([4.2, 0.01, 0.02, 1.0, 1.0, 0.5])).e < 1.0
+    assert eq_optimizer._getOrbit(eq_optimizer.p).e < 1.0
     eq_optimizer._getOrbit = lambda p: np.array(
         [p[name].value for name in eq_optimizer.fieldnames]
         if isinstance(p, dict) else p,
@@ -482,6 +632,91 @@ def test_likelihood():
     # print("log likelihoods:", lnL0, lnL1, lnL2)
     np.testing.assert_allclose(lnL0, lnL2, rtol=0, atol=1e-14)
     np.testing.assert_allclose(lnL1, lnL2, rtol=0, atol=1e-14)
+
+
+def test_rv_probability_meanpm_priors_and_bad_orbits(monkeypatch):
+    time = Time("J2000")
+    orbit = ssapy.Orbit(
+        np.array([7000e3, 0.0, 0.0]),
+        np.array([0.0, 7500.0, 0.0]),
+        time,
+    )
+    times = time + np.array([0.0, 10.0]) * u.s
+    obs_pos = np.zeros((2, 3))
+    obs_vel = np.zeros((2, 3))
+    ra, dec, _, pmra, pmdec, _ = ssapy.radec(
+        orbit, times, obsPos=obs_pos, obsVel=obs_vel, rate=True)
+
+    arc = QTable()
+    arc['ra'] = Longitude(ra * u.rad)
+    arc['dec'] = Latitude(dec * u.rad)
+    arc['rStation_GCRF'] = obs_pos * u.m
+    arc['vStation_GCRF'] = obs_vel * u.m / u.s
+    arc['time'] = Time(times)
+    arc['sigma'] = np.ones(2) * u.arcsec
+    arc['dra'] = np.ones(2) * 1e-6 * u.rad
+    arc['ddec'] = np.ones(2) * 1e-6 * u.rad
+    arc['pmra'] = pmra * u.rad / u.s
+    arc['pmdec'] = pmdec * u.rad / u.s
+    arc['dpmra'] = np.ones(2) * 1e-9 * u.rad / u.s
+    arc['dpmdec'] = np.ones(2) * 1e-9 * u.rad / u.s
+
+    prob_meanpm = ssapy.RVProbability(arc, time, priors=[], meanpm=True)
+    chi, chiprior = prob_meanpm.chi(orbit)
+    np.testing.assert_allclose(chi, np.zeros(8), atol=1e-6)
+    np.testing.assert_allclose(chiprior, [0.0])
+    assert prob_meanpm.lnprior(orbit) == pytest.approx(0.0)
+
+    prob = ssapy.RVProbability(arc, time, priors=[], damp=2.0)
+    chi, chiprior = prob.chi(orbit)
+    np.testing.assert_allclose(chi, np.zeros(4), atol=1e-6)
+    np.testing.assert_allclose(chiprior, [0.0])
+
+    def fake_radec(*args, **kwargs):
+        return prob.ra + prob._raSigma, prob.dec + prob._decSigma, np.ones_like(prob.ra)
+
+    monkeypatch.setattr(ssapy.rvsampler, 'radec', fake_radec)
+    fast = ssapy.Orbit(
+        np.array([7000e3, 0.0, 0.0]),
+        np.array([0.0, 1.0e6, 0.0]),
+        time,
+    )
+    small = ssapy.Orbit(
+        np.array([0.5, 0.0, 0.0]),
+        np.array([0.0, 0.0, 0.0]),
+        time,
+    )
+    assert np.max(np.abs(prob.chi(fast)[0])) > 1e4
+    assert np.max(np.abs(prob.chi(small)[0])) > 1e4
+
+    with monkeypatch.context() as m:
+        m.setattr(ssapy.rvsampler, 'Orbit', lambda *args, **kwargs: (_ for _ in ()).throw(ValueError()))
+        lnprob, lnprior = prob.lnprob(np.zeros(6))
+    assert lnprob == -np.inf
+    assert lnprior == -np.inf
+
+    prob.chi = lambda orbit: (np.array([np.inf]), np.array([2.0]))
+    lnprob, lnprior = prob.lnprob(np.hstack([orbit.r, orbit.v]))
+    assert lnprob == -np.inf
+    assert lnprior == pytest.approx(-2.0)
+
+
+def test_emcee_sampler_rejects_old_versions(monkeypatch):
+    import emcee
+
+    real_version = emcee.__version__
+    initializer = lambda n: np.zeros((n, 6))
+    probfn = lambda p: (0.0, 0.0)
+
+    monkeypatch.setattr(emcee, '__version__', '2.2.1')
+    with pytest.raises(ValueError, match='emcee version'):
+        ssapy.EmceeSampler(probfn, initializer, nWalker=12)
+
+    monkeypatch.setattr(emcee, '__version__', real_version)
+    sampler = ssapy.EmceeSampler(probfn, initializer, nWalker=12)
+    monkeypatch.setattr(emcee, '__version__', '2.2.1')
+    with pytest.raises(ValueError, match='emcee version'):
+        sampler.sample(nBurn=1, nStep=1)
 
 
 @timer
