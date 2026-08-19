@@ -8,3 +8,4 @@ sphinxcontrib-bibtex
 sphinx-autobuild
 docutils<0.21
 nbsphinx
+graphviz

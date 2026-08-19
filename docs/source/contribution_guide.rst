@@ -93,7 +93,7 @@ To run style checks locally:
 
 .. code-block:: console
 
-   $ flake8 ssapy tests devel
+   $ flake8 ssapy tests
 
 Please ensure that any code you contribute passes the project's style checks.
 

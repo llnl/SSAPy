@@ -8,7 +8,7 @@ SSAPy - Space Situational Awareness for Python
    :target: https://github.com/LLNL/SSAPy/actions/workflows/ci.yml
 
 .. |docs_badge| image:: https://github.com/LLNL/SSAPy/actions/workflows/pages/pages-build-deployment/badge.svg
-   :target: https://LLNL.github.io/SSAPy
+   :target: https://software.llnl.gov/SSAPy/
 
 .. |codecov_badge| image:: https://codecov.io/gh/LLNL/SSAPy/branch/main/graph/badge.svg
    :target: https://codecov.io/gh/LLNL/SSAPy
@@ -19,13 +19,14 @@ SSAPy - Space Situational Awareness for Python
 .. |pypi_badge| image:: https://badge.fury.io/py/llnl-ssapy.svg
    :target: https://badge.fury.io/py/llnl-ssapy
 
-`SSAPy <https://github.com/LLNL/SSAPy>`_ is a fast, flexible, high-fidelity
+`SSAPy <https://github.com/LLNL/SSAPy>`_ is a flexible, physics-based
 orbital modeling and analysis tool for orbits spanning from low-Earth orbit
 into the cislunar regime.
 
-For higher-level utilities, convenience workflows, plotting tools, GCRF-to-ITRF
-coordinate conversion helpers, Lambertian magnitude / brightness calculations,
-and related extensions, see the companion project
+SSAPy retains the core coordinate, observer-geometry, and propagation routines.
+For higher-level utilities, convenience workflows, plotting tools, workflow
+wrappers around coordinate conversions, Lambertian magnitude / brightness
+calculations, and related extensions, see the companion project
 `SSAPy-Toolkit <https://github.com/llnl/SSAPy-Toolkit>`__.
 
 SSAPy includes:
@@ -45,7 +46,7 @@ SSAPy includes:
 - Multiple integrators, including SGP4, Runge-Kutta (4, 8, and 7/8), SciPy,
   Keplerian, and Taylor series methods
 - User-definable timesteps and orbit information retrieval times, allowing
-  queries for quantities of interest such as magnitude, state vectors, TLEs,
+  queries for quantities of interest such as state vectors, TLEs,
   Keplerian elements, periapsis, apoapsis, specific angular momentum, and more
 - Ground- and space-based observer models
 - Lighting and visibility condition analysis
@@ -55,7 +56,8 @@ SSAPy includes:
 - Short-arc probabilistic orbit determination methods
 - Conjunction probability estimation
 - Built-in uncertainty quantification
-- Support for Monte Carlo runs and data fusion
+- Monte Carlo sampling, particle-based uncertainty representations, and
+  track linking/model selection
 - Support for multiple coordinate frames and coordinate transformations,
   including GCRF, IERS, GCRS Cartesian, TEME Cartesian, RA/Dec, NTW,
   zenith/azimuth, apparent positions, and orthogonal tangent plane coordinates
@@ -63,7 +65,7 @@ SSAPy includes:
 SSAPy-Toolkit
 -------------
 
-SSAPy provides the core high-fidelity propagation and modeling engine. Many
+SSAPy provides the core propagation and modeling engine. Many
 higher-level, analysis-ready capabilities built on top of it live in the
 companion project
 `SSAPy-Toolkit <https://github.com/LLNL/SSAPy-Toolkit>`__ (sometimes abbreviated
@@ -71,7 +73,8 @@ companion project
 
 - Higher-level utilities and convenience workflows that wrap common SSAPy tasks
 - Plotting tools for orbit and analysis visualization
-- GCRF-to-ITRF and related coordinate-conversion helpers
+- Workflow-level wrappers around SSAPy's coordinate and observer-geometry
+  routines
 - Lambertian magnitude / brightness calculations
 - Additional related extensions
 
@@ -83,7 +86,7 @@ Installation
 ------------
 
 For installation details, see the
-`Installing SSAPy <https://LLNL.github.io/SSAPy/installation.html>`_
+`Installing SSAPy <https://software.llnl.gov/SSAPy/installation.html>`_
 section of the documentation.
 
 If you are looking for higher-level utilities or plotting-oriented workflows,
@@ -104,6 +107,7 @@ The following Python packages are installed automatically when you install SSAPy
 - `emcee <https://pypi.org/project/emcee/>`_
 - `lmfit <https://pypi.org/project/lmfit/>`_
 - `sgp4 <https://pypi.org/project/sgp4/>`_
+- `ipython_genutils <https://pypi.org/project/ipython-genutils/>`_
 - `jplephem <https://pypi.org/project/jplephem/>`_
 - `ipyvolume <https://pypi.org/project/ipyvolume/>`_
 - `tqdm <https://pypi.org/project/tqdm/>`_
@@ -113,7 +117,7 @@ Documentation
 
 The documentation is hosted at:
 
-`https://LLNL.github.io/SSAPy/ <https://LLNL.github.io/SSAPy/>`_
+`https://software.llnl.gov/SSAPy/ <https://software.llnl.gov/SSAPy/>`_
 
 The API documentation may also be explored interactively:
 
@@ -141,17 +145,17 @@ in the companion repository
 
 Your PR must pass SSAPy's required CI checks. For local testing guidance,
 documentation builds, and Git workflow tips, see the
-`Contribution Guide <https://LLNL.github.io/SSAPy/contribution_guide.html>`_.
+`Contribution Guide <https://software.llnl.gov/SSAPy/contribution_guide.html>`_.
 
 SSAPy's ``main`` branch contains the latest development work.
 
 Releases
 --------
 
-For stable installations, we recommend using one of SSAPy's tagged
-`releases <https://github.com/LLNL/SSAPy/releases>`_.
-
-The latest release is always available from the ``releases/latest`` tag.
+For stable installations, we recommend installing the published
+`llnl-ssapy <https://pypi.org/project/llnl-ssapy/>`_ package from PyPI or using
+one of SSAPy's versioned source
+`tags <https://github.com/LLNL/SSAPy/tags>`_.
 
 Code of Conduct
 ---------------
@@ -168,22 +172,28 @@ SSAPy was developed with support from Lawrence Livermore National Laboratory's
 `19-SI-004 <https://ldrd-annual.llnl.gov/archives/ldrd-annual-2021/project-highlights/high-performance-computing-simulation-and-data-science/madstare-modeling-and-analysis-data-starved-or-ambiguous-environments>`_
 and
 `22-ERD-054 <https://ldrd-annual.llnl.gov/ldrd-annual-2023/project-highlights/space-security/data-demand-capable-space-domain-awareness-architecture>`_,
-by the following individuals (in alphabetical order):
+by the following individuals. For software citation order and metadata, use
+`CITATION.cff <https://github.com/LLNL/SSAPy/blob/main/CITATION.cff>`_.
 
-- `Robert Armstrong <https://orcid.org/0000-0002-6911-1038>`_ (`LLNL <https://www.llnl.gov/>`_)
-- `Julia Ebert <https://orcid.org/0000-0002-1975-772X>`_ (formerly `LLNL <https://www.llnl.gov/>`_, now at Fleet Robotics)
-- `Nathan Golovich <https://orcid.org/0000-0003-2632-572X>`_ (`LLNL <https://www.llnl.gov/>`_)
-- `Noah Lifset <https://orcid.org/0000-0003-3397-7021>`_ (formerly `LLNL <https://www.llnl.gov/>`_, now PhD student at `UT Austin <https://www.utexas.edu>`_)
-- `Dan Merl <https://orcid.org/0000-0003-4196-5354>`_ (`LLNL <https://www.llnl.gov/>`_) - Developer
-- `Joshua Meyers <https://orcid.org/0000-0002-2308-4230>`_ (formerly `LLNL <https://www.llnl.gov/>`_, now at `KIPAC <https://kipac.stanford.edu/>`_) - Former Lead Developer
-- `Caleb Miller <https://orcid.org/0000-0001-6249-0031>`_ (`LLNL <https://www.llnl.gov/>`_)
-- `Alexx Perloff <https://orcid.org/0000-0001-5230-0396>`_ (`LLNL <https://www.llnl.gov/>`_)
-- `Kerianne Pruett <https://orcid.org/0000-0002-2911-8657>`_ (formerly `LLNL <https://www.llnl.gov/>`_)
-- `Edward Schlafly <https://orcid.org/0000-0002-3569-7421>`_ (formerly `LLNL <https://www.llnl.gov/>`_, now at `STScI <https://www.stsci.edu/>`_) - Former Lead Developer
-- `Michael Schneider <https://orcid.org/0000-0002-8505-7094>`_ (`LLNL <https://www.llnl.gov/>`_) - Creator, Former Lead Developer
+- `Joshua E. Meyers <https://orcid.org/0000-0002-2308-4230>`_ (SLAC National Accelerator Laboratory)
 - `Travis Yeager <https://orcid.org/0000-0002-2582-0190>`_ (`LLNL <https://www.llnl.gov/>`_) - Current Lead Developer
+- `Michael Schneider <https://orcid.org/0000-0002-8505-7094>`_ (`LLNL <https://www.llnl.gov/>`_) - Creator, Former Lead Developer
+- `Edward Schlafly <https://orcid.org/0000-0002-3569-7421>`_ (`STScI <https://www.stsci.edu/>`_) - Former Lead Developer
+- `Julia Ebert <https://orcid.org/0000-0002-1975-772X>`_ (Fleet Robotics)
+- `Denvir Higgins <https://orcid.org/0000-0002-7579-1092>`_ (`LLNL <https://www.llnl.gov/>`_)
+- `Jason Bernstein <https://orcid.org/0000-0002-3391-5931>`_ (`LLNL <https://www.llnl.gov/>`_)
+- `Daniel Merl <https://orcid.org/0000-0003-4196-5354>`_ (`LLNL <https://www.llnl.gov/>`_)
+- Imène Goumiri
+- `Robert Armstrong <https://orcid.org/0000-0002-6911-1038>`_ (`LLNL <https://www.llnl.gov/>`_)
+- `Noah Lifset <https://orcid.org/0000-0003-3397-7021>`_ (`UT Austin <https://www.utexas.edu/>`_)
+- `Alexx Perloff <https://orcid.org/0000-0001-5230-0396>`_ (`LLNL <https://www.llnl.gov/>`_)
+- `Peter McGill <https://orcid.org/0000-0002-1052-6749>`_ (`LLNL <https://www.llnl.gov/>`_)
+- `Nathan Golovich <https://orcid.org/0000-0003-2632-572X>`_ (`LLNL <https://www.llnl.gov/>`_)
+- `Kerianne Pruett <https://orcid.org/0000-0002-2911-8657>`_ (`LLNL <https://www.llnl.gov/>`_)
+- `Caleb Miller <https://orcid.org/0000-0001-6249-0031>`_ (`LLNL <https://www.llnl.gov/>`_)
+- `William A. Dawson <https://orcid.org/0000-0003-0248-6123>`_ (`LLNL <https://www.llnl.gov/>`_)
 
-Many thanks go to SSAPy's other
+Many thanks go to SSAPy's additional
 `contributors <https://github.com/llnl/ssapy/graphs/contributors>`_.
 
 Citing SSAPy

@@ -4,7 +4,7 @@ version = "1.1.7"
 authors = [
     { name = "LLNL SSAPy Software Team", email = "yeagerastro@gmail.com" },
 ]
-description = "A fast, flexible, high-fidelity orbital modeling and analysis tool for orbits spanning from low-Earth orbit into the cislunar regime."
+description = "A flexible, physics-based orbital modeling and analysis tool for orbits spanning from low-Earth orbit into the cislunar regime."
 readme = "README.rst"
 requires-python = ">=3.10"
 license = "MIT"
