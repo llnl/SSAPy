@@ -24,7 +24,7 @@ A `coordinate system <https://en.wikipedia.org/wiki/Coordinate_system>`_ is a se
 
         - If converting from theta-phi, sets ``b = pi - theta`` and renames ``phi`` -> ``l``.  Everything is in radians.
 
-    - Orthographic tangent plane (radiants)
+    - Orthographic tangent plane (radians)
 
         - If converting from lb-like coordinates, the tangent plane is always chosen so that ``+Y`` is towards ``b = 90``, and ``+X`` is towards ``+l``.
 
@@ -34,6 +34,14 @@ A `coordinate system <https://en.wikipedia.org/wiki/Coordinate_system>`_ is a se
     - True Equator Mean Equinox frame (TEME) Cartesian coordinates
 
     Not every function will be able to make use of every coordinate system, so please be sure to read the documentation associated with a given operation.
+
+Base SSAPy still includes coordinate-conversion and observer-geometry APIs.
+Common entry points include ``ssapy.compute.groundTrack`` for GCRF positions to
+geodetic or ITRF ground tracks, ``ssapy.orbit.EarthObserver.getRV`` for
+Earth-fixed observer locations to GCRF position/velocity,
+``ssapy.utils.gcrf_to_teme`` and ``ssapy.utils.teme_to_gcrf`` for GCRF/TEME
+rotations, and
+``ssapy.io.get_tel_pos_itrf_to_gcrs`` for telescope ITRF positions to GCRS.
 
 .. _def-time-standards:
 

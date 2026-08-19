@@ -1,8 +1,8 @@
 SSAPy Benchmarks
 ================
 
-THIS PAGE IS UNDER DEVELOPMENT
+This page is under development. No current benchmark figures are included in
+this documentation build yet.
 
-The following figures provide an overview of our timing and accuracy benchmarking tests against various community SSA/SDA packages, integrators, and propagators.
-
-THIS PAGE IS UNDER DEVELOPMENT
+Future benchmark updates should describe the SSAPy version, propagators, force
+models, comparison packages, hardware, time spans, and error metrics used.

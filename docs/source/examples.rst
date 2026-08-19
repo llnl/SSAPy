@@ -1,207 +1,86 @@
 SSAPy by Example
 ================
 
-.. code-block:: python 
+The examples below use base SSAPy APIs that are part of the current package.
+Higher-level plotting workflows and apparent-magnitude calculations are
+maintained in `SSAPy-Toolkit <https://github.com/LLNL/SSAPy-Toolkit>`_.
 
-    from ssapy import *
+Define an epoch and a simple geosynchronous orbit:
+
+.. code-block:: python
+
     import numpy as np
+    import astropy.units as u
+    from astropy.time import Time
 
-Set an initial astropy time object
+    import ssapy
 
-.. code-block:: python
+    t0 = Time("2024-01-01T00:00:00", scale="utc")
 
-    t0 = Time("2024-1-1")
-    print(t0)
-    
-.. code-block:: python
-
-    2024-01-01 00:00:00.000
-
-Get the position and velocity of the Moon.
-
-.. code-block:: python
-
-    r_moon = get_body("moon").position(t0).T
-    v_moon = (r_moon - get_body("moon").position(t0 + 1).T) / 2
-    print(r_moon, v_moon)
-
-.. code-block:: python
-
-    [-3.67980873e+08  1.42721025e+08  8.93144235e+07], [13379651.47831511 35015714.2905997  18263361.07635442]
-
-Get a starting position and velocity (statevector) for an orbit. This is a Lunar bound orbit.
-
-.. code-block:: python
-
-    r0 = r_moon[0] + (1000e3 * r_moon[0] / np.linalg.norm(r_moon[0]))
-    v0 = v_moon[0] + 100
-    print(r0, v0)
-
-.. code-block:: python
-
-    -368980873.0925871 13379751.478315115
-
-Initialize an orbit object.
-
-.. code-block:: python
-
-    a = constants.RGEO
-    e = 0
-    i = np.radians(45)
-    pa = np.radians(0)
-    raan = np.radians(0)
-    ta = np.radians(180)
-
-    kElements = [a, e, i, pa, raan, ta]
-    orbit = Orbit.fromKeplerianElements(*kElements, t=t0)
-
-Set parameters of the satellite
-
-.. code-block:: python
-
-    sat_kwargs = dict(
-            mass=100,  # [kg]
-            area=1,  # [m^2]
-            CD=2.3,  # Drag coefficient
-            CR=1.3,  # Radiation pressure coefficient
+    orbit = ssapy.Orbit.fromKeplerianElements(
+        ssapy.constants.RGEO,  # semi-major axis [m]
+        0.001,                 # eccentricity
+        np.radians(45.0),      # inclination [rad]
+        0.0,                   # argument of periapsis [rad]
+        0.0,                   # right ascension of ascending node [rad]
+        np.pi,                 # true anomaly [rad]
+        t=t0,
     )
 
-Build a propagator and set custom accelerations.
+Propagate the orbit at user-selected times:
 
 .. code-block:: python
 
-    moon = get_body("moon")
-    sun = get_body("Sun")
-    Mercury = get_body("Mercury")
-    Venus = get_body("Venus")
-    Earth = get_body("Earth", model="EGM2008")
-    Mars = get_body("Mars")
-    Jupiter = get_body("Jupiter")
-    Saturn = get_body("Saturn")
-    Uranus = get_body("Uranus")
-    Neptune = get_body("Neptune")
-    aEarth = AccelKepler() + AccelHarmonic(Earth, 140, 140)
-    aSun = AccelThirdBody(sun)
-    aMoon = AccelThirdBody(moon) + AccelHarmonic(moon, 20, 20)
-    aSolRad = AccelSolRad(**sat_kwargs)
-    aEarthRad = AccelEarthRad(**sat_kwargs)
-    accel = aEarth + aMoon + aSun + aSolRad + aEarthRad
-    prop = SciPyPropagator(accel)
+    times = t0 + np.linspace(0.0, 6.0, 7) * u.hour
+    propagator = ssapy.KeplerianPropagator()
 
-Build a time array to evaluate the orbit at
+    r_gcrf, v_gcrf = ssapy.rv(orbit, times, propagator=propagator)
+    print(r_gcrf.shape, v_gcrf.shape)
+
+Compute a ground track. The geodetic form returns longitude, latitude, and
+height; the Cartesian form returns International Terrestrial Reference Frame
+(ITRF) coordinates.
 
 .. code-block:: python
 
-    times = utils.get_times(duration=(2, 'day'), freq=(1, 'minute'), t0=t0)
-    r, v = rv(orbit=orbit, time=times, propagator=prop)
+    lon, lat, height = ssapy.groundTrack(
+        orbit, times, propagator=propagator, format="geodetic"
+    )
 
-Plot the output in a GCRF (star fixed frame) and lunar (a non-interial Earth-Moon fixed frame)
+    x_itrf, y_itrf, z_itrf = ssapy.groundTrack(
+        r_gcrf, times, format="cartesian"
+    )
 
-.. code-block:: python
-
-    plotUtils.orbit_plot(r, times, frame="gcrf", show=True)
-    plotUtils.orbit_plot(r, times, frame="lunar", show=True)
-
-.. figure:: ./orbit_plot_1.png
-.. figure:: ./orbit_plot_2.png
-
-Lets see a ground track of the orbit.
+Compute observer geometry from an Earth-based site:
 
 .. code-block:: python
 
-    plotUtils.ground_track_plot(r, times)
+    observer = ssapy.EarthObserver(lon=-121.76, lat=37.68, elevation=120.0)
 
-.. figure:: ./ground_track_plot.png
+    ra, dec, slant_range = ssapy.radec(
+        orbit, times, observer=observer, propagator=propagator
+    )
+    alt, az = ssapy.altaz(
+        orbit, times, observer=observer, propagator=propagator
+    )
 
-Calculate the Lambertian Reflectance of the orbit
+    print(np.degrees(ra[0]), np.degrees(dec[0]), slant_range[0])
+    print(np.degrees(alt[0]), np.degrees(az[0]))
 
-.. code-block:: python
-
-    mv = compute.M_v_lambertian(r, times)
-    import matplotlib.pyplot as plt
-
-    def decimal_to_datetime_label(d):
-        year = int(d)
-        rem = d - year
-        is_leap = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
-        days_in_year = 366 if is_leap else 365
-        total_seconds = rem * days_in_year * 24 * 3600
-
-        day = int(total_seconds // (24 * 3600))
-        seconds_in_day = total_seconds % (24 * 3600)
-        hour = int(seconds_in_day // 3600)
-        minute = int((seconds_in_day % 3600) // 60)
-
-        base_date = np.datetime64(f'{year}-01-01') + np.timedelta64(day, 'D')
-        return f"{base_date} {hour:02d}:{minute:02d}"
-
-    xticks = np.linspace(times.decimalyear[0], times.decimalyear[-1], 6)
-    xtick_labels = [decimal_to_datetime_label(t) for t in xticks]
-
-    plt.figure(dpi=300)
-    plt.plot(times.decimalyear, mv)
-    plt.xlabel("Date")
-    plt.ylabel("Lambertian Reflectance [Apparent Magnitude]")
-    plt.xticks(xticks, xtick_labels, rotation=45)
-    plt.tight_layout()
-    plt.show()
-
-.. figure:: ./reflectance_plot.png
-
-Plot the apparent magnitude of the orbit at each timestep:
+Convert between Geocentric Celestial Reference Frame (GCRF) and True Equator
+Mean Equinox (TEME) Cartesian coordinates:
 
 .. code-block:: python
 
-    r_sun = get_body("sun").position(times).T
-    r_earth = get_body("earth").position(times).T
+    gcrf_to_teme = ssapy.utils.gcrf_to_teme(times)
+    teme_to_gcrf = ssapy.utils.teme_to_gcrf(times)
 
-    # Calculate the apparent magnitude at each timestep
-    mags = compute.calc_M_v(r, r_sun, r_earth)
+    r_teme = np.einsum("tij,tj->ti", gcrf_to_teme, r_gcrf)
+    r_roundtrip = np.einsum("tij,tj->ti", teme_to_gcrf, r_teme)
 
-    RGEO = constants.RGEO
-    moon = get_body("moon").position(times).T
+    print(np.max(np.linalg.norm(r_roundtrip - r_gcrf, axis=1)))
 
-    fig = plt.figure(figsize=(12, 12), layout='constrained')
-    plt.rcParams.update({'font.size': 12})
-    ax = fig.add_subplot(projection='3d')
-
-    x = r[:, 0] / RGEO
-    y = r[:, 1] / RGEO
-    z = r[:, 2] / RGEO
-
-    # Plot orbit
-    scatter = ax.scatter3D(x, y, z, c=mags, cmap='RdYlBu')
-
-    cbar = fig.colorbar(scatter, ax=ax, shrink=0.6, aspect=20, pad=0.1, orientation='vertical')
-    cbar.set_label('Vis Mag')
-    cbar.ax.invert_yaxis()
-
-    # Plot Earth
-    ax.scatter3D(0, 0, 0, color='green', label='Earth', s=100)
-
-    # Plot Moon
-    ax.plot(moon[:, 0] / RGEO, moon[:, 1] / RGEO, moon[:, 2] / RGEO, color='gray', label='Moon', lw=6)
-
-    ax.set_xlabel('X [GEO]')
-    ax.set_ylabel('Y [GEO]')
-    ax.set_zlabel('Z [GEO]')
-
-    plt.legend()
-    plt.show()
-
-.. figure:: ./magnitude_plot.png
-
-Plot the solar phase angle at each timestep:
-
-.. code-block:: python
-
-    sun_angle=compute.get_angle(r_sun,r,r_earth)
-
-    plt.scatter(sun_angle,mags)
-    plt.xlabel('Solar Equatorial Phase Angle [rad]')
-    plt.ylabel('Apparent Magnitude')
-    plt.ylim(max(mags), min(mags))
-    plt.grid()
-    plt.show()
-
-.. figure:: ./phase_angle.png
+Base SSAPy also includes lower-level coordinate utilities such as
+``ssapy.utils.lb_to_unit``, ``ssapy.utils.unit_to_lb``,
+``ssapy.utils.rv_to_ntw``, ``ssapy.utils.ntw_to_r``,
+``ssapy.compute.radecRateObsToRV``, and ``ssapy.compute.rvObsToRaDecRate``.

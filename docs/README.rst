@@ -6,7 +6,7 @@ Building the docs
 -----------------
 
 First, build and *install* ``ssapy`` by following the
-`Installing SSAPy <https://LLNL.github.io/SSAPy/installation.html>`_
+`Installing SSAPy <https://software.llnl.gov/SSAPy/installation.html>`_
 section of the documentation.
 
 If needed, install the documentation dependencies:

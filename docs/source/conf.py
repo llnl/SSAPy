@@ -10,7 +10,7 @@ import ssapy
 
 project = 'SSAPy'
 copyright = '2018, Lawrence Livermore National Security, LLC'
-author = 'Michael Schneider, Josh Meyers, Edward Schlafly, Julia Ebert, Travis Yeager, et al.'
+author = 'LLNL SSAPy Software Team'
 version = ssapy.__version__
 release = ssapy.__version__
 
