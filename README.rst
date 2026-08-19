@@ -189,7 +189,13 @@ Many thanks go to SSAPy's other
 Citing SSAPy
 ------------
 
-If you use SSAPy in your research, please cite the JOSS paper:
+If you use SSAPy in your research, please cite the software using the
+repository metadata in
+`CITATION.cff <https://github.com/LLNL/SSAPy/blob/main/CITATION.cff>`_.
+On GitHub, use the "Cite this repository" button to copy the citation in APA
+or BibTeX format.
+
+The related JOSS paper may also be cited separately:
 
 - Meyers, J. E., Schneider, M. D., Ebert, J. T., Schlafly, E. F., Yeager, T.,
   Perloff, A., Merl, D., Lifset, N., Bernstein, J., Dawson, W. A., Golovich, N.,
@@ -211,11 +217,6 @@ BibTeX::
       title     = {SSAPy - Space Situational Awareness for Python},
       journal   = {Journal of Open Source Software}
     }
-
-To cite the software itself, you can also copy a citation in APA or BibTeX format
-via the "Cite this repository" button on GitHub. If you prefer MLA or Chicago
-style citations, see the comments in
-`CITATION.cff <https://github.com/LLNL/SSAPy/blob/main/CITATION.cff>`_.
 
 You may also cite the following publications (click
 `here <https://github.com/LLNL/SSAPy/blob/main/docs/source/refs.bib>`_
