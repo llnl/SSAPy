@@ -63,6 +63,8 @@ authors:
   email: "merl1@llnl.gov"
 - family-names: "Goumiri"
   given-names: "Imène"
+  affiliation: "Lawrence Livermore National Laboratory"
+  orcid: "https://orcid.org/0000-0002-3149-7828"
 - family-names: "Armstrong"
   given-names: "Robert"
   affiliation: "Lawrence Livermore National Laboratory"

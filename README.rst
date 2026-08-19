@@ -175,7 +175,7 @@ and
 by the following individuals. For software citation order and metadata, use
 `CITATION.cff <https://github.com/LLNL/SSAPy/blob/main/CITATION.cff>`_.
 
-- `Joshua E. Meyers <https://orcid.org/0000-0002-2308-4230>`_ (SLAC National Accelerator Laboratory)
+- `Joshua E. Meyers <https://orcid.org/0000-0002-2308-4230>`_ (SLAC National Accelerator Laboratory) - Former Lead Developer
 - `Travis Yeager <https://orcid.org/0000-0002-2582-0190>`_ (`LLNL <https://www.llnl.gov/>`_) - Current Lead Developer
 - `Michael Schneider <https://orcid.org/0000-0002-8505-7094>`_ (`LLNL <https://www.llnl.gov/>`_) - Creator, Former Lead Developer
 - `Edward Schlafly <https://orcid.org/0000-0002-3569-7421>`_ (`STScI <https://www.stsci.edu/>`_) - Former Lead Developer
@@ -183,7 +183,7 @@ by the following individuals. For software citation order and metadata, use
 - `Denvir Higgins <https://orcid.org/0000-0002-7579-1092>`_ (`LLNL <https://www.llnl.gov/>`_)
 - `Jason Bernstein <https://orcid.org/0000-0002-3391-5931>`_ (`LLNL <https://www.llnl.gov/>`_)
 - `Daniel Merl <https://orcid.org/0000-0003-4196-5354>`_ (`LLNL <https://www.llnl.gov/>`_)
-- Imène Goumiri
+- `Imène Goumiri <https://orcid.org/0000-0002-3149-7828>`_ (`LLNL <https://www.llnl.gov/>`_)
 - `Robert Armstrong <https://orcid.org/0000-0002-6911-1038>`_ (`LLNL <https://www.llnl.gov/>`_)
 - `Noah Lifset <https://orcid.org/0000-0003-3397-7021>`_ (`UT Austin <https://www.utexas.edu/>`_)
 - `Alexx Perloff <https://orcid.org/0000-0001-5230-0396>`_ (`LLNL <https://www.llnl.gov/>`_)
