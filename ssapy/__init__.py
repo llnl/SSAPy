@@ -1,6 +1,6 @@
 import os
 
-__version__ = "1.1.7"
+__version__ = "1.1.8"
 
 datadir = os.path.join(os.path.dirname(__file__), "data")
 
