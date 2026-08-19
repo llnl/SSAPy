@@ -144,6 +144,18 @@ def test_ntw_cartesian_round_trip():
     np.testing.assert_allclose(utils.ntw_to_r(r, v, ntw), r + offset)
     np.testing.assert_allclose(utils.ntw_to_r(r, v, ntw, relative=True), offset)
 
+    r_circular = np.array([[7000.0, 0.0, 0.0]])
+    v_circular = np.array([[0.0, 7.5, 0.0]])
+    components = np.array([[1.0, 2.0, 3.0]])
+    np.testing.assert_allclose(
+        utils.ntw_to_r(r_circular, v_circular, components, relative=True),
+        [[1.0, 2.0, 3.0]],
+    )
+    np.testing.assert_allclose(
+        utils.rv_to_ntw(r_circular, v_circular, r_circular + [[1.0, 2.0, 3.0]]),
+        components,
+    )
+
 
 def test_small_coordinate_and_angle_helpers(capsys):
     np.testing.assert_allclose(utils.unit_vector(np.array([3.0, 4.0, 0.0])), [0.6, 0.8, 0.0])

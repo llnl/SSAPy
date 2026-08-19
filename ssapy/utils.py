@@ -767,8 +767,9 @@ def rv_to_ntw(r, v, rcoord):
     """Convert coordinates to NTW coordinates, using r, v to define NTW system.
 
     ``T`` is the projection of ``rcoord - r`` along velocity, tangent to the
-    track. ``W`` is the projection along ``V cross r``, normal to the orbital
-    plane. ``N`` is the in-plane projection perpendicular to ``T``.
+    track. ``W`` is the projection along ``r cross V``, normal to the orbital
+    plane. ``N`` is the in-plane projection perpendicular to ``T`` and follows
+    ``T cross W``.
 
     Parameters
     ----------
@@ -798,8 +799,8 @@ def ntw_to_r(r, v, ntw, relative=False):
     NTW system.
 
     ``T`` is the projection along velocity, tangent to the track. ``W`` is the
-    projection along ``V cross r``, normal to the orbital plane. ``N`` is the
-    in-plane projection perpendicular to ``T``.
+    projection along ``r cross V``, normal to the orbital plane. ``N`` is the
+    in-plane projection perpendicular to ``T`` and follows ``T cross W``.
 
     Parameters
     ----------
