@@ -46,6 +46,7 @@ def test_unit_angle():
     a = utils.normed(a)
     b = a.copy()
     np.testing.assert_allclose(utils.unitAngle3(a, b), 0.0)
+    assert np.isclose(utils.unitAngle3([1.0, 0.0, 0.0], [-1.0, 0.0, 0.0]), np.pi)
 
 
 def test_newton_raphson():
@@ -59,6 +60,9 @@ def test_find_extrema_brackets():
     y = np.array([1, 2, 1, 0, -1, -2, -1])
     brackets = utils.find_extrema_brackets(y)
     assert len(brackets) > 0
+
+    plateau = np.array([0.0, 1.0, 1.0, 0.0])
+    assert utils.find_extrema_brackets(plateau) == [(0, 1, 3)]
 
 
 def test_sample_points():
@@ -180,6 +184,194 @@ def test_small_coordinate_and_angle_helpers(capsys):
     assert "cannot be negative" in capsys.readouterr().out
 
 
+def test_sun_ra_dec_matches_astropy_solar_position():
+    from astropy.coordinates import get_sun
+
+    time = Time("J2000", scale="utc")
+    ra, dec = utils.sun_ra_dec(time.mjd)
+    sun = get_sun(time)
+
+    dra = ((ra - sun.ra.rad + np.pi) % (2 * np.pi)) - np.pi
+    separation = np.hypot(dra * np.cos(dec), dec - sun.dec.rad)
+    assert separation < np.deg2rad(60.0 / 3600.0)
+
+
+def test_sun_ra_dec_handles_vector_sunpos_shapes(monkeypatch):
+    monkeypatch.setattr(utils, "sunPos", lambda time: np.array([[1.0, 0.0], [0.0, 1.0], [0.0, 0.0]]))
+    ra, dec = utils.sun_ra_dec(np.array([0.0, 1.0]))
+    np.testing.assert_allclose(ra, [0.0, np.pi / 2])
+    np.testing.assert_allclose(dec, [0.0, 0.0])
+
+    monkeypatch.setattr(utils, "sunPos", lambda time: np.array([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]]))
+    ra, dec = utils.sun_ra_dec(np.array([0.0, 1.0]))
+    np.testing.assert_allclose(ra, [0.0, np.pi / 2])
+    np.testing.assert_allclose(dec, [0.0, 0.0])
+
+
+def test_catalog_to_apparent_accepts_gps_float_time():
+    ra, dec = utils.catalog_to_apparent(
+        np.array([0.0]),
+        np.array([0.0]),
+        Time("J2000", scale="utc").gps,
+        skipAberration=True,
+    )
+    np.testing.assert_allclose(ra, [0.0], atol=1e-12)
+    np.testing.assert_allclose(dec, [0.0], atol=1e-12)
+
+
+def test_ra_dec_accepts_documented_component_inputs():
+    ra, dec = utils.ra_dec(
+        x=1.0,
+        y=2.0,
+        z=3.0,
+        vx=0.1,
+        vy=0.2,
+        vz=0.3,
+    )
+    np.testing.assert_allclose(ra, [np.arctan2(2.0, 1.0)])
+    np.testing.assert_allclose(dec, [np.arcsin(3.0 / np.sqrt(14.0))])
+
+
+def test_horizontal_to_equatorial_inverts_simple_transit_case():
+    azimuth, altitude = utils.equatorial_to_horizontal(
+        observer_latitude=45.0,
+        declination=0.0,
+        hour_angle=0.0,
+    )
+    hour_angle, declination = utils.horizontal_to_equatorial(
+        observer_latitude=45.0,
+        azimuth=azimuth,
+        altitude=altitude,
+    )
+
+    wrapped_hour_angle = hour_angle % 360.0
+    assert (
+        np.isclose(wrapped_hour_angle, 0.0, atol=1e-12)
+        or np.isclose(wrapped_hour_angle, 360.0, atol=1e-12)
+    )
+    assert np.isclose(declination, 0.0, atol=1e-12)
+
+
+def test_find_all_zeros_recovers_polynomial_roots():
+    roots = utils.find_all_zeros(lambda x: (x - 1.0) * (x - 3.0), 0.0, 4.0, n=9)
+    np.testing.assert_allclose(roots, [1.0, 3.0], atol=1e-12)
+
+    roots = utils.find_all_zeros(lambda x: (x - 0.2) ** 2 - 0.01, 0.0, 0.5, n=6)
+    np.testing.assert_allclose(roots, [0.1, 0.3], atol=1e-12)
+
+    roots = utils.find_all_zeros(lambda x: 0.01 - (x - 0.2) ** 2, 0.0, 0.5, n=6)
+    np.testing.assert_allclose(roots, [0.1, 0.3], atol=1e-12)
+
+
+def test_mcmc_chain_selection_helpers_are_deterministic_with_seed():
+    chain = np.arange(4 * 5 * 6, dtype=float).reshape(4, 5, 6)
+    lnprob = np.array([[0.0, 0.0, 0.0, 0.0, -100.0]] * 4)
+    lnprior = lnprob - 1.0
+
+    clustered_chain, clustered_lnprob, clustered_lnprior = utils.cluster_emcee_walkers(
+        chain,
+        lnprob,
+        lnprior,
+    )
+    assert clustered_chain.shape == (4, 3, 6)
+    np.testing.assert_allclose(clustered_lnprob, 0.0)
+    np.testing.assert_allclose(clustered_lnprior, -1.0)
+
+    equal_lnprob = np.zeros((2, 3))
+    equal_chain = np.arange(2 * 3 * 2, dtype=float).reshape(2, 3, 2)
+    equal_lnprior = equal_lnprob - 2.0
+    out = utils.cluster_emcee_walkers(
+        equal_chain,
+        equal_lnprob,
+        equal_lnprior,
+        verbose=True,
+    )
+    assert out[0].shape == equal_chain.shape
+
+    original_version_check = utils._emcee_version_before_3
+    try:
+        utils._emcee_version_before_3 = lambda version: True
+        with pytest.raises(ValueError, match="emcee version"):
+            utils.cluster_emcee_walkers(equal_chain, equal_lnprob, equal_lnprior)
+    finally:
+        utils._emcee_version_before_3 = original_version_check
+
+    np.random.seed(0)
+    samples, sample_lnprob, sample_lnprior = utils.subsample_high_lnprob(
+        chain[:2, :4],
+        np.array([[0.0, -1.0, -20.0, -30.0], [2.0, 1.0, 0.0, -50.0]]),
+        np.array([[-100.0, -101.0, -120.0, -130.0], [-98.0, -99.0, -100.0, -150.0]]),
+        nSample=3,
+        thresh=-2.0,
+    )
+    assert samples.shape == (3, 6)
+    assert np.all(sample_lnprob >= 0.0)
+    np.testing.assert_allclose(sample_lnprior, sample_lnprob - 100.0)
+
+
+def test_resample_non_pod_uses_full_particle_regularization(monkeypatch):
+    particles = np.arange(12.0).reshape(3, 4)
+    ln_weights = np.log([0.2, 0.3, 0.5])
+
+    def fake_regularize_default(particles_arg, weights_arg):
+        np.testing.assert_allclose(particles_arg, particles)
+        np.testing.assert_allclose(weights_arg, [0.2, 0.3, 0.5])
+        return np.ones_like(particles_arg), np.full(particles_arg.shape[0], 1.0 / particles_arg.shape[0])
+
+    monkeypatch.setattr(utils, "regularize_default", fake_regularize_default)
+    monkeypatch.setattr(utils.np.random, "uniform", lambda high: 0.0)
+
+    resampled, weights = utils.resample(particles, ln_weights, pod=False)
+    np.testing.assert_allclose(resampled, particles + 1.0)
+    np.testing.assert_allclose(weights, np.full(3, 1.0 / 3.0))
+
+
+def test_tangent_plane_and_simulation_frame_helpers():
+    lb = utils.xyz_to_lb(1.0, 0.0, 0.0)
+    np.testing.assert_allclose(lb, (0.0, 0.0))
+
+    theta, phi = utils.xyz_to_tp(0.0, 0.0, 2.0)
+    assert np.isclose(theta, 0.0)
+    assert np.isclose(phi, 0.0)
+
+    x, y, vx, vy = utils.lb_to_tan(
+        np.array([0.0]),
+        np.array([0.0]),
+        mul=np.array([0.01]),
+        mub=np.array([0.02]),
+        lcen=np.array([0.0]),
+        bcen=np.array([0.0]),
+    )
+    np.testing.assert_allclose((x, y, vx, vy), ([0.0], [0.0], [0.01], [0.02]))
+
+    x_auto, y_auto = utils.lb_to_tan(np.array([0.0, 0.1]), np.array([0.0, 0.0]))
+    assert x_auto.shape == (2,)
+    assert y_auto.shape == (2,)
+
+    xrot, yrot = utils.inert2rot(-1.0, 0.0, -1.0, 0.0)
+    assert np.isclose(xrot, -1.0)
+    assert np.isclose(yrot, 0.0, atol=1e-15)
+
+    longitude, latitude, radius = utils.sim_lonlatrad(
+        1.0, 2.0, 3.0,
+        -1.0, 0.0, 0.0,
+        0.0, 0.0, 0.0,
+    )
+    assert np.isclose(longitude, 315.0)
+    assert np.isclose(latitude, np.degrees(np.arcsin(3.0 / np.sqrt(17.0))))
+    assert np.isclose(radius, np.sqrt(17.0))
+
+
+def test_angle_format_converters_carry_rounded_seconds():
+    almost_13_deg = 12.0 + 59.0 / 60.0 + 59.99999 / 3600.0
+    almost_2_hours = 15.0 * (1.0 + 59.0 / 60.0 + 59.99999 / 3600.0)
+
+    assert utils.dd_to_dms(almost_13_deg) == "13:0:00"
+    assert utils.dd_to_dms(-almost_13_deg) == "-13:0:00"
+    assert utils.dd_to_hms(almost_2_hours) == "2:0:00"
+    assert utils.dd_to_hms("15:00:00") == "1:0:0"
+
+
 def test_ecliptic_equatorial_helpers_and_class_extension():
     xyz = (1.0, 2.0, 3.0)
     ecliptic = utils.equatorial_xyz_to_ecliptic_xyz(*xyz)
@@ -201,6 +393,17 @@ def test_ecliptic_equatorial_helpers_and_class_extension():
     assert np.isclose(ra3, 0.0)
     assert np.isclose(dec3, 0.0)
 
+    lon_rad, lat_rad = utils.xyz_to_ecliptic(0.0, 1.0, 0.0)
+    np.testing.assert_allclose((lon_rad, lat_rad), (np.pi / 2, 0.0))
+    ra_rad, dec_rad = utils.xyz_to_equatorial(0.0, 1.0, 0.0)
+    np.testing.assert_allclose((ra_rad, dec_rad), (np.pi / 2, 0.0))
+    ecliptic_ra, ecliptic_dec = utils.ecliptic_xyz_to_equatorial(1.0, 0.0, 0.0)
+    np.testing.assert_allclose((ecliptic_ra, ecliptic_dec), (0.0, 0.0))
+
+    lon4, lat4 = utils.equatorial_to_ecliptic(np.pi / 2, 0.0)
+    ra4, dec4 = utils.ecliptic_to_equatorial(lon4, lat4)
+    np.testing.assert_allclose((ra4, dec4), (np.pi / 2, 0.0), atol=1e-12)
+
     assert utils.isAttributeSafeToTransfer("__doc__", None) is False
     assert utils.isAttributeSafeToTransfer("new_method", object()) is True
 
@@ -221,6 +424,8 @@ def test_ecliptic_equatorial_helpers_and_class_extension():
 def test_gps_to_tt_and_interpolate_points_between():
     t = Time(0.0, format="gps")
     assert np.isclose(utils._gpsToTT(t), utils._gpsToTT(0.0))
+    assert utils.moonPos(t).shape == (3,)
+    assert len(utils.iers_interp(t)) == 3
 
     points = np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
     interpolated = utils.interpolate_points_between(points, 2)
@@ -228,6 +433,59 @@ def test_gps_to_tt_and_interpolate_points_between():
         interpolated,
         [[1.0, 2.0, 3.0], [1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [4.0, 5.0, 6.0], [4.0, 5.0, 6.0]],
     )
+
+
+def test_coordinate_angle_edge_cases_and_errors(capsys):
+    np.testing.assert_allclose(utils.dms_to_rad(["30d00m00s", "60d00m00s"]), [np.pi / 6, np.pi / 3])
+    assert np.isclose(utils.dms_to_deg("30d00m00s"), 30.0)
+    assert utils.deg90to90(190.0) == 10.0
+    with pytest.raises(ValueError, match="hms cannot be negative"):
+        utils.hms_to_dd("-01:00:00")
+
+    with pytest.raises(ValueError, match="Either provide r and v"):
+        utils.ra_dec(x=1.0, y=2.0, z=3.0)
+
+    with pytest.raises(ValueError, match="Either right_ascension or hour_angle"):
+        utils.equatorial_to_horizontal(45.0, 0.0)
+
+    az, alt = utils.equatorial_to_horizontal(
+        observer_latitude=-45.0,
+        declination=0.0,
+        hour_angle="00:00:00",
+        hms=True,
+    )
+    assert np.isfinite(az)
+    assert np.isfinite(alt)
+
+    az2, alt2 = utils.equatorial_to_horizontal(
+        observer_latitude=45.0,
+        declination=0.0,
+        right_ascension="01:00:00",
+        hour_angle="00:00:00",
+        local_time="02:00:00",
+        hms=True,
+    )
+    assert np.isfinite(az2)
+    assert np.isfinite(alt2)
+    assert "Using hour_angle" in capsys.readouterr().out
+
+    az3, alt3 = utils.equatorial_to_horizontal(
+        observer_latitude=45.0,
+        declination=0.0,
+        right_ascension="01:00:00",
+        local_time="02:00:00",
+        hms=True,
+    )
+    assert np.isfinite(az3)
+    assert np.isfinite(alt3)
+
+    hour_angle, declination = utils.horizontal_to_equatorial(-45.0, az, alt)
+    assert np.isfinite(hour_angle)
+    assert np.isfinite(declination)
+
+    hour_angle, declination = utils.horizontal_to_equatorial(45.0, 180.0, 30.0)
+    assert np.isclose(hour_angle % 360.0, 0.0)
+    assert declination < 0.0
 
 
 @timer

@@ -1061,8 +1061,6 @@ def sample_points(x, C, npts, sqrt=False):
         sqrtdiag = np.sqrt(np.diag(C))
         scalecovar = sqrtdiag[None, :] * sqrtdiag[:, None]
         uu, ss, vvh = np.linalg.svd(C / scalecovar)
-        if np.any(ss < 0):
-            raise ValueError('negative eigenvalues in C!')
         sqrtC = uu.dot(np.diag(ss**0.5)).dot(vvh)
     else:
         sqrtC = C
@@ -1695,9 +1693,18 @@ def sun_ra_dec(time_):
     tuple
         Sun right ascension and declination in radians.
     """
-    from .body import get_body
-    out = get_body(_Time(time_, format='mjd'))
-    return out.ra.to('rad').value, out.dec.to('rad').value
+    time = time_ if isinstance(time_, _Time) else _Time(time_, format='mjd')
+    r = np.asarray(sunPos(time))
+    if r.ndim == 1:
+        x, y, z = r
+    elif r.shape[0] == 3:
+        x, y, z = r
+    else:
+        x, y, z = np.moveaxis(r, -1, 0)
+    radius = np.sqrt(x**2 + y**2 + z**2)
+    ra = rad0to2pi(np.arctan2(y, x))
+    dec = np.arcsin(z / radius)
+    return ra, dec
 
 
 def ra_dec(r=None, v=None, x=None, y=None, z=None, vx=None, vy=None, vz=None, r_earth=np.array([0, 0, 0]), v_earth=np.array([0, 0, 0]), input_unit='si'):
@@ -1752,9 +1759,9 @@ def ra_dec(r=None, v=None, x=None, y=None, z=None, vx=None, vy=None, vz=None, r_
         else:
             raise ValueError("Either provide r and v arrays or individual coordinates (x, y, z) and velocities (vx, vy, vz)")
 
-    # Subtract Earth's position and velocity from the input arrays
-    r = r - r_earth
-    v = v - v_earth
+    # Subtract Earth's position and velocity from the input arrays.
+    r = np.atleast_2d(r) - np.asarray(r_earth)
+    v = np.atleast_2d(v) - np.asarray(v_earth)
 
     d_earth_mag = einsum_norm(r, 'ij,ij->i')
     ra = rad0to2pi(np.arctan2(r[:, 1], r[:, 0]))  # in radians
@@ -1894,19 +1901,19 @@ def equatorial_to_horizontal(observer_latitude, declination, right_ascension=Non
     tuple
         Azimuth and altitude in degrees.
     """
-    if right_ascension is not None:
+    if right_ascension is not None and hour_angle is not None:
+        print('Both right_ascension and hour_angle parameters are provided.\nUsing hour_angle for calculations.')
+        if hms:
+            hour_angle = hms_to_dd(hour_angle)
+    elif right_ascension is not None:
         hour_angle = rightascension_to_hourangle(right_ascension, local_time)
         if hms:
             hour_angle = hms_to_dd(hour_angle)
     elif hour_angle is not None:
         if hms:
             hour_angle = hms_to_dd(hour_angle)
-    elif right_ascension is not None and hour_angle is not None:
-        print('Both right_ascension and hour_angle parameters are provided.\nUsing hour_angle for calculations.')
-        if hms:
-            hour_angle = hms_to_dd(hour_angle)
     else:
-        print('Either right_ascension or hour_angle must be provided.')
+        raise ValueError('Either right_ascension or hour_angle must be provided.')
 
     observer_latitude, hour_angle, declination = np.radians([observer_latitude, hour_angle, declination])
 
@@ -1944,7 +1951,7 @@ def horizontal_to_equatorial(observer_latitude, azimuth, altitude):
     """
 
     altitude, azimuth, latitude = np.radians([altitude, azimuth, observer_latitude])
-    zenith_angle = zenithangle_to_altitude(altitude)
+    zenith_angle = altitude_to_zenithangle(altitude, deg=False)
 
     zenith_angle = [-zenith_angle if latitude < 0 else zenith_angle][0]
 
@@ -2110,7 +2117,10 @@ def equatorial_to_ecliptic(right_ascension, declination, degrees=False):
     tuple
         Ecliptic longitude and latitude.
     """
-    ra, dec = np.radians(right_ascension), np.radians(declination)
+    if degrees:
+        ra, dec = np.radians(right_ascension), np.radians(declination)
+    else:
+        ra, dec = right_ascension, declination
     ec_latitude = np.arcsin(cos_ec * np.sin(dec) - sin_ec * np.cos(dec) * np.sin(ra))
     ec_longitude = np.arctan((cos_ec * np.cos(dec) * np.sin(ra) + sin_ec * np.sin(dec)) / (np.cos(dec) * np.cos(ra)))
     if degrees:
@@ -2135,7 +2145,10 @@ def ecliptic_to_equatorial(lon, lat, degrees=False):
     tuple
         Right ascension and declination.
     """
-    lon, lat = np.radians(lon), np.radians(lat)
+    if degrees:
+        lon, lat = np.radians(lon), np.radians(lat)
+    else:
+        lon, lat = lon, lat
     ra = np.arctan((cos_ec * np.cos(lat) * np.sin(lon) - sin_ec * np.sin(lat)) / (np.cos(lat) * np.cos(lon)))
     dec = np.arcsin(cos_ec * np.sin(lat) + sin_ec * np.cos(lat) * np.sin(lon))
     if degrees:
@@ -2296,17 +2309,20 @@ def dd_to_dms(degree_decimal):
         >>> dd_to_dms(0.0002777777777777778)
         '0:0:1'
     """
-    _d, __d = np.trunc(degree_decimal), degree_decimal - np.trunc(degree_decimal)
-    __d = [-__d if degree_decimal < 0 else __d][0]
+    sign = -1 if degree_decimal < 0 else 1
+    degree_decimal = abs(degree_decimal)
+    _d = int(np.trunc(degree_decimal))
+    __d = degree_decimal - np.trunc(degree_decimal)
     _m, __m = np.trunc(__d * 60), __d * 60 - np.trunc(__d * 60)
     _s = round(__m * 60, 4)
     _s = [int(_s) if int(_s) == _s else _s][0]
     if _s == 60:
         _m, _s = _m + 1, '00'
-    elif _s > 60:
-        _m, _s = _m + 1, _s - 60
+    if _m == 60:
+        _d, _m = _d + 1, 0
+    prefix = "-" if sign < 0 and (_d != 0 or _m != 0 or _s != 0) else ""
 
-    return f'{int(_d)}:{int(_m)}:{_s}'
+    return f'{prefix}{int(_d)}:{int(_m)}:{_s}'
 
 
 def hms_to_dd(hms):
@@ -2351,7 +2367,7 @@ def hms_to_dd(hms):
             hour, minute, sec = float(hour), float(minute), float(sec)
             out.append(hour * 15 + (minute / 4) + (sec / 240))
         else:
-            print('hms cannot be negative.')
+            raise ValueError('hms cannot be negative.')
 
     return [out[0] if _type == str or len(hms) == 1 else out][0]
 
@@ -2400,14 +2416,15 @@ def dd_to_hms(degree_decimal):
         _dd = -degree_decimal / 15
     else:
         _dd = degree_decimal / 15
-    _h, __h = np.trunc(_dd), _dd - np.trunc(_dd)
+    _h = int(np.trunc(_dd))
+    __h = _dd - np.trunc(_dd)
     _m, __m = np.trunc(__h * 60), __h * 60 - np.trunc(__h * 60)
     _s = round(__m * 60, 4)
     _s = [int(_s) if int(_s) == _s else _s][0]
     if _s == 60:
         _m, _s = _m + 1, '00'
-    elif _s > 60:
-        _m, _s = _m + 1, _s - 60
+    if _m == 60:
+        _h, _m = _h + 1, 0
 
     return f'{int(_h)}:{int(_m)}:{_s}'
 

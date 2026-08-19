@@ -86,6 +86,113 @@ def test_bstar_seed_is_physical_order():
     assert 1e-4 < cd < 1e-1
 
 
+def test_numerical_from_tle_uses_bstar_seed_and_default_propagator(monkeypatch):
+    sentinel = object()
+    monkeypatch.setattr("ssapy.tle_drag.drag_propagator", lambda harmonics=(4, 4): sentinel)
+
+    orbit, propagator = numerical_from_tle(ISS, propagator=None, harmonics=(2, 2))
+
+    assert propagator is sentinel
+    assert orbit.propkw["CD"] == pytest.approx(bstar_to_cd_a_over_m(orbit._sat.bstar))
+    assert orbit.propkw["CR"] == 0.0
+
+    orbit, propagator = numerical_from_tle(
+        ISS,
+        cd_a_over_m=0.03,
+        cr_a_over_m=0.004,
+        propagator=sentinel,
+    )
+    assert propagator is sentinel
+    assert orbit.propkw["CD"] == 0.03
+    assert orbit.propkw["CR"] == 0.004
+
+
+def test_fit_drag_verbose_path_with_fake_solver(monkeypatch, capsys):
+    import scipy.optimize
+    import ssapy.compute
+
+    orbit = Orbit(
+        np.array([7.0e6, 0.0, 0.0]),
+        np.array([0.0, 7.5e3, 0.0]),
+        0.0,
+    )
+    times = np.array([0.0, 1.0])
+    r_ref = np.zeros((2, 3))
+
+    def fake_rv(orbit_arg, times_arg, propagator=None):
+        cd = orbit_arg.propkw["CD"]
+        return np.full((len(times_arg), 3), cd), np.zeros((len(times_arg), 3))
+
+    def fake_least_squares(fun, x0, **kwargs):
+        fun(np.asarray(x0, dtype=float))
+        return type("Result", (), {"x": np.asarray(x0, dtype=float)})()
+
+    monkeypatch.setattr(ssapy.compute, "rv", fake_rv)
+    monkeypatch.setattr(scipy.optimize, "least_squares", fake_least_squares)
+
+    result = fit_drag(
+        orbit,
+        times,
+        r_ref,
+        propagator=object(),
+        cd_a_over_m0=0.02,
+        verbose=True,
+    )
+
+    assert result["cd_a_over_m"] == 0.02
+    assert "Cd*A/m" in capsys.readouterr().out
+
+
+def test_fit_orbit_drag_default_propagator_verbose_and_cov_failure(monkeypatch, capsys):
+    import scipy.optimize
+    import ssapy.compute
+    import ssapy.tle_drag as tle_drag
+
+    orbit = Orbit(
+        np.array([7.0e6, 0.0, 0.0]),
+        np.array([0.0, 7.5e3, 0.0]),
+        0.0,
+    )
+    times = np.array([0.0, 1.0])
+    r_ref = np.broadcast_to(orbit.r, (2, 3))
+    sentinel_propagator = object()
+
+    def fake_rv(orbit_arg, times_arg, propagator=None):
+        assert propagator is sentinel_propagator
+        return np.broadcast_to(orbit_arg.r, (len(times_arg), 3)), np.broadcast_to(orbit_arg.v, (len(times_arg), 3))
+
+    def fake_least_squares(fun, x0, **kwargs):
+        fun(np.asarray(x0, dtype=float))
+        return type(
+            "Result",
+            (),
+            {
+                "x": np.asarray(x0, dtype=float),
+                "success": True,
+                "nfev": 1,
+                "jac": None,
+                "cost": 1.0,
+            },
+        )()
+
+    monkeypatch.setattr(tle_drag, "drag_propagator", lambda harmonics=(4, 4): sentinel_propagator)
+    monkeypatch.setattr(ssapy.compute, "rv", fake_rv)
+    monkeypatch.setattr(scipy.optimize, "least_squares", fake_least_squares)
+
+    result = tle_drag.fit_orbit_drag(
+        orbit,
+        times,
+        r_ref,
+        propagator=None,
+        return_cov=True,
+        verbose=True,
+    )
+
+    assert result["success"] is True
+    assert result["cov"] is None
+    assert "rms(3D pos)" in capsys.readouterr().out
+
+
 @needs_body_data
 def test_path_b_fit_improves_residual():
     """Path B: fitting Cd*A/m against an arc reduces the residual and yields a
@@ -126,6 +233,7 @@ def _light_drag_propagator():
 
 
 @needs_body_data
+@pytest.mark.timeout(180)
 def test_joint_fit_recovers_state_and_drag():
     """With a wrong epoch state, drag-only absorbs the error into Cd*A/m; the
     joint fit recovers the true state and coefficient instead."""

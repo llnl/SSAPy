@@ -87,6 +87,29 @@ def test_make_tle_and_parse_tle():
     assert np.isclose(parsed[0], a, rtol=0.01)
 
 
+def test_parse_tle_legacy_year_and_epoch_fallback(monkeypatch):
+    line1 = list("1 25544U 98067A   99001.00000000  .00000282  00000-0  00000-0 0  9991")
+    line2 = "2 25544  51.6430 249.4256 0001791 160.3235 199.7986 15.48988277272524"
+    parsed = io.parse_tle(("".join(line1), line2))
+    assert Time(parsed[-1], format="gps").utc.datetime.year == 1999
+
+    import sgp4.ext
+
+    monkeypatch.setattr(sgp4.ext, "days2mdhms", lambda year, day: (13, 1, 0, 0, 0.0))
+    monkeypatch.setattr(sgp4.ext, "jday", lambda *args: 0.0)
+    monkeypatch.setattr(sgp4.ext, "invjday", lambda jd: (2021, 12, 31, 0, 0, 0.0))
+
+    line1[18:32] = list("21001.00000000")
+    parsed = io.parse_tle(("".join(line1), line2))
+    assert Time(parsed[-1], format="gps").utc.datetime.year == 2021
+
+
+def test_get_tel_pos_itrf_to_gcrs_returns_cartesian_quantity():
+    pos = io.get_tel_pos_itrf_to_gcrs(Time(0.0, format="gps"), tel_label="511")
+    assert pos.shape == (3,)
+    assert pos.unit.is_equivalent(u.m)
+
+
 def test_parse_overpunched():
     assert io.parse_overpunched("J1234") == "-11234"
     assert io.parse_overpunched("51234") == "51234"
@@ -104,6 +127,18 @@ def test_b3_line_file_and_catalog_helpers(tmp_path):
     invalid_type[74] = " "
     rec_invalid = io.parseB3Line("".join(invalid_type))
     assert rec_invalid['type'][0] == -999
+
+    bad_range_exp = list(line)
+    bad_range_exp[45] = " "
+    rec_bad_exp = io.parseB3Line("".join(bad_range_exp))
+    assert np.isfinite(rec_bad_exp['range'][0])
+
+    bad_sensor_xyz = list(_make_b3_line(obs_type="9"))
+    bad_sensor_xyz[46:55] = list(" notnum  ")
+    rec_bad_xyz = io.parseB3Line("".join(bad_sensor_xyz))
+    assert np.isnan(rec_bad_xyz["x"][0])
+    assert np.isnan(rec_bad_xyz["y"][0])
+    assert np.isnan(rec_bad_xyz["z"][0])
 
     with pytest.raises(ValueError, match="B3OBS format error"):
         io.b3obs2pos("too short")
@@ -125,6 +160,12 @@ def test_b3_line_file_and_catalog_helpers(tmp_path):
     assert catalog['satnum'] == [12345]
     assert catalog['sensnum'] == [511]
     assert np.isfinite(catalog['ra'][0])
+
+    type9_unknown_sensor = _make_b3_line(obs_type="9", sensor="999")
+    pos9 = io.b3obs2pos(type9_unknown_sensor[:9] + "99" + type9_unknown_sensor[11:])
+    assert pos9["sensnum"] == 999
+    assert pos9["epoch"].year == 1999
+    assert pos9["tel_pos"] is None
 
 def test_parseB3Line_type9_sensor_position():
     # Regression test: the z coordinate of the sensor position for

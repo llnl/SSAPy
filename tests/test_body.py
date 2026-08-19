@@ -37,9 +37,13 @@ class _FakeSegment:
 class _FakeKernel:
     def __init__(self, values):
         self.values = values
+        self.closed = False
 
     def __getitem__(self, key):
         return _FakeSegment(self.values[key])
+
+    def close(self):
+        self.closed = True
 
 
 def test_body_defaults():
@@ -78,6 +82,70 @@ def test_position_helpers_use_kernel_differences(monkeypatch):
         (3, 399): [0.5, 1.0, 1.5],
     })
     np.testing.assert_allclose(planet_position(123.0), [5500.0, 5000.0, 4500.0])
+
+
+def test_kernel_backed_helpers_close_open_kernels():
+    kernel = _FakeKernel({})
+    moon_position = body.MoonPosition.__new__(body.MoonPosition)
+    moon_position.kernel = kernel
+
+    moon_position.close()
+    assert kernel.closed is True
+    assert moon_position.kernel is None
+
+    moon_position.close()
+
+
+def test_kernel_backed_context_manager_closes_kernel():
+    kernel = _FakeKernel({})
+    moon_position = body.MoonPosition.__new__(body.MoonPosition)
+    moon_position.kernel = kernel
+
+    with moon_position as returned:
+        assert returned is moon_position
+
+    assert kernel.closed is True
+    assert moon_position.kernel is None
+
+
+def test_destructors_suppress_close_errors():
+    class BadClose:
+        def __init__(self):
+            self.called = False
+
+        def close(self):
+            self.called = True
+            raise RuntimeError("close failed")
+
+    kernel = BadClose()
+    moon_position = body.MoonPosition.__new__(body.MoonPosition)
+    moon_position.kernel = kernel
+    moon_position.__del__()
+    assert kernel.called is True
+
+    position = BadClose()
+    obj = body.Body(1.0, 2.0, position=position)
+    obj.__del__()
+    assert position.called is True
+
+
+def test_body_close_closes_position_and_orientation_once():
+    position = _FakeKernel({})
+    orientation = _FakeKernel({})
+    obj = body.Body(1.0, 2.0, position=position, orientation=orientation)
+
+    obj.close()
+
+    assert position.closed is True
+    assert orientation.closed is True
+
+
+def test_body_context_manager_closes_shared_kernel_once():
+    kernel = _FakeKernel({})
+    with body.Body(1.0, 2.0, position=kernel, orientation=kernel) as obj:
+        assert obj.position is kernel
+
+    assert kernel.closed is True
 
 
 def test_planet_position_init_loads_kernel(monkeypatch):

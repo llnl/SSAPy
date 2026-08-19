@@ -11,6 +11,21 @@ from ssapy.particles import Particles
 from ssapy.rvsampler import RPrior, APrior, GaussianRVInitializer
 from ssapy.utils import cluster_emcee_walkers
 
+
+class _TinyRVProbability:
+    epoch = 0.0
+
+    def __init__(self):
+        self.prior_calls = 0
+
+    def lnprior(self, orbit):
+        self.prior_calls += 1
+        return -float(self.prior_calls)
+
+    def lnlike(self, orbit):
+        return 0.0
+
+
 # ------------------------------------------
 # Helpers
 # ------------------------------------------
@@ -125,3 +140,50 @@ def test_reweight_fails(prepared_particles, monkeypatch):
     monkeypatch.setattr(p0.rvprobability, "lnlike", lambda orbit: -1e50)
     result = p0.reweight(p1)
     assert result is False
+
+
+def test_particles_constructor_reset_and_lazy_prior_branches():
+    rvprob = _TinyRVProbability()
+    chain = np.arange(2 * 2 * 6, dtype=float).reshape(2, 2, 6)
+
+    with pytest.raises(ValueError, match="lnpriors"):
+        Particles(chain, rvprob, lnpriors=np.zeros(4))
+
+    particles = Particles(chain, rvprob)
+    assert particles.particles.shape == (4, 6)
+    np.testing.assert_allclose(particles.lnpriors, [-1.0, -2.0, -3.0, -4.0])
+    np.testing.assert_allclose(particles.ln_wts, [1.0, 2.0, 3.0, 4.0])
+
+    particles.particles[:] = -1.0
+    particles.ln_wts[:] = -10.0
+    particles.reset_to_pseudo_prior()
+    np.testing.assert_allclose(particles.particles, chain.reshape(4, 6))
+    np.testing.assert_allclose(particles.ln_wts, [1.0, 2.0, 3.0, 4.0])
+
+
+def test_particles_resample_over_request_and_verbose_fuse(monkeypatch, capsys):
+    rvprob = _TinyRVProbability()
+    particles = Particles(
+        np.arange(12.0).reshape(2, 6),
+        rvprob,
+        lnpriors=np.array([0.0, 0.0]),
+        ln_weights=np.array([0.0, 0.0]),
+    )
+
+    def shrink_resample(particles_arg, ln_weights_arg, pod=False):
+        return particles_arg[:1], np.array([1.0])
+
+    monkeypatch.setattr("ssapy.particles.utils.resample", shrink_resample)
+    with pytest.raises(ValueError, match="Requested more particles"):
+        particles.resample(num_particles=2)
+
+    particles = Particles(
+        np.arange(12.0).reshape(2, 6),
+        rvprob,
+        lnpriors=np.array([0.0, 0.0]),
+        ln_weights=np.array([0.0, 0.0]),
+    )
+    monkeypatch.setattr(particles, "reweight", lambda epoch_particles: True)
+    monkeypatch.setattr(particles, "resample", lambda num_particles: None)
+    particles.fuse(particles, verbose=True)
+    assert "All weights are negligible" in capsys.readouterr().out

@@ -116,7 +116,7 @@ def _hyperbolicTrueToEccentricAnomaly(v, e):
 
 def _hyperbolicTrueToEccentricAnomalyMany(v, e):
     return np.arcsinh(
-        np.sqrt(e * e - 1)[:, None] * np.sin(v) / (1 + e * np.cos(v))[:, None]
+        np.sqrt(e * e - 1)[:, None] * np.sin(v) / (1 + e[:, None] * np.cos(v))
     )
 
 
@@ -941,20 +941,14 @@ class Orbit:
         # elements where it's faster to just work in the TEME frame.
         from sgp4.api import Satrec, WGS84
 
-        if e <= 1:
-            meanAnomaly = _ellipticalEccentricToMeanAnomaly(
-                _ellipticalTrueToEccentricAnomaly(
-                    trueAnomaly % (2 * np.pi), e
-                ),
-                e
-            )
-        else:
-            meanAnomaly = _hyperbolicEccentricToMeanAnomaly(
-                _hyperbolicTrueToEccentricAnomaly(
-                    trueAnomaly % (2 * np.pi), e
-                ),
-                e
-            )
+        if a <= 0 or e >= 1:
+            raise ValueError("Kozai mean elements require a bound orbit with a > 0 and e < 1")
+        meanAnomaly = _ellipticalEccentricToMeanAnomaly(
+            _ellipticalTrueToEccentricAnomaly(
+                trueAnomaly % (2 * np.pi), e
+            ),
+            e
+        )
         meanMotion = np.sqrt(mu / np.abs(a**3)) * 60.0  # rad/min
 
         if not isinstance(t, astropy.time.Time):
@@ -1231,10 +1225,10 @@ class Orbit:
             rpDot = np.array([xDot, yDot])  # (2, n, m)
             rpDot = np.einsum("abc,bcd->acd", R, rpDot)  # (2, n, m)
 
-            rub = np.einsum("nm,nt->nmt", rp[0], np.atleast_2d(self._pEq))
-            rub += np.einsum("nm,nt->nmt", rp[1], np.atleast_2d(self._qEq))
-            vub = np.einsum("nm,nt->nmt", rpDot[0], np.atleast_2d(self._pEq))
-            vub += np.einsum("nm,nt->nmt", rpDot[1], np.atleast_2d(self._qEq))
+            rub = np.einsum("nm,nt->nmt", rp[0], np.atleast_2d(self._pEq)[~wBound])
+            rub += np.einsum("nm,nt->nmt", rp[1], np.atleast_2d(self._qEq)[~wBound])
+            vub = np.einsum("nm,nt->nmt", rpDot[0], np.atleast_2d(self._pEq)[~wBound])
+            vub += np.einsum("nm,nt->nmt", rpDot[1], np.atleast_2d(self._qEq)[~wBound])
             if np.all(~wBound):
                 return rub, vub
             r[~wBound] = rub
@@ -1288,7 +1282,7 @@ class Orbit:
 
         wBound = np.atleast_1d(self.a) > 0
         if np.any(wBound):
-            a = np.atleast_1d(self.a)
+            a = np.atleast_1d(self.a)[wBound]
             e = np.atleast_1d(self.e)[wBound]
             uME2 = (1 - e) * (1 + e)
             s1Me2 = np.sqrt(uME2)
@@ -1773,7 +1767,7 @@ class Orbit:
             apoapsis = np.empty((len(self.a), 3))
             if np.any(wBound):
                 adist = self.p[wBound] / (1 - self.e[wBound])
-                apoapsis[wBound] = -normed(self.LRL)[wBound] * adist[wBound, None]
+                apoapsis[wBound] = -normed(self.LRL)[wBound] * adist[:, None]
             if np.any(~wBound):
                 apoapsis[~wBound] = np.array([np.inf, np.inf, np.inf])
             return apoapsis

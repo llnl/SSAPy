@@ -34,6 +34,79 @@ HAS_MOON_PA = not _is_lfs_pointer(Path(ssapy.datadir) / "moon_pa_de440_200625.bp
 HAS_BODY_DATA = HAS_EGM84 and HAS_DE430 and HAS_MOON_PA
 
 
+def test_harmonic_coefficients_error_and_identity_paths(tmp_path):
+    with pytest.raises(FileNotFoundError, match="missing-model"):
+        ssapy.HarmonicCoefficients.fromEGM("missing-model")
+
+    missing_radius = tmp_path / "missing_radius.egm"
+    missing_radius.write_text("ModelMass 398600.0\n")
+    with pytest.raises(ValueError, match="model radius"):
+        ssapy.HarmonicCoefficients.fromEGM(str(missing_radius))
+
+    missing_mass = tmp_path / "missing_mass.egm"
+    missing_mass.write_text("ModelRadius 6378.0\n")
+    with pytest.raises(ValueError, match="model mass"):
+        ssapy.HarmonicCoefficients.fromEGM(str(missing_mass))
+
+    with pytest.raises(FileNotFoundError, match="missing-tab"):
+        ssapy.HarmonicCoefficients.fromTAB("missing-tab")
+
+    tab = tmp_path / "tiny.tab"
+    tab.write_text(
+        "1.0,2.0,0.0,3,2,0,0,0\n"
+        "0,0,1.0,0.0,0.0,0.0\n"
+        "1,0,0.1,0.0,0.0,0.0\n"
+        "2,2,0.2,0.3,0.0,0.0\n"
+        "3,0,0.4,0.0,0.0,0.0\n"
+    )
+    coeffs = ssapy.HarmonicCoefficients.fromTAB(str(tab), n_max=2, m_max=1)
+    assert coeffs.name == str(tab)
+    assert coeffs.radius == 1000.0
+    assert coeffs.MG == 2.0e9
+    assert coeffs.CS.shape == (3, 3)
+    assert np.isnan(coeffs.CS[2, 2])
+
+    hc1 = ssapy.HarmonicCoefficients.__new__(ssapy.HarmonicCoefficients)
+    hc1.name = "tiny"
+    hc1.radius = 1.0
+    hc1.MG = 2.0
+    hc1.n_max = 1
+    hc1.m_max = 1
+    hc1.CS = np.array([[0.0, 0.1], [0.2, 0.3]])
+    hc2 = ssapy.HarmonicCoefficients.__new__(ssapy.HarmonicCoefficients)
+    hc2.name = hc1.name
+    hc2.radius = hc1.radius
+    hc2.MG = hc1.MG
+    hc2.n_max = hc1.n_max
+    hc2.m_max = hc1.m_max
+    hc2.CS = hc1.CS.copy()
+
+    assert hash(hc1) == hash(hc2)
+    assert hc1 == hc2
+    assert hc1 != object()
+
+
+def test_accel_harmonic_clamps_requested_degree_and_order(capsys):
+    harmonics = SimpleNamespace(
+        name="tiny",
+        n_max=1,
+        m_max=1,
+        CS=np.array([[0.0, 0.1], [0.2, 0.3]], dtype=float),
+    )
+    body = SimpleNamespace(mu=1.0, radius=1.0, harmonics=harmonics)
+
+    default_accel = ssapy.AccelHarmonic(body)
+    assert default_accel.n_max == 1
+    assert default_accel.m_max == 1
+
+    clamped = ssapy.AccelHarmonic(body, n_max=5, m_max=6)
+    assert clamped.n_max == 1
+    assert clamped.m_max == 1
+    out = capsys.readouterr().out
+    assert "provided degree" in out
+    assert "provided order" in out
+
+
 def _make_body_dependent_objects():
     iers_interp(0.0)  # Prime the IERS interpolant cache
     earth = ssapy.get_body("earth")
@@ -1163,7 +1236,33 @@ def test_accel_sub():
     neg_b = AccelProd(b,-1)
     assert result == AccelSum([a,neg_b])
 
- 
+
+class _ConstantAccel(Accel):
+    def __init__(self, value):
+        super().__init__()
+        self.value = np.array(value, dtype=float)
+
+    def __call__(self, r, v, t, **kwargs):
+        return self.value.copy()
+
+    def __hash__(self):
+        return hash(tuple(self.value))
+
+    def __eq__(self, other):
+        return isinstance(other, _ConstantAccel) and np.all(self.value == other.value)
+
+
+def test_accel_sum_and_product_formula_paths():
+    a = _ConstantAccel([1.0, 2.0, 3.0])
+    b = _ConstantAccel([-0.5, 0.0, 0.5])
+
+    np.testing.assert_allclose(AccelProd(a, -2.0)(None, None, None), [-2.0, -4.0, -6.0])
+    np.testing.assert_allclose(AccelSum([a, b])(None, None, None), [0.5, 2.0, 3.5])
+
+    assert AccelSum([a]) != a
+    assert AccelProd(a, 1.0) != a
+
+
 def test_kepler_eq_same_mu():
     a = AccelKepler(mu=EARTH_MU)
     b = AccelKepler(mu=EARTH_MU)
@@ -1206,7 +1305,20 @@ def test_solrad_eq_different_type():
     not_accel = "not an AccelSolRad"
     assert a != not_accel
 
- 
+
+def test_solrad_call_matches_direct_pressure_formula(monkeypatch):
+    sun = np.array([1.0e11, 0.0, 0.0])
+    r = np.array([2.0e11, 0.0, 0.0])
+    monkeypatch.setattr("ssapy.accel.sunPos", lambda t: sun)
+
+    accel = AccelSolRad(CR=2.0, area=3.0, mass=4.0)
+    rr = r - sun
+    expected = 4.56e-6 * 2.0 * 3.0 / 4.0 * rr / norm(rr) ** 3 * 2.2379522708536898e22
+
+    np.testing.assert_allclose(accel(r, None, 0.0), expected)
+    assert hash(accel) == hash(AccelSolRad(CR=2.0, area=3.0, mass=4.0))
+
+
 @pytest.fixture(autouse=True)
 def patch_sunpos_and_norm(monkeypatch):
     monkeypatch.setattr("ssapy.utils.sunPos", lambda t: np.array([1e11, 0, 0]))  # Large distance to sun
@@ -1252,7 +1364,25 @@ def test_call_valid_high_orbit():
     assert np.all(np.isfinite(accel))
     assert accel.shape == (3,)
 
- 
+
+def test_earthrad_call_matches_direct_pressure_formula(monkeypatch):
+    r_sun = np.array([1.0e11, 0.0, 0.0])
+    r = np.array([2.0 * EARTH_RADIUS, 0.0, 0.0])
+    monkeypatch.setattr("ssapy.accel.sunPos", lambda t: r_sun)
+
+    accel = AccelEarthRad(CR=1.2, area=2.0, mass=100.0)
+    d_sun = norm(r_sun)
+    normr = norm(r)
+    normsunsat = norm(r_sun - r)
+    cosi = (d_sun ** 2 + normr ** 2 - normsunsat ** 2) / (2 * d_sun * normr)
+    k = (1 + cosi) / 2
+    pressure = (459 * k + 230) / 299792458 * r * EARTH_RADIUS ** 2 / normr ** 3
+    expected = pressure * 1.2 * 2.0 / 100.0
+
+    np.testing.assert_allclose(accel(r, None, 0.0), expected)
+    assert hash(accel) == hash(AccelEarthRad(CR=1.2, area=2.0, mass=100.0))
+
+
 @pytest.fixture(autouse=True)
 def patch_drag_dependencies(monkeypatch):
     # Stub out external dependencies

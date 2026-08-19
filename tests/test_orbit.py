@@ -1556,6 +1556,7 @@ def test_light_time_correction():
     _is_lfs_pointer(Path(ssapy.datadir) / "de430.bsp"),
     reason="de430.bsp is a Git LFS pointer, not real ephemeris data",
 )
+@pytest.mark.timeout(90)
 @timer
 def test_find_passes():
     # Just checking that things run.  No checking of values.
@@ -1721,6 +1722,183 @@ def test_MG_2_3():
         atol=1e-5,
         err_msg="Mean anomaly test failed",
     )
+
+
+def test_orbit_scalar_vector_api_branches_and_reprs(tmp_path):
+    tle = (
+        "1 25544U 98067A   24015.54791435  .00016717  00000-0  30074-3 0  9993",
+        "2 25544  51.6411  13.2045 0004750  89.0124  31.0932 15.50024251435465",
+    )
+    tle_file = tmp_path / "iss.tle"
+    tle_file.write_text("ISS (ZARYA)\n{}\n{}\n".format(*tle))
+    tle_orbit = ssapy.Orbit.fromTLE("ISS (ZARYA)", str(tle_file), propkw={"area": 12.0})
+    np.testing.assert_allclose(tle_orbit.propkw["area"], 12.0)
+    assert hasattr(tle_orbit, "_sat")
+    assert tle_orbit._tle == tle
+
+    scalar = ssapy.Orbit.fromKeplerianElements(
+        7.0e6, 0.1, 0.2, 0.3, 0.4, 0.5, 0.0, mu=ssapy.constants.MOON_MU
+    )
+    assert len(scalar) == 1
+    assert "mu=" in repr(scalar)
+
+    vector = ssapy.Orbit(
+        np.array([tle_orbit.r, tle_orbit.r + [10.0, 0.0, 0.0]]),
+        np.array([tle_orbit.v, tle_orbit.v]),
+        np.array([tle_orbit.t, tle_orbit.t + 1.0]),
+        propkw={"area": np.array([1.0, 2.0])},
+    )
+    vector.kozaiMeanKeplerianElements = np.array(tle_orbit.kozaiMeanKeplerianElements)
+    vector._sat = tle_orbit._sat
+    vector._tle = tle_orbit._tle
+    indexed = vector[1]
+    assert indexed.kozaiMeanKeplerianElements is vector.kozaiMeanKeplerianElements
+    assert indexed._sat is vector._sat
+    assert indexed._tle == vector._tle
+    np.testing.assert_allclose(indexed.propkw["area"], 2.0)
+    assert scalar != vector
+
+    observer = ssapy.EarthObserver(10.0, 20.0, elevation=30.0)
+    assert "elevation=30.0" in repr(observer)
+    assert np.isfinite(observer.sunAlt(Time(0.0, format="gps")))
+
+    orbital_observer = ssapy.OrbitalObserver(scalar, propagator=ssapy.SGP4Propagator())
+    assert "propagator=" in repr(orbital_observer)
+
+
+def test_orbit_mixed_vector_bound_unbound_regression():
+    a = np.array([7.0e6, -1.0e7])
+    e = np.array([0.1, 1.5])
+    inc = np.array([0.2, 0.2])
+    pa = np.array([0.3, 0.3])
+    raan = np.array([0.4, 0.4])
+    true_anomaly = np.array([0.5, 0.2])
+    t = np.array([0.0, 0.0])
+
+    orbit = ssapy.Orbit.fromKeplerianElements(
+        a, e, inc, pa, raan, true_anomaly, t, propkw={"area": 2.0}
+    )
+    assert orbit.r.shape == (2, 3)
+    np.testing.assert_allclose(orbit.propkw["area"], [2.0, 2.0])
+    np.testing.assert_allclose(orbit.period[0], 2 * np.pi / orbit.meanMotion[0])
+    assert np.isinf(orbit.period[1])
+    assert np.all(np.isinf(orbit.apoapsis[1]))
+    assert np.all(np.isfinite(orbit.periapsis))
+    assert np.all(np.isfinite(orbit.eccentricAnomaly))
+    assert np.all(np.isfinite(orbit.meanAnomaly))
+
+    r_eq, v_eq = orbit._rvFromEquinoctial(lv=np.atleast_2d(orbit.lv).T)
+    np.testing.assert_allclose(r_eq[:, 0], orbit.r, atol=1e-8)
+    np.testing.assert_allclose(v_eq[:, 0], orbit.v, atol=1e-10)
+
+    equinoctial = ssapy.Orbit.fromEquinoctialElements(
+        *orbit.equinoctialElements,
+        orbit.t,
+        propkw={"mass": 5.0},
+    )
+    np.testing.assert_allclose(equinoctial.propkw["mass"], [5.0, 5.0])
+    np.testing.assert_allclose(equinoctial.r, orbit.r, atol=1e-8)
+    np.testing.assert_allclose(equinoctial.v, orbit.v, atol=1e-10)
+
+
+def test_orbit_scalar_anomaly_and_apoapsis_branches():
+    elliptical = ssapy.Orbit.fromKeplerianElements(7.0e6, 0.1, 0.2, 0.3, 0.4, 0.5, 0.0)
+    hyperbolic = ssapy.Orbit.fromKeplerianElements(-1.0e7, 1.5, 0.2, 0.3, 0.4, 0.2, 0.0)
+
+    assert np.isfinite(elliptical.eccentricAnomaly)
+    assert np.isfinite(elliptical.meanAnomaly)
+    assert np.all(np.isfinite(elliptical.apoapsis))
+    np.testing.assert_allclose(
+        np.linalg.norm(elliptical.apoapsis),
+        elliptical.p / (1.0 - elliptical.e),
+        rtol=1e-14,
+    )
+
+    assert np.isfinite(hyperbolic.eccentricAnomaly)
+    assert np.isfinite(hyperbolic.meanAnomaly)
+    assert np.all(np.isinf(hyperbolic.apoapsis))
+
+
+def test_orbit_equinoctial_many_and_lazy_property_branches():
+    orbit = ssapy.Orbit.fromKeplerianElements(
+        np.array([7.0e6, 8.0e6]),
+        np.array([0.1, 0.2]),
+        np.array([0.2, 0.3]),
+        np.array([0.3, 0.4]),
+        np.array([0.4, 0.5]),
+        np.array([0.5, 0.6]),
+        np.array([0.0, 10.0]),
+        propkw={"area": 2.0},
+    )
+    lE = np.atleast_2d(orbit.lE).T
+    r_many, v_many = ssapy.Orbit._rvFromEquinoctialMany(
+        orbit.a, orbit.ex, orbit.ey, orbit.mu, orbit._pEq, orbit._qEq, lE
+    )
+    r_ref, v_ref = orbit._rvFromEquinoctial(lE=lE)
+    np.testing.assert_allclose(r_many, r_ref)
+    np.testing.assert_allclose(v_many, v_ref)
+    with pytest.raises(NotImplementedError, match="hyperbolic"):
+        ssapy.Orbit._rvFromEquinoctialMany(
+            np.array([-1.0e7]), np.array([1.5]), np.array([0.0]), orbit.mu,
+            np.array([[1.0, 0.0, 0.0]]), np.array([[0.0, 1.0, 0.0]]),
+            np.array([[0.1]]),
+        )
+
+    raw = ssapy.Orbit(orbit.r[0], orbit.v[0], orbit.t[0])
+    assert raw._qEq.shape == (3,)
+    raw = ssapy.Orbit(orbit.r[0], orbit.v[0], orbit.t[0])
+    assert raw._qK.shape == (3,)
+    raw = ssapy.Orbit(orbit.r[0], orbit.v[0], orbit.t[0])
+    assert np.isfinite(raw.hy)
+    raw = ssapy.Orbit(orbit.r[0], orbit.v[0], orbit.t[0])
+    assert np.isfinite(raw.ex)
+    raw = ssapy.Orbit(orbit.r[0], orbit.v[0], orbit.t[0])
+    assert np.isfinite(raw.ey)
+    raw = ssapy.Orbit(orbit.r[0], orbit.v[0], orbit.t[0])
+    assert np.isfinite(raw.lonPa)
+    raw = ssapy.Orbit(orbit.r[0], orbit.v[0], orbit.t[0])
+    assert np.isfinite(raw.raan)
+
+
+def test_kozai_constructor_and_solver_restart_branches(monkeypatch):
+    kozai = ssapy.Orbit.fromKozaiMeanKeplerianElements(
+        7.0e6, 0.1, 0.2, 0.3, 0.4, 0.5, Time(0.0, format="gps")
+    )
+    assert np.all(np.isfinite(kozai.r))
+    assert np.all(np.isfinite(kozai.v))
+    with pytest.raises(ValueError, match="bound orbit"):
+        ssapy.Orbit.fromKozaiMeanKeplerianElements(-1.0e7, 1.5, 0.2, 0.3, 0.4, 0.5, 0.0)
+
+    orbit = ssapy.Orbit.fromKeplerianElements(7.0e6, 0.1, 0.2, 0.3, 0.4, 0.5, 0.0)
+    calls = []
+
+    class Result:
+        def __init__(self, x, fun):
+            self.x = x
+            self.fun = fun
+
+    def fake_least_squares(resid, x0, **kwargs):
+        calls.append(np.array(x0))
+        fun = np.ones(6) * (1e-2 if len(calls) < 3 else 0.0)
+        return Result(np.array(x0), fun)
+
+    import scipy.optimize
+    monkeypatch.setattr(scipy.optimize, "least_squares", fake_least_squares)
+    result = orbit.kozaiMeanKeplerianElements
+    assert len(calls) == 3
+    np.testing.assert_allclose(calls[1], calls[0] + np.ones(6) * 1e-3)
+    np.testing.assert_allclose(calls[2], calls[1] + np.array([-1, 1, -1, 1, -1, 1]) * 1e-3)
+    np.testing.assert_allclose(result, calls[-1])
+
+
+def test_hyperbolic_many_anomaly_helper():
+    from ssapy.orbit import _hyperbolicTrueToEccentricAnomalyMany
+
+    true_anomaly = np.array([[0.1, 0.2], [0.3, 0.4]])
+    eccentricity = np.array([1.2, 1.5])
+    H = _hyperbolicTrueToEccentricAnomalyMany(true_anomaly, eccentricity)
+    true_round_trip = _hyperbolicEccentricToTrueAnomaly(H, eccentricity[:, None])
+    np.testing.assert_allclose(true_round_trip, true_anomaly)
 
 
 if __name__ == '__main__':

@@ -311,12 +311,12 @@ class SGP4Propagator(Propagator):
 
     def __hash__(self):
         t = self.t.gps if isinstance(self.t, Time) else self.t
-        return hash(("SGP4Propagator", t))
+        return hash(("SGP4Propagator", t, self.truncate))
 
     def __eq__(self, rhs):
         if not isinstance(rhs, SGP4Propagator):
             return False
-        return np.all(self.t == rhs.t)
+        return np.all(self.t == rhs.t) and self.truncate == rhs.truncate
 
 
 def impact_event(t, s):
