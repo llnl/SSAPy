@@ -89,8 +89,8 @@ Users can specify various space- and ground-based observation models with suppor
 multiple coordinate and reference frames. SSAPy also supports orbit analysis and
 propagation methods such as multiple hypothesis tracking and has built-in uncertainty quantification.
 The majority of SSAPy's methods are vectorized and parallelizable, allowing for effective use of
-high-performance computer (HPC) systems. Finally, SSAPy has plotting functionality, allowing users to
-visualize orbits and trajectories. Examples are shown in \autoref{fig:ground_track} and \autoref{fig:orbit_plot}.
+high-performance computer (HPC) systems. SSAPy-Toolkit provides visualization workflows for SSAPy
+orbits and trajectories. Examples are shown in \autoref{fig:ground_track} and \autoref{fig:orbit_plot}.
 
 SSAPy has been used for the classification of cislunar [@Higgins2024] and closely-spaced [@Pruett2024] orbits as
 well as for studying the long-term stability of orbits in cislunar space [@Yeager2023]. SSAPy
@@ -118,14 +118,14 @@ and provides conversions between on-sky coordinates, TLEs, the Geocentric Celest
 There are also built-in observation-linking tools and orbit refinement. SSAPy, with its full-featured modeling framework and scalable, parallelizable
 functionality, fills the gap in the orbital software landscape.
 
-![Example SSAPy visualization plot of an orbit ground track over the surface of the Earth. The 12–13 hour orbit has a semi-major axis of 27,000 km, an eccentricity of 0.2 and an inclination of 45 degrees.\label{fig:ground_track}](ground_track.png)
+![Example SSAPy-Toolkit visualization of an SSAPy orbit ground track over the surface of the Earth. The 12–13 hour orbit has a semi-major axis of 27,000 km, an eccentricity of 0.2 and an inclination of 45 degrees.\label{fig:ground_track}](ground_track.png)
 
 
-![Example SSAPy visualization plot of a cislunar orbit. The color on this plot represents time.\label{fig:orbit_plot}](orbit_plot.png){ width=50% }
+![Example SSAPy-Toolkit visualization of an SSAPy cislunar orbit. The color represents time.\label{fig:orbit_plot}](orbit_plot.png){ width=50% }
 
 # Acknowledgements
 
-SSAPy depends on NumPy [@Harris2020], SciPy [@Virtanen2020], Matplotlib [@Hunter2007], emcee [@ForemanMackey2013],
+SSAPy depends on NumPy [@Harris2020], SciPy [@Virtanen2020], emcee [@ForemanMackey2013],
 Astropy [@astropy2022], PyERFA [@Kerkwijk2023], lmfit [@newville2024], and SGP4 [@Vallado2006].
 We would like to thank Robert Armstrong and Iméne Goumiri for valuable contributions to this project.
  This work was performed under the auspices of the U.S.

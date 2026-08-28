@@ -26,7 +26,6 @@ and/or heavy dependencies.  Below lists the packages available in the ``ssapy`` 
       ssapy.orbit_solver
       ssapy.orbit
       ssapy.particles
-      ssapy.plotUtils
       ssapy.propagator
       ssapy.rvsampler
       ssapy.utils

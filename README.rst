@@ -111,8 +111,8 @@ The following Python packages are installed automatically when you install SSAPy
 - `jplephem <https://pypi.org/project/jplephem/>`_
 - `tqdm <https://pypi.org/project/tqdm/>`_
 
-Install ``llnl-ssapy[plotting]`` for the optional ``ipyvolume`` Earth and Moon
-mesh helpers.
+Earth/Moon mesh helpers and other visualization tools are maintained in
+`SSAPy-Toolkit <https://github.com/llnl/SSAPy-Toolkit>`__.
 
 Documentation
 -------------

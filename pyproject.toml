@@ -31,11 +31,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-plotting = [
-    "ipyvolume",
-    "pillow",
-]
-
 dev = [
     "pytest",
     "pytest-cov",
@@ -45,8 +40,6 @@ dev = [
     "build",
     "cibuildwheel",
     "delocate",
-    "ipyvolume",
-    "pillow",
 ]
 
 docs = [
