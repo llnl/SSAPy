@@ -1524,20 +1524,32 @@ def time_ordered_satIDs(data, with_time=False, order='forward'):
 
     list of corresponding gps times of first obs per ID
     """
-    s = np.argsort(data['time'].gps)
+    time_values = data['time']
+    if isinstance(time_values, Time):
+        times_gps = np.asarray(time_values.gps, dtype=float)
+    elif np.issubdtype(time_values.dtype, np.number):
+        times_gps = np.asarray(time_values, dtype=float)
+    else:
+        times_gps = np.asarray([
+            value.gps if isinstance(value, Time) else float(value)
+            for value in time_values
+        ], dtype=float)
+
+    s = np.argsort(times_gps)
     if order == 'backward':
         s = s[::-1]
     usedtracklet = {}
     out = []
     times = []
-    for satid in data['satID'][s]:
+    for idx in s:
+        satid = data['satID'][idx]
         if usedtracklet.get(satid, False):
             continue
         usedtracklet[satid] = True
         out.append(satid)
 
         if with_time:
-            times.append(data[data['satID'] == satid]['time'].gps[0])
+            times.append(times_gps[idx])
 
     res = out
     if with_time:
