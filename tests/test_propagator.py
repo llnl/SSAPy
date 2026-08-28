@@ -46,6 +46,28 @@ def test_base_get_rv_many_trims_to_shortest_result():
     np.testing.assert_allclose(v[:, 0, 0], [-3.0, -1.0])
 
 
+def test_chained_at_reuses_root_propagation_context():
+    orbit = ssapy.Orbit(
+        np.array([7.0e6, 0.0, 0.0]),
+        np.array([0.0, 7.5e3, 0.0]),
+        0.0,
+    )
+    propagator = ssapy.RK4Propagator(ssapy.AccelKepler(), h=70.0)
+    times = np.array([0.0, 1000.0, 2500.0, 4000.0, 5500.0])
+    r_expected, v_expected = ssapy.rv(orbit, times, propagator=propagator)
+
+    current = orbit
+    states = []
+    for time in times:
+        current = current.at(time, propagator=propagator)
+        states.append((current.r, current.v))
+
+    r_chained = np.array([state[0] for state in states])
+    v_chained = np.array([state[1] for state in states])
+    np.testing.assert_allclose(r_chained, r_expected, rtol=0.0, atol=1e-8)
+    np.testing.assert_allclose(v_chained, v_expected, rtol=0.0, atol=1e-11)
+
+
 @pytest.mark.parametrize(
     "orbit",
     [

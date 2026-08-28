@@ -713,6 +713,9 @@ class Orbit:
                 out._tle = self._tle
             if hasattr(self, "_sat_epoch"):
                 out._sat_epoch = self._sat_epoch
+            if hasattr(self, "_propagation_root"):
+                out._propagation_root = self._propagation_root
+                out._propagation_propagator = self._propagation_propagator
             # TODO: iterate through already-instantiated lazy_properties and
             # copy them over too.
             self._iter += 1
@@ -736,6 +739,9 @@ class Orbit:
             out._tle = self._tle
         if hasattr(self, "_sat_epoch"):
             out._sat_epoch = self._sat_epoch
+        if hasattr(self, "_propagation_root"):
+            out._propagation_root = self._propagation_root
+            out._propagation_propagator = self._propagation_propagator
         return out
 
     def __hash__(self):
@@ -1113,13 +1119,22 @@ class Orbit:
             Propagated Orbit.
         """
         from .compute import rv
-        r, v = rv(self, t, propagator=propagator)
+        source = self
+        context_propagator = getattr(self, "_propagation_propagator", None)
+        if (
+            context_propagator is not None
+            and (propagator is context_propagator or propagator == context_propagator)
+        ):
+            source = self._propagation_root
+        r, v = rv(source, t, propagator=propagator)
         out = Orbit(r, v, t, mu=self.mu, propkw=self.propkw)
         if hasattr(self, "_sat"):
             out._sat = self._sat
             out._sat_epoch = getattr(self, "_sat_epoch", self.t)
         if hasattr(self, "_tle"):
             out._tle = self._tle
+        out._propagation_root = source
+        out._propagation_propagator = propagator
         return out
 
     def __repr__(self):
