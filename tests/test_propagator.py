@@ -6,9 +6,10 @@ from collections import deque
 from types import SimpleNamespace
 
 import ssapy
-from ssapy.constants import EARTH_RADIUS
-from ssapy.propagator import Propagator, RKPropagator, default_numerical, impact_event
-from ssapy.utils import norm
+from ssapy.constants import EARTH_RADIUS, MOON_RADIUS
+from ssapy.propagator import (Propagator, RKPropagator, default_numerical,
+                              impact_event, moon_impact_event)
+from ssapy.utils import moonPos, norm
 
 
 def test_abstract_propagator_classes_require_concrete_methods():
@@ -268,6 +269,47 @@ def test_scipy_get_rv_one_returns_empty_when_solution_does_not_cover_query(monke
     assert v.shape == (0, 3)
 
 
+def test_scipy_burnup_returns_valid_state_prefix():
+    accel = ssapy.AccelKepler() + ssapy.AccelDrag(
+        CD=2.2, area=1.0, mass=100.0)
+    prop = ssapy.SciPyPropagator(accel, {"rtol": 1e-8, "max_step": 5.0})
+    orbit = ssapy.Orbit(
+        np.array([EARTH_RADIUS + 200e3, 0.0, 0.0]),
+        np.array([-1000.0, 0.0, 0.0]),
+        0.0,
+    )
+    times = np.arange(0.0, 201.0, 20.0)
+
+    r, v = ssapy.rv(orbit, times, propagator=prop)
+
+    assert 0 < len(r) < len(times)
+    assert np.all(np.linalg.norm(r, axis=1) - EARTH_RADIUS >= 100e3)
+    assert v.shape == r.shape
+
+
+def test_scipy_moon_collision_returns_valid_state_prefix():
+    moon_r0 = moonPos(0.0)
+    moon_v0 = moonPos(1.0) - moon_r0
+    orbit = ssapy.Orbit(
+        moon_r0 + np.array([MOON_RADIUS + 1000.0, 0.0, 0.0]),
+        moon_v0 + np.array([-100.0, 0.0, 0.0]),
+        0.0,
+    )
+    prop = ssapy.SciPyPropagator(
+        ssapy.AccelKepler(), {"rtol": 1e-9, "max_step": 0.1})
+    times = np.arange(0.0, 21.0, 1.0)
+
+    r, v = ssapy.rv(orbit, times, propagator=prop)
+
+    assert 0 < len(r) < len(times)
+    distances = np.array([
+        np.linalg.norm(state - moonPos(time)) - MOON_RADIUS
+        for state, time in zip(r, times)
+    ])
+    assert np.all(distances >= -1.0)
+    assert v.shape == r.shape
+
+
 def test_rk_get_rv_one_single_point_cache_paths():
     class StaticRK(RKPropagator):
         _minPoints = 2
@@ -334,6 +376,12 @@ def test_impact_event_and_default_numerical_factory():
     assert impact_event(0.0, state) == 123.0
     assert impact_event.terminal is True
     assert impact_event.direction == -1
+
+    moon_state = np.hstack([moonPos(0.0) + [MOON_RADIUS + 123.0, 0.0, 0.0],
+                             np.zeros(3)])
+    assert moon_impact_event(0.0, moon_state) == pytest.approx(123.0)
+    assert moon_impact_event.terminal is True
+    assert moon_impact_event.direction == -1
 
     accel = ssapy.AccelKepler()
     propagator = default_numerical(10.0, cls=ssapy.RK4Propagator, accel=accel)
