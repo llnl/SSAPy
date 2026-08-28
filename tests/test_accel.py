@@ -89,6 +89,7 @@ def test_harmonic_coefficients_error_and_identity_paths(tmp_path):
 def test_accel_harmonic_clamps_requested_degree_and_order(capsys):
     harmonics = SimpleNamespace(
         name="tiny",
+        radius=1.0,
         n_max=1,
         m_max=1,
         CS=np.array([[0.0, 0.1], [0.2, 0.3]], dtype=float),

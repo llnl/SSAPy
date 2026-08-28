@@ -700,6 +700,7 @@ class Orbit:
                 self.r[self._iter],
                 self.v[self._iter],
                 self.t[self._iter],
+                mu=self.mu,
                 propkw={k: v[self._iter] for k, v in self.propkw.items()}
             )
             if kMKE is not None:
@@ -722,7 +723,7 @@ class Orbit:
             kMKE = self.__dict__['kozaiMeanKeplerianElements']
         else:
             kMKE = None
-        out = Orbit(self.r[idx], self.v[idx], self.t[idx],
+        out = Orbit(self.r[idx], self.v[idx], self.t[idx], mu=self.mu,
                     propkw={k: v[idx] for k, v in self.propkw.items()})
         if kMKE is not None:
             out.kozaiMeanKeplerianElements = kMKE
