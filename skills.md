@@ -111,7 +111,6 @@ r, v = rv(orbit, times, propagator=KeplerianPropagator())
 - `ssapy.correlate_tracks`: track fitting, priors, hypotheses, and multiple-hypothesis tracking utilities.
 - `ssapy.orbit_solver`: Gauss, Danchick, Shefer, and three-angle orbit solvers.
 - `ssapy.utils`: coordinate math, rotations, zero finding, interpolation, sampling helpers, and wrappers.
-- `ssapy.plotUtils`: low-level Earth/Moon plotting helpers.
 - `ssapy.tle_drag`: TLE drag fitting helpers.
 
 ## Data and Binary Rules

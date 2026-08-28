@@ -109,8 +109,10 @@ The following Python packages are installed automatically when you install SSAPy
 - `sgp4 <https://pypi.org/project/sgp4/>`_
 - `ipython_genutils <https://pypi.org/project/ipython-genutils/>`_
 - `jplephem <https://pypi.org/project/jplephem/>`_
-- `ipyvolume <https://pypi.org/project/ipyvolume/>`_
 - `tqdm <https://pypi.org/project/tqdm/>`_
+
+Earth/Moon mesh helpers and other visualization tools are maintained in
+`SSAPy-Toolkit <https://github.com/llnl/SSAPy-Toolkit>`__.
 
 Documentation
 -------------

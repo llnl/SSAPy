@@ -26,7 +26,6 @@ dependencies = [
     "lmfit",
     "sgp4",
     "ipython_genutils",
-    "ipyvolume",
     "jplephem",
     "tqdm",
 ]

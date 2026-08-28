@@ -30,7 +30,6 @@ from .body import (
 from .gravity import HarmonicCoefficients, AccelThirdBody, AccelHarmonic
 
 from . import constants
-from . import plotUtils
 from . import io
 from . import utils
 
