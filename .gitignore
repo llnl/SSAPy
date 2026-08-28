@@ -94,3 +94,6 @@ venv.bak
 ##########################
 
 *~
+
+# Local agent handoff
+AGENTS.md

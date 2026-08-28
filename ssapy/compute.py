@@ -91,6 +91,11 @@ def _countOrbit(orbit):
                 orbit._sat = _orig_scalar._sat
             if hasattr(_orig_scalar, "_tle"):
                 orbit._tle = _orig_scalar._tle
+            if hasattr(_orig_scalar, "_sat_epoch"):
+                orbit._sat_epoch = _orig_scalar._sat_epoch
+            if hasattr(_orig_scalar, "_propagation_root"):
+                orbit._propagation_root = _orig_scalar._propagation_root
+                orbit._propagation_propagator = _orig_scalar._propagation_propagator
         else:  # vector Orbit
             nOrbit = orbit.r.shape[0]
             squeezeOrbit = False

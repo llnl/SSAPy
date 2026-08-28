@@ -6,8 +6,8 @@ from abc import ABC, abstractmethod
 import numpy as np
 from astropy.time import Time
 
-from .utils import LRU_Cache, norm, teme_to_gcrf
-from .constants import EARTH_RADIUS
+from .utils import LRU_Cache, moonPos, norm, teme_to_gcrf
+from .constants import EARTH_RADIUS, LD, MOON_RADIUS
 
 # Set up a cache for propagation interpolants.  Useful in case one wants to
 # propagate using the same Propagator and Orbit multiple times, such as when
@@ -46,7 +46,51 @@ __all__ = [
     "SeriesPropagator",
     "default_numerical",
     "impact_event",
+    "moon_impact_event",
 ]
+
+
+_BURNUP_RADIUS = EARTH_RADIUS + 100e3
+_MOON_CHECK_MARGIN = 50e6
+
+
+def _burnup_event(t, s):
+    return np.linalg.norm(s[0:3]) - _BURNUP_RADIUS
+
+
+_burnup_event.terminal = True
+_burnup_event.direction = -1
+
+
+def moon_impact_event(t, s):
+    radius = np.linalg.norm(s[0:3])
+    if abs(radius - LD) > _MOON_CHECK_MARGIN:
+        return MOON_RADIUS
+    return np.linalg.norm(s[0:3] - moonPos(t)) - MOON_RADIUS
+
+
+moon_impact_event.terminal = True
+moon_impact_event.direction = -1
+
+
+def _safe_accel(accel, r, v, t, propkw):
+    if np.linalg.norm(r) <= _BURNUP_RADIUS:
+        return np.zeros(3)
+    return accel(r, v, t, **propkw)
+
+
+def _termination_hit(state, t):
+    radius = np.linalg.norm(state[0:3])
+    if radius <= EARTH_RADIUS:
+        print("Collision with Earth detected. Propagation stopped at t =", t)
+        return True
+    if radius <= _BURNUP_RADIUS:
+        print("Atmospheric burn-up detected. Propagation stopped at t =", t)
+        return True
+    if moon_impact_event(t, state) <= 0.0:
+        print("Collision with Moon detected. Propagation stopped at t =", t)
+        return True
+    return False
 
 
 class Propagator(ABC):
@@ -244,6 +288,7 @@ class SGP4Propagator(Propagator):
         from .constants import WGS72_EARTH_MU
         from .io import make_tle
 
+        sat_epoch = orbit.t
         if self.truncate:
             line1, line2 = make_tle(*orbit.kozaiMeanKeplerianElements, orbit.t)
             sat = Satrec.twoline2rv(line1, line2)
@@ -255,6 +300,7 @@ class SGP4Propagator(Propagator):
             # elements with bstar=0 and therefore cannot match sgp4 for
             # drag-sensitive LEO objects.)
             sat = orbit._sat
+            sat_epoch = getattr(orbit, "_sat_epoch", orbit.t)
         else:
             a, e, i, pa, raan, trueAnomaly = orbit.kozaiMeanKeplerianElements
             meanAnomaly = _ellipticalEccentricToMeanAnomaly(
@@ -285,7 +331,7 @@ class SGP4Propagator(Propagator):
 
         rs, vs = [], []
         for t in time:
-            e, r, v = sat.sgp4_tsince((t - orbit.t) / 60.0)
+            e, r, v = sat.sgp4_tsince((t - sat_epoch) / 60.0)
             rs.append(r)
             vs.append(v)
         rs = np.array(rs)
@@ -389,17 +435,28 @@ class SciPyPropagator(Propagator):
                 [t0, t1],
                 sol(t0),
                 dense_output=True,
-                events=impact_event,
+                events=(impact_event, _burnup_event, moon_impact_event),
                 **self.ode_kwargs
             )
-            if soln.t_events and soln.t_events[0].size > 0:
-                print(f"Impact detected at t = {soln.t_events[0][0]:.2f} s")
             if not soln.success:
                 raise ValueError(soln.message)
+            terminated = any(events.size > 0 for events in soln.t_events)
             if t1 > t0:
                 sol = self._concatenateOdeSolutions(sol, soln.sol)
             else:
                 sol = self._concatenateOdeSolutions(soln.sol, sol)
+            if terminated:
+                event_index = next(index for index, events in
+                                   enumerate(soln.t_events)
+                                   if events.size > 0)
+                event_time = soln.t_events[event_index][0]
+                label = {
+                    0: "Impact",
+                    1: "Atmospheric burn-up",
+                    2: "Moon impact",
+                }[event_index]
+                print(f"{label} detected at t = {event_time:.2f} s")
+                return sol
         return sol
 
     def _getRVOne(self, orbit, tQuery):
@@ -412,7 +469,7 @@ class SciPyPropagator(Propagator):
         def fp(t, s):
             r = s[0:3]
             v = s[3:6]
-            return np.hstack([v, self.accel(r, v, t, **orbit.propkw)])
+            return np.hstack([v, _safe_accel(self.accel, r, v, t, orbit.propkw)])
 
         tmin, tmax = np.min(tQuery), np.max(tQuery)
         update = False
@@ -605,7 +662,7 @@ class RK4Propagator(RKPropagator):
         def fp(s, t):
             r = s[0:3]
             v = s[3:6]
-            return np.hstack([v, self.accel(r, v, t, **propkw)])
+            return np.hstack([v, _safe_accel(self.accel, r, v, t, propkw)])
 
         if h > 0:
             t = times[-1]
@@ -628,17 +685,14 @@ class RK4Propagator(RKPropagator):
             state = state + h / 6.0 * (k1 + 2 * k2 + 2 * k3 + k4)
             t = t + h
             
+            if _termination_hit(state, t):
+                break
             if h > 0:
                 states.append(state)
                 times.append(t)
             else:
                 states.appendleft(state)
                 times.appendleft(t)
-
-            # EARTH COLLISION CHECK
-            if np.linalg.norm(state[0:3]) <= EARTH_RADIUS:
-                print("Collision with Earth detected. Propagation stopped at t =", t)
-                break  # Do not add further states — exit
 
         return h
 
@@ -725,7 +779,7 @@ class RK8Propagator(RKPropagator):
         def fp(s, t):
             r = s[0:3]
             v = s[3:6]
-            return np.hstack([v, self.accel(r, v, t, **propkw)])
+            return np.hstack([v, _safe_accel(self.accel, r, v, t, propkw)])
 
         if h > 0:
             t = times[-1]
@@ -746,17 +800,14 @@ class RK8Propagator(RKPropagator):
                 k[i] = h * fp(state + np.dot(a[i], k), t + c[i] * h)
             state = state + np.dot(b8, k)
             t = t + h
+            if _termination_hit(state, t):
+                break
             if h > 0:
                 states.append(state)
                 times.append(t)
             else:
                 states.appendleft(state)
                 times.appendleft(t)
-
-            # EARTH COLLISION CHECK
-            if np.linalg.norm(state[0:3]) <= EARTH_RADIUS:
-                print("Collision with Earth detected. Propagation stopped at t =", t)
-                break  # Do not add further states — exit
 
         return h
 
@@ -836,7 +887,7 @@ class RK78Propagator(RK8Propagator):
         def fp(s, t):
             r = s[0:3]
             v = s[3:6]
-            return np.hstack([v, self.accel(r, v, t, **propkw)])
+            return np.hstack([v, _safe_accel(self.accel, r, v, t, propkw)])
 
         def step(h, t, state):
             while True:
@@ -872,17 +923,14 @@ class RK78Propagator(RK8Propagator):
             h, state, h_next = step(h, t, state)
             t = t + h
             h = h_next
+            if _termination_hit(state, t):
+                break
             if h > 0:
                 states.append(state)
                 times.append(t)
             else:
                 states.appendleft(state)
                 times.appendleft(t)
-
-            # EARTH COLLISION CHECK
-            if np.linalg.norm(state[0:3]) <= EARTH_RADIUS:
-                print("Collision with Earth detected. Propagation stopped at t =", t)
-                break  # Do not add further states — exit
 
         return h
 
@@ -937,7 +985,7 @@ class LeapfrogPropagator(RKPropagator):
 
     def _prop(self, times, states, h, tthresh, propkw):
         def accel_fn(r, v, t):
-            return self.accel(r, v, t, **propkw)
+            return _safe_accel(self.accel, r, v, t, propkw)
 
         if h > 0:
             t = times[-1]
@@ -965,16 +1013,14 @@ class LeapfrogPropagator(RKPropagator):
             state = np.hstack([r_new, v_new])
             t = t + h
 
+            if _termination_hit(state, t):
+                break
             if h > 0:
                 states.append(state)
                 times.append(t)
             else:
                 states.appendleft(state)
                 times.appendleft(t)
-
-            if np.linalg.norm(state[0:3]) <= EARTH_RADIUS:
-                print("Collision with Earth detected. Propagation stopped at t =", t)
-                break
 
         return h
 
@@ -1027,10 +1073,10 @@ class Leapfrog4Propagator(RKPropagator):
 
     @staticmethod
     def _leapfrog_step(accel, r, v, t, h, propkw):
-        a0 = accel(r, v, t, **propkw)
+        a0 = _safe_accel(accel, r, v, t, propkw)
         v_half = v + 0.5 * h * a0
         r_new = r + h * v_half
-        a1 = accel(r_new, v_half, t + h, **propkw)
+        a1 = _safe_accel(accel, r_new, v_half, t + h, propkw)
         v_new = v_half + 0.5 * h * a1
         return r_new, v_new
 
@@ -1069,16 +1115,14 @@ class Leapfrog4Propagator(RKPropagator):
 
             state = np.hstack([r, v])
 
+            if _termination_hit(state, t):
+                break
             if h > 0:
                 states.append(state)
                 times.append(t)
             else:
                 states.appendleft(state)
                 times.appendleft(t)
-
-            if np.linalg.norm(state[0:3]) <= EARTH_RADIUS:
-                print("Collision with Earth detected. Propagation stopped at t =", t)
-                break
 
         return h
 

@@ -79,6 +79,25 @@ def test_path_a_survives_scalar_vector_promotion():
     assert next(iter(promoted)).__dict__.get("_sat") is not None  # vector -> scalar
 
 
+def test_path_a_survives_chained_at_propagation():
+    """Chained Orbit.at calls must retain the TLE epoch and native SGP4 state."""
+    orb = Orbit.fromTLETuple(ISS)
+    prop = SGP4Propagator()
+    times = orb.t + np.arange(4) * 3600.0
+    r_expected, v_expected = rv(orb, times, propagator=prop)
+
+    current = orb
+    r_chained = []
+    v_chained = []
+    for time in times:
+        current = current.at(time, propagator=prop)
+        r_chained.append(current.r)
+        v_chained.append(current.v)
+
+    np.testing.assert_allclose(r_chained, r_expected, rtol=0.0, atol=1e-3)
+    np.testing.assert_allclose(v_chained, v_expected, rtol=0.0, atol=1e-6)
+
+
 def test_bstar_seed_is_physical_order():
     """B* -> Cd*A/m seed lands in a physically plausible range."""
     orb = Orbit.fromTLETuple(ISS)

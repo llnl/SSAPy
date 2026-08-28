@@ -216,6 +216,8 @@ class Particles:
             Side effect is to update the internal particles state.
         """
         # TODO: Decide if resampling is really required here?
+        if num_particles > self.particles.shape[0]:
+            raise ValueError("Requested more particles than we have")
         self.particles, wts = utils.resample(self.particles,
                                              self.ln_wts, pod=True)
         self.ln_wts = np.log(wts)
