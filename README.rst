@@ -109,8 +109,10 @@ The following Python packages are installed automatically when you install SSAPy
 - `sgp4 <https://pypi.org/project/sgp4/>`_
 - `ipython_genutils <https://pypi.org/project/ipython-genutils/>`_
 - `jplephem <https://pypi.org/project/jplephem/>`_
-- `ipyvolume <https://pypi.org/project/ipyvolume/>`_
 - `tqdm <https://pypi.org/project/tqdm/>`_
+
+Install ``llnl-ssapy[plotting]`` for the optional ``ipyvolume`` Earth and Moon
+mesh helpers.
 
 Documentation
 -------------

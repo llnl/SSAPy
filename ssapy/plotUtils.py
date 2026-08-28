@@ -6,11 +6,39 @@ from .utils import find_file
 
 import numpy as np
 from astropy.time import Time
-from PIL import Image as PILImage
-import ipyvolume as ipv
+
+try:
+    from PIL import Image as PILImage
+except (ImportError, OSError) as exc:
+    PILImage = None
+    _PIL_IMPORT_ERROR = exc
+else:
+    _PIL_IMPORT_ERROR = None
+
+try:
+    import ipyvolume as ipv
+except (ImportError, OSError) as exc:
+    ipv = None
+    _IPYVOLUME_IMPORT_ERROR = exc
+else:
+    _IPYVOLUME_IMPORT_ERROR = None
 
 
 __all__ = ["draw_earth", "draw_moon", "load_earth_file", "load_moon_file"]
+
+
+def _require_pillow():
+    if _PIL_IMPORT_ERROR is not None:
+        raise ImportError(
+            "Earth and Moon textures require Pillow; install llnl-ssapy[plotting]."
+        ) from _PIL_IMPORT_ERROR
+
+
+def _require_ipyvolume():
+    if _IPYVOLUME_IMPORT_ERROR is not None:
+        raise ImportError(
+            "Earth and Moon meshes require ipyvolume; install llnl-ssapy[plotting]."
+        ) from _IPYVOLUME_IMPORT_ERROR
 
 
 def load_earth_file():
@@ -25,6 +53,7 @@ def load_earth_file():
     Returns:
         PIL.Image.Image: The resized Earth image.
     """
+    _require_pillow()
     earth = PILImage.open(find_file("earth", ext=".png"))
     earth = earth.resize((5400 // 5, 2700 // 5))
     return earth
@@ -45,6 +74,7 @@ def draw_earth(time, ngrid=100, R=EARTH_RADIUS, rfactor=1):
         Factor by which to enlarge Earth (for visualization purposes)
 
     """
+    _require_ipyvolume()
     earth = load_earth_file()
 
     from numbers import Real
@@ -93,6 +123,7 @@ def load_moon_file():
     Returns:
         PIL.Image.Image: The resized Moon image.
     """
+    _require_pillow()
     moon = PILImage.open(find_file("moon", ext=".png"))
     moon = moon.resize((5400 // 5, 2700 // 5))
     return moon
@@ -113,6 +144,7 @@ def draw_moon(time, ngrid=100, R=MOON_RADIUS, rfactor=1):
         Factor by which to enlarge Earth (for visualization purposes)
 
     """
+    _require_ipyvolume()
     moon = load_moon_file()
 
     from numbers import Real

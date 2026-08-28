@@ -26,12 +26,16 @@ dependencies = [
     "lmfit",
     "sgp4",
     "ipython_genutils",
-    "ipyvolume",
     "jplephem",
     "tqdm",
 ]
 
 [project.optional-dependencies]
+plotting = [
+    "ipyvolume",
+    "pillow",
+]
+
 dev = [
     "pytest",
     "pytest-cov",
@@ -41,6 +45,8 @@ dev = [
     "build",
     "cibuildwheel",
     "delocate",
+    "ipyvolume",
+    "pillow",
 ]
 
 docs = [

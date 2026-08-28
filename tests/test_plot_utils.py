@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 from astropy.time import Time
 
 from ssapy import plotUtils
@@ -12,6 +13,17 @@ class _FakeImage:
     def resize(self, size):
         self.resize_size = size
         return self
+
+
+def test_plotting_dependencies_are_checked_at_call_time(monkeypatch):
+    monkeypatch.setattr(plotUtils, "_PIL_IMPORT_ERROR", ImportError("blocked Pillow"))
+    with pytest.raises(ImportError, match=r"llnl-ssapy\[plotting\]"):
+        plotUtils.load_earth_file()
+
+    monkeypatch.setattr(plotUtils, "_PIL_IMPORT_ERROR", None)
+    monkeypatch.setattr(plotUtils, "_IPYVOLUME_IMPORT_ERROR", ImportError("blocked ipyvolume"))
+    with pytest.raises(ImportError, match=r"llnl-ssapy\[plotting\]"):
+        plotUtils.draw_earth(0.0)
 
 
 def test_load_texture_files_resize_known_images(monkeypatch):
