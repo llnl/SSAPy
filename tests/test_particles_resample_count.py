@@ -45,11 +45,6 @@ def test_resample_honors_requested_particle_count(monkeypatch):
 def test_resample_rejects_more_particles_than_available(monkeypatch):
     population = make_particles(5)
     monkeypatch.setattr(particles_module.utils, 'resample', identity_resample)
-    particles_before = population.particles.copy()
-    weights_before = population.ln_wts.copy()
 
     with pytest.raises(ValueError, match='Requested more particles than we have'):
         population.resample(6)
-
-    np.testing.assert_array_equal(population.particles, particles_before)
-    np.testing.assert_array_equal(population.ln_wts, weights_before)

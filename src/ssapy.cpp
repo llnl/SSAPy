@@ -70,14 +70,14 @@ namespace ssapy {
 
         double rho_antapex;
         double rho_apex;
-        auto hptr = std::upper_bound(_h.cbegin(), _h.cend(), height);
-        if (hptr == _h.cend()) {
+        if (height == _h.back()) {
             // The scale-height arrays describe the 49 intervals between the
-            // 50 tabulated altitudes. At or just below the upper table
-            // boundary there is no following interval, so use the endpoint.
+            // 50 tabulated altitudes. At the upper table boundary there is no
+            // following interval, so use the tabulated endpoint directly.
             rho_antapex = _rho_antapex.back();
             rho_apex = _rho_apex.back();
         } else {
+            auto hptr = std::upper_bound(_h.cbegin(), _h.cend(), height);
             auto idx = std::distance(_h.cbegin(), hptr);
             rho_antapex = _rho_antapex[idx-1] * exp(-(height-_h[idx-1])/_scale_antapex[idx-1]);  // MG (3.101)
             rho_apex = _rho_apex[idx-1] * exp(-(height-_h[idx-1])/_scale_apex[idx-1]);
