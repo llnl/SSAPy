@@ -18,7 +18,7 @@
 cff-version: 1.2.0
 message: "If you use SSAPy software, please cite the software metadata below. The related JOSS paper may also be cited separately."
 title: "Space Situational Awareness for Python"
-version: 1.1.9
+version: 1.1.10
 doi: 10.11578/dc.20240417.1
 date-released: 2026-08-27
 url: "https://github.com/LLNL/SSAPy"
