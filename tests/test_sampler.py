@@ -719,6 +719,7 @@ def test_emcee_sampler_rejects_old_versions(monkeypatch):
         sampler.sample(nBurn=1, nStep=1)
 
 
+@pytest.mark.timeout(90)
 @timer
 def test_emcee_sampler():
     np.random.seed(57)
