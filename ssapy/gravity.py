@@ -154,7 +154,7 @@ class HarmonicCoefficients:
                 lat_ref_deg
             ) = np.array(f.readline().replace(',', ' ').split()).astype(float)
         n_max = min(int(n_max1), n_max)
-        m_max = min(int(m_max1), m_max)
+        m_max = min(int(m_max1), m_max, n_max)
 
         # read array (TODO: only read relevant rows)
         max_rows = (n_max + 2) * (n_max + 1) // 2 + 2
@@ -296,9 +296,15 @@ class AccelHarmonic(_Accel):
             self.m_max = body.harmonics.m_max
         else:
             self.m_max = m_max
+        if self.m_max > self.n_max:
+            print(
+                f"WARNING::The provided order ({self.m_max}) is higher than the selected degree "
+                f"({self.n_max}).\nSetting the order to {self.n_max}."
+            )
+            self.m_max = self.n_max
         self._harmonic = _ssapy.AccelHarmonic(
             self.body.mu,
-            self.body.radius,
+            self.body.harmonics.radius,
             self.body.harmonics.CS.shape[0],
             self.body.harmonics.CS.ctypes.data
         )

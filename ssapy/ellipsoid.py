@@ -9,7 +9,7 @@ parameter f, but that's good enough for simple Earth models.
 import numpy as np
 from .utils import continueClass
 from . import _ssapy
-from ._ssapy import Ellipsoid   
+from ._ssapy import Ellipsoid
 
 
 @continueClass
@@ -21,11 +21,11 @@ class Ellipsoid:
     -------
     sphereToCart(lon, lat, height)
         Converts spherical coordinates (longitude, latitude, height) to Cartesian coordinates (x, y, z).
-    
+
     cartToSphere(x, y, z)
         Converts Cartesian coordinates (x, y, z) to spherical coordinates (longitude, latitude, height).
     """
-    
+
     def sphereToCart(self, lon, lat, height):
         """
         Converts spherical coordinates to Cartesian coordinates.
@@ -52,14 +52,14 @@ class Ellipsoid:
 
         Notes
         -----
-        This method uses broadcasting to handle inputs of varying shapes and ensures 
+        This method uses broadcasting to handle inputs of varying shapes and ensures
         contiguous arrays for efficient computation.
         """
 
         lon, lat, height = np.broadcast_arrays(lon, lat, height)
-        lon = np.ascontiguousarray(lon)
-        lat = np.ascontiguousarray(lat)
-        height = np.ascontiguousarray(height)
+        lon = np.ascontiguousarray(lon, dtype=np.float64)
+        lat = np.ascontiguousarray(lat, dtype=np.float64)
+        height = np.ascontiguousarray(height, dtype=np.float64)
 
         x = np.empty_like(lon)
         y = np.empty_like(lon)
@@ -98,14 +98,14 @@ class Ellipsoid:
 
         Notes
         -----
-        This method uses broadcasting to handle inputs of varying shapes and ensures 
+        This method uses broadcasting to handle inputs of varying shapes and ensures
         contiguous arrays for efficient computation.
         """
 
         x, y, z = np.broadcast_arrays(x, y, z)
-        x = np.ascontiguousarray(x)
-        y = np.ascontiguousarray(y)
-        z = np.ascontiguousarray(z)
+        x = np.ascontiguousarray(x, dtype=np.float64)
+        y = np.ascontiguousarray(y, dtype=np.float64)
+        z = np.ascontiguousarray(z, dtype=np.float64)
 
         lon = np.empty_like(x)
         lat = np.empty_like(x)
@@ -117,6 +117,3 @@ class Ellipsoid:
         )
 
         return lon, lat, height
-
-
-
