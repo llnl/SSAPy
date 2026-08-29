@@ -255,7 +255,7 @@ class Particles:
         # Update the weight values by 'cross-pollinating' epoch likelihoods
         status = self.reweight(epoch_particles)
         # Check that we have at least some non-zero weights for particles
-        if status > 0 and verbose:
+        if not status and verbose:
             print("All weights are negligible in Particles class")
             print("\tlog-norm:",np.logaddexp.reduce(self.ln_wts))
         # Resample the weights to maintain only significant particles

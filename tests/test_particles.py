@@ -186,4 +186,8 @@ def test_particles_resample_over_request_and_verbose_fuse(monkeypatch, capsys):
     monkeypatch.setattr(particles, "reweight", lambda epoch_particles: True)
     monkeypatch.setattr(particles, "resample", lambda num_particles: None)
     particles.fuse(particles, verbose=True)
+    assert "All weights are negligible" not in capsys.readouterr().out
+
+    monkeypatch.setattr(particles, "reweight", lambda epoch_particles: False)
+    particles.fuse(particles, verbose=True)
     assert "All weights are negligible" in capsys.readouterr().out
