@@ -744,33 +744,58 @@ class Orbit:
             out._propagation_propagator = self._propagation_propagator
         return out
 
+    @staticmethod
+    def _hashable_propkw_value(value):
+        array = np.asarray(value)
+        return array.shape, tuple(array.ravel().tolist())
+
     def __hash__(self):
         if not hasattr(self, '_hash'):
             self.r.flags.writeable = False
             self.v.flags.writeable = False
+            propkw = tuple(
+                (key, self._hashable_propkw_value(self.propkw[key]))
+                for key in sorted(self.propkw)
+            )
             if self.r.ndim == 1:
                 self._hash = hash((
                     self.r.data.tobytes(),
                     self.v.data.tobytes(),
                     self.t,
-                    self.mu) + tuple([(k, v.data.tobytes()) for k, v in self.propkw.items()])
-                )
+                    self.mu,
+                    propkw,
+                ))
             else:
                 self.t.flags.writeable = False
                 self._hash = hash((
                     self.r.data.tobytes(),
                     self.v.data.tobytes(),
                     self.t.data.tobytes(),
-                    self.mu) + tuple([(k, v.data.tobytes()) for k, v in self.propkw.items()])
-                )
+                    self.mu,
+                    propkw,
+                ))
         return self._hash
 
     def __eq__(self, rhs):
+        if not isinstance(rhs, Orbit):
+            return NotImplemented
         if self.r.ndim != rhs.r.ndim:
             return False
-        else:
-            return (
-                np.all(self.r == rhs.r) and np.all(self.v == rhs.v) and np.all(self.mu == rhs.mu) and np.all(self.t == rhs.t) and np.all([np.all(self.propkw[k] == rhs.propkw[k]) for k in self.propkw]))
+        if self.propkw.keys() != rhs.propkw.keys():
+            return False
+        return (
+            np.all(self.r == rhs.r)
+            and np.all(self.v == rhs.v)
+            and np.all(self.mu == rhs.mu)
+            and np.all(self.t == rhs.t)
+            and all(
+                np.array_equal(
+                    np.asarray(self.propkw[key]),
+                    np.asarray(rhs.propkw[key]),
+                )
+                for key in self.propkw
+            )
+        )
 
     @classmethod
     def fromEquinoctialElements(
