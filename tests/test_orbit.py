@@ -1785,6 +1785,7 @@ def test_orbit_equality_and_hash_respect_propkw_mapping():
     assert second == first
     assert hash(first) == hash(second)
     assert isinstance(hash(with_area), int)
+    assert plain.__eq__(object()) is NotImplemented
 
 
 def test_orbit_mixed_vector_bound_unbound_regression():
