@@ -372,6 +372,16 @@ def _hyperbolicEccentricToTrueLongitude(lH, ex, ey):
     return v + w
 
 
+def _hyperbolicEccentricToTrueLongitudeMany(lH, ex, ey):
+    # lH (n, m)
+    # ex, ey (n,)
+    e = np.sqrt(ex * ex + ey * ey)
+    w = np.arctan2(ey, ex)
+    H = lH - w[:, None]
+    v = _hyperbolicEccentricToTrueAnomaly(H, e[:, None])
+    return v + w[:, None]
+
+
 def _hyperbolicTrueToEccentricLongitude(lv, ex, ey):
     """Compute hyperbolic eccentric longitude from hyperbolic true longitude for
     hyperbolic orbit.
@@ -1224,7 +1234,12 @@ class Orbit:
             e = np.sqrt(e2)
             lonPa = np.arctan2(ey, ex)
             if lv is None:
-                lvub = _hyperbolicTrueToEccentricLongitudeMany(
+                # lE holds hyperbolic *eccentric* longitude here, so convert
+                # forwards to true longitude.  Applying the inverse transform
+                # places the object at the wrong point on the correct conic,
+                # which conserves energy and angular momentum and therefore
+                # escapes the usual sanity checks.
+                lvub = _hyperbolicEccentricToTrueLongitudeMany(
                     lE[~wBound], ex, ey
                 )
             else:

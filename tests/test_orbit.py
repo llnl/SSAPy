@@ -1801,6 +1801,54 @@ def test_orbit_mixed_vector_bound_unbound_regression():
     np.testing.assert_allclose(equinoctial.v, orbit.v, atol=1e-10)
 
 
+@timer
+def test_hyperbolic_keplerian_propagation():
+    """Keplerian propagation of an unbound orbit must be self-consistent.
+
+    ``_rvFromEquinoctial`` receives hyperbolic *eccentric* longitude on the
+    ``lE`` path.  Applying the true->eccentric transform there instead of
+    eccentric->true put the object at the wrong point on the correct conic:
+    805 km of position error at zero elapsed time for a=-1e7 m, e=1.5,
+    growing to 1.6e5 km after six hours.  Energy and |h| stay exact under
+    that failure, so neither is a usable guard.
+    """
+    orbit = ssapy.Orbit.fromKeplerianElements(
+        -1.0e7, 1.5, 0.2, 0.3, 0.4, 0.2, 0.0)
+    assert orbit.a < 0
+
+    # Zero elapsed time must reproduce the state the orbit was built from.
+    r, v = ssapy.rv(orbit, np.array([0.0]),
+                    propagator=ssapy.KeplerianPropagator())
+    np.testing.assert_allclose(r[0], orbit.r, rtol=0, atol=1e-6)
+    np.testing.assert_allclose(v[0], orbit.v, rtol=0, atol=1e-9)
+
+    # The lE and lv paths through _rvFromEquinoctial must agree.
+    for dt in [0.0, 600.0, 3600.0, 6 * 3600.0]:
+        lM = orbit.lM + orbit.meanMotion * dt
+        lE = _hyperbolicMeanToEccentricLongitude(lM, orbit.ex, orbit.ey)
+        lv = _hyperbolicEccentricToTrueLongitude(lE, orbit.ex, orbit.ey)
+        rE, vE = orbit._rvFromEquinoctial(lE=np.atleast_2d(lE))
+        rv_, vv_ = orbit._rvFromEquinoctial(lv=np.atleast_2d(lv))
+        np.testing.assert_allclose(rE, rv_, rtol=0, atol=1e-6)
+        np.testing.assert_allclose(vE, vv_, rtol=0, atol=1e-9)
+
+    # Same check for a mixed bound/unbound vector Orbit, which exercises
+    # both branches of _rvFromEquinoctial in one call.
+    vec = ssapy.Orbit.fromKeplerianElements(
+        np.array([7.0e6, -1.0e7]),
+        np.array([0.1, 1.5]),
+        np.array([0.2, 0.2]),
+        np.array([0.3, 0.3]),
+        np.array([0.4, 0.4]),
+        np.array([0.5, 0.2]),
+        np.array([0.0, 0.0]),
+    )
+    rvec, vvec = ssapy.rv(vec, np.array([0.0]),
+                          propagator=ssapy.KeplerianPropagator())
+    np.testing.assert_allclose(rvec[:, 0], vec.r, rtol=0, atol=1e-6)
+    np.testing.assert_allclose(vvec[:, 0], vec.v, rtol=0, atol=1e-9)
+
+
 def test_orbit_scalar_anomaly_and_apoapsis_branches():
     elliptical = ssapy.Orbit.fromKeplerianElements(7.0e6, 0.1, 0.2, 0.3, 0.4, 0.5, 0.0)
     hyperbolic = ssapy.Orbit.fromKeplerianElements(-1.0e7, 1.5, 0.2, 0.3, 0.4, 0.2, 0.0)
