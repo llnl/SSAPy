@@ -309,6 +309,36 @@ def test_scipy_burnup_returns_valid_state_prefix():
     assert v.shape == r.shape
 
 
+def test_scipy_backward_termination_returns_valid_state_suffix():
+    """Backward integration must not extrapolate past a terminating event.
+
+    _getRVOne filtered requested times against sol.ts[-1] only. Integrating
+    backwards from apoapsis on an Earth-intersecting ellipse terminates at
+    the burn-up event, after which the earlier requested times were still
+    evaluated by the dense solution -- outside its interpolation interval,
+    where scipy gives no accuracy guarantee. That returned radii of order
+    1e18 km as ordinary states.
+    """
+    # perigee 5000 km, well inside the Earth; start at apoapsis
+    orbit = ssapy.Orbit.fromKeplerianElements(
+        20000e3, 0.75, 0.3, 0.0, 0.0, np.pi, 0.0)
+    prop = ssapy.SciPyPropagator(ssapy.AccelKepler(), {"rtol": 1e-9})
+    times = np.linspace(-20000.0, 0.0, 11)
+
+    r, v = ssapy.rv(orbit, times, propagator=prop)
+
+    assert 0 < len(r) < len(times)
+    assert v.shape == r.shape
+    assert np.all(np.isfinite(r)) and np.all(np.isfinite(v))
+    # every returned state stays on the physical arc, bounded by apoapsis
+    radii = np.linalg.norm(r, axis=1)
+    assert np.all(radii <= 35000e3 * (1 + 1e-6))
+    assert np.all(radii >= EARTH_RADIUS)
+    # the valid part of a backward result is its suffix: the returned
+    # states are the ones nearest the epoch, not the ones nearest tmin
+    np.testing.assert_allclose(r[-1], orbit.r, rtol=0, atol=1e-3)
+
+
 def test_scipy_moon_collision_returns_valid_state_prefix():
     moon_r0 = moonPos(0.0)
     moon_v0 = moonPos(1.0) - moon_r0
