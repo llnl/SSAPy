@@ -1,0 +1,18 @@
+PlanetPosition
+==============
+
+.. currentmodule:: ssapy.body
+
+.. autoclass:: PlanetPosition
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~PlanetPosition.__call__
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: __call__
+      :noindex:

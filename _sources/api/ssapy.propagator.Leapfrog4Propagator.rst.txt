@@ -1,0 +1,7 @@
+Leapfrog4Propagator
+===================
+
+.. currentmodule:: ssapy.propagator
+
+.. autoclass:: Leapfrog4Propagator
+   :show-inheritance:

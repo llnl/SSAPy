@@ -1,0 +1,5 @@
+ssapy.propagator
+================
+
+.. automodapi:: ssapy.propagator
+    :no-heading:

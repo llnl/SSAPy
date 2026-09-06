@@ -1,0 +1,6 @@
+impact_event
+============
+
+.. currentmodule:: ssapy.propagator
+
+.. autofunction:: impact_event

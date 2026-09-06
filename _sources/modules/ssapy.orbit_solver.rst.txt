@@ -1,0 +1,5 @@
+ssapy.orbit_solver
+==================
+
+.. automodapi:: ssapy.orbit_solver
+    :no-heading:

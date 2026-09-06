@@ -1,0 +1,54 @@
+SheferTwoPosOrbitSolver
+=======================
+
+.. currentmodule:: ssapy.orbit_solver
+
+.. autoclass:: SheferTwoPosOrbitSolver
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~SheferTwoPosOrbitSolver.D
+      ~SheferTwoPosOrbitSolver.F
+      ~SheferTwoPosOrbitSolver.Flam0
+      ~SheferTwoPosOrbitSolver.G
+      ~SheferTwoPosOrbitSolver.X
+      ~SheferTwoPosOrbitSolver.Y
+      ~SheferTwoPosOrbitSolver.Yxi
+      ~SheferTwoPosOrbitSolver.Z
+      ~SheferTwoPosOrbitSolver.alpha
+      ~SheferTwoPosOrbitSolver.beta
+      ~SheferTwoPosOrbitSolver.semiMajorAxis
+      ~SheferTwoPosOrbitSolver.solve
+      ~SheferTwoPosOrbitSolver.yPoly
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: D
+      :noindex:
+   .. automethod:: F
+      :noindex:
+   .. automethod:: Flam0
+      :noindex:
+   .. automethod:: G
+      :noindex:
+   .. automethod:: X
+      :noindex:
+   .. automethod:: Y
+      :noindex:
+   .. automethod:: Yxi
+      :noindex:
+   .. automethod:: Z
+      :noindex:
+   .. automethod:: alpha
+      :noindex:
+   .. automethod:: beta
+      :noindex:
+   .. automethod:: semiMajorAxis
+      :noindex:
+   .. automethod:: solve
+      :noindex:
+   .. automethod:: yPoly
+      :noindex:

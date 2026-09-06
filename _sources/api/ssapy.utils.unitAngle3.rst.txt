@@ -1,0 +1,6 @@
+unitAngle3
+==========
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: unitAngle3

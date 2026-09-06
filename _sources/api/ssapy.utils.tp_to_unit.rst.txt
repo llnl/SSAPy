@@ -1,0 +1,6 @@
+tp_to_unit
+==========
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: tp_to_unit

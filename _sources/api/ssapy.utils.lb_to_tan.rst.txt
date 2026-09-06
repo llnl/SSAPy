@@ -1,0 +1,6 @@
+lb_to_tan
+=========
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: lb_to_tan

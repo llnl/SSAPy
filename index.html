@@ -1,0 +1,404 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SSAPy - Space Situational Awareness for Python &mdash; SSAPy 1.1.10 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="_static/ssapy_logo.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=5d9df9de"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting Started" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#">
+            
+              <img src="_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SSAPy - Space Situational Awareness for Python</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ssapy-space-situational-awareness-for-python">
+<h1>SSAPy - Space Situational Awareness for Python<a class="headerlink" href="#ssapy-space-situational-awareness-for-python" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="https://github.com/LLNL/SSAPy/actions/workflows/ci.yml"><img alt="ci_badge" src="https://github.com/LLNL/SSAPy/actions/workflows/ci.yml/badge.svg" /></a> <a class="reference external" href="https://software.llnl.gov/SSAPy/"><img alt="docs_badge" src="https://github.com/LLNL/SSAPy/actions/workflows/pages/pages-build-deployment/badge.svg" /></a> <a class="reference external" href="https://codecov.io/gh/LLNL/SSAPy"><img alt="codecov_badge" src="https://codecov.io/gh/LLNL/SSAPy/branch/main/graph/badge.svg" /></a> <a class="reference external" href="https://doi.org/10.21105/joss.08147"><img alt="joss_badge" src="https://joss.theoj.org/papers/10.21105/joss.08147/status.svg" /></a> <a class="reference external" href="https://badge.fury.io/py/llnl-ssapy"><img alt="pypi_badge" src="https://badge.fury.io/py/llnl-ssapy.svg" /></a></p>
+<p><a class="reference external" href="https://github.com/LLNL/SSAPy">SSAPy</a> is a flexible, physics-based
+orbital modeling and analysis tool for orbits spanning from low-Earth orbit
+into the cislunar regime.</p>
+<p>SSAPy retains the core coordinate, observer-geometry, and propagation routines.
+For higher-level utilities, convenience workflows, plotting tools, workflow
+wrappers around coordinate conversions, Lambertian magnitude / brightness
+calculations, and related extensions, see the companion project
+<a class="reference external" href="https://github.com/llnl/SSAPy-Toolkit">SSAPy-Toolkit</a>.</p>
+<p>SSAPy includes:</p>
+<ul class="simple">
+<li><p>Ability to define satellite parameters (area, mass, radiation and drag coefficients, etc.)</p></li>
+<li><p>Support for multiple orbit representations and input types, including TLE-based
+initialization and Keplerian, equinoctial, and Kozai mean Keplerian elements</p></li>
+<li><p>Fully customizable analytic force propagation models, including:</p>
+<ul>
+<li><p>Earth gravity models (WGS84, EGM84, EGM96, EGM2008)</p></li>
+<li><p>Lunar gravity models (point source and harmonic)</p></li>
+<li><p>Radiation pressure (Earth and solar)</p></li>
+<li><p>Forces for planets out to Neptune</p></li>
+<li><p>Atmospheric drag models</p></li>
+<li><p>Maneuvering with user-defined burn profiles</p></li>
+</ul>
+</li>
+<li><p>Multiple integrators, including SGP4, Runge-Kutta (4, 8, and 7/8), SciPy,
+Keplerian, and Taylor series methods</p></li>
+<li><p>User-definable timesteps and orbit information retrieval times, allowing
+queries for quantities of interest such as state vectors, TLEs,
+Keplerian elements, periapsis, apoapsis, specific angular momentum, and more</p></li>
+<li><p>Ground- and space-based observer models</p></li>
+<li><p>Lighting and visibility condition analysis</p></li>
+<li><p>Multiple-hypothesis tracking (MHT) UCT linker</p></li>
+<li><p>Vectorized computations using array broadcasting for efficient execution and
+easy deployment on HPC systems</p></li>
+<li><p>Short-arc probabilistic orbit determination methods</p></li>
+<li><p>Conjunction probability estimation</p></li>
+<li><p>Built-in uncertainty quantification</p></li>
+<li><p>Monte Carlo sampling, particle-based uncertainty representations, and
+track linking/model selection</p></li>
+<li><p>Support for multiple coordinate frames and coordinate transformations,
+including GCRF, IERS, GCRS Cartesian, TEME Cartesian, RA/Dec, NTW,
+zenith/azimuth, apparent positions, and orthogonal tangent plane coordinates</p></li>
+</ul>
+<section id="ssapy-toolkit">
+<h2>SSAPy-Toolkit<a class="headerlink" href="#ssapy-toolkit" title="Permalink to this heading"></a></h2>
+<p>SSAPy provides the core propagation and modeling engine. Many
+higher-level, analysis-ready capabilities built on top of it live in the
+companion project
+<a class="reference external" href="https://github.com/LLNL/SSAPy-Toolkit">SSAPy-Toolkit</a> (sometimes abbreviated
+<em>SSATK</em>), including:</p>
+<ul class="simple">
+<li><p>Higher-level utilities and convenience workflows that wrap common SSAPy tasks</p></li>
+<li><p>Plotting tools for orbit and analysis visualization</p></li>
+<li><p>Workflow-level wrappers around SSAPy’s coordinate and observer-geometry
+routines</p></li>
+<li><p>Lambertian magnitude / brightness calculations</p></li>
+<li><p>Additional related extensions</p></li>
+</ul>
+<p>If your work centers on plotting, dashboards, convenience utilities, or
+higher-level workflows, SSAPy-Toolkit is often the best place to start — and the
+natural home for contributions of that kind.</p>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<p>For installation details, see the
+<a class="reference external" href="https://software.llnl.gov/SSAPy/installation.html">Installing SSAPy</a>
+section of the documentation.</p>
+<p>If you are looking for higher-level utilities or plotting-oriented workflows,
+you may also want to install or explore
+<a class="reference external" href="https://github.com/llnl/SSAPy-Toolkit">SSAPy-Toolkit</a>.</p>
+</section>
+<section id="strict-dependencies">
+<h2>Strict dependencies<a class="headerlink" href="#strict-dependencies" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="http://docs.python-guide.org/en/latest/starting/installation/">Python</a> (3.10+)</p></li>
+</ul>
+<p>The following Python packages are installed automatically when you install SSAPy:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://scipy.org/install.html">numpy</a></p></li>
+<li><p><a class="reference external" href="https://scipy.org/scipylib/index.html">scipy</a></p></li>
+<li><p><a class="reference external" href="https://www.astropy.org/">astropy</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/pyerfa/">pyerfa</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/emcee/">emcee</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/lmfit/">lmfit</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/sgp4/">sgp4</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/ipython-genutils/">ipython_genutils</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/jplephem/">jplephem</a></p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/tqdm/">tqdm</a></p></li>
+</ul>
+<p>Earth/Moon mesh helpers and other visualization tools are maintained in
+<a class="reference external" href="https://github.com/llnl/SSAPy-Toolkit">SSAPy-Toolkit</a>.</p>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading"></a></h2>
+<p>The documentation is hosted at:</p>
+<p><a class="reference external" href="https://software.llnl.gov/SSAPy/">https://software.llnl.gov/SSAPy/</a></p>
+<p>The API documentation may also be explored interactively:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python3
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ssapy</span>
+<span class="n">help</span><span class="p">(</span><span class="n">ssapy</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Permalink to this heading"></a></h2>
+<p>Contributing to SSAPy is straightforward. Please open a
+<a class="reference external" href="https://help.github.com/articles/using-pull-requests/">pull request</a>
+targeting the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch of the
+<a class="reference external" href="https://github.com/LLNL/SSAPy">SSAPy repository</a>.</p>
+<p>For work that primarily concerns plotting, dashboards, convenience utilities,
+or higher-level workflows, please also consider whether the contribution belongs
+in the companion repository
+<a class="reference external" href="https://github.com/llnl/SSAPy-Toolkit">SSAPy-Toolkit</a>.</p>
+<p>Your PR must pass SSAPy’s required CI checks. For local testing guidance,
+documentation builds, and Git workflow tips, see the
+<a class="reference external" href="https://software.llnl.gov/SSAPy/contribution_guide.html">Contribution Guide</a>.</p>
+<p>SSAPy’s <code class="docutils literal notranslate"><span class="pre">main</span></code> branch contains the latest development work.</p>
+</section>
+<section id="releases">
+<h2>Releases<a class="headerlink" href="#releases" title="Permalink to this heading"></a></h2>
+<p>For stable installations, we recommend installing the published
+<a class="reference external" href="https://pypi.org/project/llnl-ssapy/">llnl-ssapy</a> package from PyPI or using
+one of SSAPy’s versioned source
+<a class="reference external" href="https://github.com/LLNL/SSAPy/tags">tags</a>.</p>
+</section>
+<section id="code-of-conduct">
+<h2>Code of Conduct<a class="headerlink" href="#code-of-conduct" title="Permalink to this heading"></a></h2>
+<p>Please note that SSAPy has a
+<a class="reference external" href="https://github.com/LLNL/SSAPy/blob/main/CODE_OF_CONDUCT.md">Code of Conduct</a>.
+By participating in the SSAPy community, you agree to abide by its rules.</p>
+</section>
+<section id="authors">
+<h2>Authors<a class="headerlink" href="#authors" title="Permalink to this heading"></a></h2>
+<p>SSAPy was developed with support from Lawrence Livermore National Laboratory’s
+(LLNL) Laboratory Directed Research and Development (LDRD) Program under projects
+<a class="reference external" href="https://ldrd-annual.llnl.gov/archives/ldrd-annual-2021/project-highlights/high-performance-computing-simulation-and-data-science/madstare-modeling-and-analysis-data-starved-or-ambiguous-environments">19-SI-004</a>
+and
+<a class="reference external" href="https://ldrd-annual.llnl.gov/ldrd-annual-2023/project-highlights/space-security/data-demand-capable-space-domain-awareness-architecture">22-ERD-054</a>,
+by the following individuals. For software citation order and metadata, use
+<a class="reference external" href="https://github.com/LLNL/SSAPy/blob/main/CITATION.cff">CITATION.cff</a>.</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://orcid.org/0000-0002-2308-4230">Joshua E. Meyers</a> (SLAC National Accelerator Laboratory) - Former Lead Developer</p></li>
+<li><p><a class="reference external" href="https://orcid.org/0000-0002-2582-0190">Travis Yeager</a> (<a class="reference external" href="https://www.llnl.gov/">LLNL</a>) - Current Lead Developer</p></li>
+<li><p><a class="reference external" href="https://orcid.org/0000-0002-8505-7094">Michael Schneider</a> (<a class="reference external" href="https://www.llnl.gov/">LLNL</a>) - Creator, Former Lead Developer</p></li>
+<li><p><a class="reference external" href="https://orcid.org/0000-0002-3569-7421">Edward Schlafly</a> (<a class="reference external" href="https://www.stsci.edu/">STScI</a>) - Former Lead Developer</p></li>
+<li><p><a class="reference external" href="https://orcid.org/0000-0002-1975-772X">Julia Ebert</a> (Fleet Robotics)</p></li>
+<li><p><a class="reference external" href="https://orcid.org/0000-0002-7579-1092">Denvir Higgins</a> (<a class="reference external" href="https://www.llnl.gov/">LLNL</a>)</p></li>
+<li><p><a class="reference external" href="https://orcid.org/0000-0002-3391-5931">Jason Bernstein</a> (<a class="reference external" href="https://www.llnl.gov/">LLNL</a>)</p></li>
+<li><p><a class="reference external" href="https://orcid.org/0000-0003-4196-5354">Daniel Merl</a> (<a class="reference external" href="https://www.llnl.gov/">LLNL</a>)</p></li>
+<li><p><a class="reference external" href="https://orcid.org/0000-0002-3149-7828">Imène Goumiri</a> (<a class="reference external" href="https://www.llnl.gov/">LLNL</a>)</p></li>
+<li><p><a class="reference external" href="https://orcid.org/0000-0002-6911-1038">Robert Armstrong</a> (<a class="reference external" href="https://www.llnl.gov/">LLNL</a>)</p></li>
+<li><p><a class="reference external" href="https://orcid.org/0000-0003-3397-7021">Noah Lifset</a> (<a class="reference external" href="https://www.utexas.edu/">UT Austin</a>)</p></li>
+<li><p><a class="reference external" href="https://orcid.org/0000-0001-5230-0396">Alexx Perloff</a> (<a class="reference external" href="https://www.llnl.gov/">LLNL</a>)</p></li>
+<li><p><a class="reference external" href="https://orcid.org/0000-0002-1052-6749">Peter McGill</a> (<a class="reference external" href="https://www.llnl.gov/">LLNL</a>)</p></li>
+<li><p><a class="reference external" href="https://orcid.org/0000-0003-2632-572X">Nathan Golovich</a> (<a class="reference external" href="https://www.llnl.gov/">LLNL</a>)</p></li>
+<li><p><a class="reference external" href="https://orcid.org/0000-0002-2911-8657">Kerianne Pruett</a> (<a class="reference external" href="https://www.llnl.gov/">LLNL</a>)</p></li>
+<li><p><a class="reference external" href="https://orcid.org/0000-0001-6249-0031">Caleb Miller</a> (<a class="reference external" href="https://www.llnl.gov/">LLNL</a>)</p></li>
+<li><p><a class="reference external" href="https://orcid.org/0000-0003-0248-6123">William A. Dawson</a> (<a class="reference external" href="https://www.llnl.gov/">LLNL</a>)</p></li>
+</ul>
+<p>Many thanks go to SSAPy’s additional
+<a class="reference external" href="https://github.com/llnl/ssapy/graphs/contributors">contributors</a>.</p>
+</section>
+<section id="citing-ssapy">
+<h2>Citing SSAPy<a class="headerlink" href="#citing-ssapy" title="Permalink to this heading"></a></h2>
+<p>If you use SSAPy in your research, please cite the software using the
+repository metadata in
+<a class="reference external" href="https://github.com/LLNL/SSAPy/blob/main/CITATION.cff">CITATION.cff</a>.
+On GitHub, use the “Cite this repository” button to copy the citation in APA
+or BibTeX format.</p>
+<p>The related JOSS paper may also be cited separately:</p>
+<ul class="simple">
+<li><p>Meyers, J. E., Schneider, M. D., Ebert, J. T., Schlafly, E. F., Yeager, T.,
+Perloff, A., Merl, D., Lifset, N., Bernstein, J., Dawson, W. A., Golovich, N.,
+Higgins, D., McGill, P., Miller, C., &amp; Pruett, K. (2025). <em>SSAPy - Space
+Situational Awareness for Python.</em> Journal of Open Source Software, 10(111),
+8147. <a class="reference external" href="https://doi.org/10.21105/joss.08147">doi:10.21105/joss.08147</a></p></li>
+</ul>
+<p>BibTeX:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@article</span><span class="p">{</span><span class="n">Meyers2025</span><span class="p">,</span>
+  <span class="n">doi</span>       <span class="o">=</span> <span class="p">{</span><span class="mf">10.21105</span><span class="o">/</span><span class="n">joss</span><span class="mf">.08147</span><span class="p">},</span>
+  <span class="n">url</span>       <span class="o">=</span> <span class="p">{</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">doi</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="mf">10.21105</span><span class="o">/</span><span class="n">joss</span><span class="mf">.08147</span><span class="p">},</span>
+  <span class="n">year</span>      <span class="o">=</span> <span class="p">{</span><span class="mi">2025</span><span class="p">},</span>
+  <span class="n">publisher</span> <span class="o">=</span> <span class="p">{</span><span class="n">The</span> <span class="n">Open</span> <span class="n">Journal</span><span class="p">},</span>
+  <span class="n">volume</span>    <span class="o">=</span> <span class="p">{</span><span class="mi">10</span><span class="p">},</span>
+  <span class="n">number</span>    <span class="o">=</span> <span class="p">{</span><span class="mi">111</span><span class="p">},</span>
+  <span class="n">pages</span>     <span class="o">=</span> <span class="p">{</span><span class="mi">8147</span><span class="p">},</span>
+  <span class="n">author</span>    <span class="o">=</span> <span class="p">{</span><span class="n">Meyers</span><span class="p">,</span> <span class="n">Joshua</span> <span class="n">E</span><span class="o">.</span> <span class="ow">and</span> <span class="n">Schneider</span><span class="p">,</span> <span class="n">Michael</span> <span class="n">D</span><span class="o">.</span> <span class="ow">and</span> <span class="n">Ebert</span><span class="p">,</span> <span class="n">Julia</span> <span class="n">T</span><span class="o">.</span> <span class="ow">and</span> <span class="n">Schlafly</span><span class="p">,</span> <span class="n">Edward</span> <span class="n">F</span><span class="o">.</span> <span class="ow">and</span> <span class="n">Yeager</span><span class="p">,</span> <span class="n">Travis</span> <span class="ow">and</span> <span class="n">Perloff</span><span class="p">,</span> <span class="n">Alexx</span> <span class="ow">and</span> <span class="n">Merl</span><span class="p">,</span> <span class="n">Daniel</span> <span class="ow">and</span> <span class="n">Lifset</span><span class="p">,</span> <span class="n">Noah</span> <span class="ow">and</span> <span class="n">Bernstein</span><span class="p">,</span> <span class="n">Jason</span> <span class="ow">and</span> <span class="n">Dawson</span><span class="p">,</span> <span class="n">William</span> <span class="n">A</span><span class="o">.</span> <span class="ow">and</span> <span class="n">Golovich</span><span class="p">,</span> <span class="n">Nathan</span> <span class="ow">and</span> <span class="n">Higgins</span><span class="p">,</span> <span class="n">Denvir</span> <span class="ow">and</span> <span class="n">McGill</span><span class="p">,</span> <span class="n">Peter</span> <span class="ow">and</span> <span class="n">Miller</span><span class="p">,</span> <span class="n">Caleb</span> <span class="ow">and</span> <span class="n">Pruett</span><span class="p">,</span> <span class="n">Kerianne</span><span class="p">},</span>
+  <span class="n">title</span>     <span class="o">=</span> <span class="p">{</span><span class="n">SSAPy</span> <span class="o">-</span> <span class="n">Space</span> <span class="n">Situational</span> <span class="n">Awareness</span> <span class="k">for</span> <span class="n">Python</span><span class="p">},</span>
+  <span class="n">journal</span>   <span class="o">=</span> <span class="p">{</span><span class="n">Journal</span> <span class="n">of</span> <span class="n">Open</span> <span class="n">Source</span> <span class="n">Software</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>You may also cite the following publications (click
+<a class="reference external" href="https://github.com/LLNL/SSAPy/blob/main/docs/source/refs.bib">here</a>
+for BibTeX entries):</p>
+<ul class="simple">
+<li><p>Yeager, T., Pruett, K., &amp; Schneider, M. (2022). <em>Unaided Dynamical Orbit Stability in the Cislunar Regime.</em> Poster presentation, Cislunar Security Conference, USA.</p></li>
+<li><p>Yeager, T., Pruett, K., &amp; Schneider, M. (2023). <em>Long-term N-body Stability in Cislunar Space.</em> Poster presentation, Advanced Maui Optical and Space Surveillance (AMOS) Technologies Conference, USA.</p></li>
+<li><p>Yeager, T., Pruett, K., &amp; Schneider, M. (2023, September). Long-term N-body Stability in Cislunar Space. In S. Ryan (Ed.), <em>Proceedings of the Advanced Maui Optical and Space Surveillance (AMOS) Technologies Conference</em> (p. 208). Retrieved from <a class="reference external" href="https://amostech.com/TechnicalPapers/2023/Poster/Yeager.pdf">https://amostech.com/TechnicalPapers/2023/Poster/Yeager.pdf</a></p></li>
+</ul>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this heading"></a></h2>
+<p>SSAPy is distributed under the terms of the MIT license. All new contributions
+must be made under the MIT license.</p>
+<p>See the
+<a class="reference external" href="https://github.com/LLNL/SSAPy/blob/main/LICENSE">LICENSE</a>
+and
+<a class="reference external" href="https://github.com/LLNL/SSAPy/blob/main/NOTICE">NOTICE</a>
+files for details.</p>
+<p>SPDX-License-Identifier: MIT</p>
+<p>LLNL-CODE-862420</p>
+</section>
+<section id="documentation-inspiration">
+<h2>Documentation Inspiration<a class="headerlink" href="#documentation-inspiration" title="Permalink to this heading"></a></h2>
+<p>The structure and organization of this repository’s documentation were inspired
+by the excellent design and layout of the
+<a class="reference external" href="https://coffea-hep.readthedocs.io/en/latest/index.html">Coffea</a> project.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#system-prerequisites">System Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installation">Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">SSAPy Concepts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="concepts.html#coordinate-systems">Coordinate Systems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="concepts.html#time-standards">Time Standards</a></li>
+<li class="toctree-l2"><a class="reference internal" href="concepts.html#types-of-standard-orbits">Types of Standard Orbits</a></li>
+<li class="toctree-l2"><a class="reference internal" href="concepts.html#types-of-models">Types of Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="concepts.html#numerical-integrators">Numerical Integrators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="concepts.html#computing-considerations">Computing Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="concepts.html#other-codes">Other Codes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribution_guide.html">Contribution Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contribution_guide.html#branches">Branches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribution_guide.html#continuous-integration">Continuous Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribution_guide.html#coverage">Coverage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribution_guide.html#git-workflows">Git Workflows</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="modules/ssapy.accel.html">ssapy.accel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/ssapy.body.html">ssapy.body</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/ssapy.compute.html">ssapy.compute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/ssapy.constants.html">ssapy.constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/ssapy.correlate_tracks.html">ssapy.correlate_tracks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/ssapy.ellipsoid.html">ssapy.ellipsoid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/ssapy.gravity.html">ssapy.gravity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/ssapy.io.html">ssapy.io</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/ssapy.linker.html">ssapy.linker</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/ssapy.orbit_solver.html">ssapy.orbit_solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/ssapy.orbit.html">ssapy.orbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/ssapy.particles.html">ssapy.particles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/ssapy.propagator.html">ssapy.propagator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/ssapy.rvsampler.html">ssapy.rvsampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="modules/ssapy.utils.html">ssapy.utils</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="indices-and-tables">
+<h3>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-right" title="Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

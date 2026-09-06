@@ -1,0 +1,5 @@
+ssapy.accel
+===========
+
+.. automodapi:: ssapy.accel
+    :no-heading:

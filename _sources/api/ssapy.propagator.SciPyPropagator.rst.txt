@@ -1,0 +1,7 @@
+SciPyPropagator
+===============
+
+.. currentmodule:: ssapy.propagator
+
+.. autoclass:: SciPyPropagator
+   :show-inheritance:

@@ -1,0 +1,24 @@
+RK8Propagator
+=============
+
+.. currentmodule:: ssapy.propagator
+
+.. autoclass:: RK8Propagator
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~RK8Propagator.a
+      ~RK8Propagator.b8
+      ~RK8Propagator.c
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: a
+      :noindex:
+   .. autoattribute:: b8
+      :noindex:
+   .. autoattribute:: c
+      :noindex:

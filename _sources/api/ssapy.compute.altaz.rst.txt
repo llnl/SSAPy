@@ -1,0 +1,6 @@
+altaz
+=====
+
+.. currentmodule:: ssapy.compute
+
+.. autofunction:: altaz

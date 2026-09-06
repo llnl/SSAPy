@@ -1,0 +1,6 @@
+data_for_satellite
+==================
+
+.. currentmodule:: ssapy.correlate_tracks
+
+.. autofunction:: data_for_satellite

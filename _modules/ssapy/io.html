@@ -1,0 +1,732 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ssapy.io &mdash; SSAPy 1.1.10 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../../_static/ssapy_logo.ico"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=5d9df9de"></script>
+      <script src="../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ssapy.io</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ssapy.io</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">Collection of functions to read from and write to various file formats.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ac</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">EARTH_MU</span>
+
+
+<span class="n">telescope_catalog</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"511"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"SST"</span><span class="p">,</span>
+        <span class="s2">"x"</span><span class="p">:</span> <span class="o">-</span><span class="mf">1496.451</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span><span class="p">,</span>
+        <span class="s2">"y"</span><span class="p">:</span> <span class="o">-</span><span class="mf">5096.210</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span><span class="p">,</span>
+        <span class="s2">"z"</span><span class="p">:</span> <span class="mf">3523.795</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span>
+    <span class="p">},</span>
+    <span class="s2">"241"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Diego Garcia"</span><span class="p">,</span>
+        <span class="s2">"x"</span><span class="p">:</span> <span class="mf">1907.068</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span><span class="p">,</span>
+        <span class="s2">"y"</span><span class="p">:</span> <span class="mf">6030.792</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span><span class="p">,</span>
+        <span class="s2">"z"</span><span class="p">:</span> <span class="o">-</span><span class="mf">817.291</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="read_tle_catalog"><a class="viewcode-back" href="../../api/ssapy.io.read_tle_catalog.html#ssapy.io.read_tle_catalog">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">read_tle_catalog</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">n_lines</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Read in a TLE catalog file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fname : string</span>
+<span class="sd">        The filename</span>
+<span class="sd">    n_lines : int</span>
+<span class="sd">        number of lines per tle, usually 2 but sometimes 3</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    catalog : list</span>
+<span class="sd">        lists containing TLEs</span>
+<span class="sd">    """</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+    <span class="n">tles</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span><span class="n">dat</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">_</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_lines</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dat</span><span class="p">),</span> <span class="n">n_lines</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">tles</span></div>
+
+
+<div class="viewcode-block" id="read_tle"><a class="viewcode-back" href="../../api/ssapy.io.read_tle.html#ssapy.io.read_tle">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">read_tle</span><span class="p">(</span><span class="n">sat_name</span><span class="p">,</span> <span class="n">tle_filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Get the TLE data from the file for the satellite with the given name</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ---------</span>
+<span class="sd">    sat_name : str</span>
+<span class="sd">        NORAD name of the satellite</span>
+<span class="sd">    tle_filename : str</span>
+<span class="sd">        Path and name of file where TLE is</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    line1, line2 : str</span>
+<span class="sd">        Both lines of the satellite TLE</span>
+<span class="sd">    """</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tle_filename</span><span class="p">)</span> <span class="k">as</span> <span class="n">tle_f</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">_</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">tle_f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sat_line_ind</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">sat_name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+            <span class="s2">"No satellite '</span><span class="si">{}</span><span class="s2">' in file '</span><span class="si">{}</span><span class="s2">'"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sat_name</span><span class="p">,</span> <span class="n">tle_filename</span><span class="p">))</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">line1</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">sat_line_ind</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">line2</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">sat_line_ind</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">line1</span><span class="p">,</span> <span class="n">line2</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">"Incorrectly formatted TLE file"</span><span class="p">)</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_rvt_from_tle_tuple</span><span class="p">(</span><span class="n">tle_tuple</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Get r, v, t (in the TEME frame!) from TLE tuple</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tle_tuple : 2-tuple of str</span>
+<span class="sd">        Line1 and Line2 of TLE as strings</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    r : array_like (3,)</span>
+<span class="sd">        Position in meters in TEME frame</span>
+<span class="sd">    v : array_like 3(,)</span>
+<span class="sd">        Velocity in meters in TEME frame</span>
+<span class="sd">    t : float</span>
+<span class="sd">        Time in GPS seconds; i.e., seconds since 1980-01-06 00:00:00 UTC.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function returns positions and velocities in the TEME frame!  This is</span>
+<span class="sd">    not the same frame as used by ssapy.Orbit constructor.  Please use</span>
+<span class="sd">    ssapy.Orbit.fromTLETuple() to construct an Orbit object from a TLE.</span>
+<span class="sd">    """</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">sgp4.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">Satrec</span>
+    <span class="n">line1</span><span class="p">,</span> <span class="n">line2</span> <span class="o">=</span> <span class="n">tle_tuple</span>
+    <span class="n">sat</span> <span class="o">=</span> <span class="n">Satrec</span><span class="o">.</span><span class="n">twoline2rv</span><span class="p">(</span><span class="n">line1</span><span class="p">,</span> <span class="n">line2</span><span class="p">)</span>
+    <span class="n">e</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">sat</span><span class="o">.</span><span class="n">sgp4_tsince</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">epoch_time</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">sat</span><span class="o">.</span><span class="n">jdsatepoch</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">'jd'</span><span class="p">)</span>
+    <span class="n">epoch_time</span> <span class="o">+=</span> <span class="n">sat</span><span class="o">.</span><span class="n">jdsatepochF</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">d</span>
+    <span class="c1"># Convert from km to m</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1e3</span><span class="p">,</span> <span class="n">epoch_time</span><span class="o">.</span><span class="n">gps</span>
+
+
+<div class="viewcode-block" id="parse_tle"><a class="viewcode-back" href="../../api/ssapy.io.parse_tle.html#ssapy.io.parse_tle">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">parse_tle</span><span class="p">(</span><span class="n">tle</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Parse a TLE returning Kozai mean orbital elements.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tle : 2-tuple of str</span>
+<span class="sd">        Line1 and Line2 of TLE as strings</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    a : float</span>
+<span class="sd">        Kozai mean semi-major axis in meters</span>
+<span class="sd">    e : float</span>
+<span class="sd">        Kozai mean eccentricity</span>
+<span class="sd">    i : float</span>
+<span class="sd">        Kozai mean inclination in radians</span>
+<span class="sd">    pa : float</span>
+<span class="sd">        Kozai mean periapsis argument in radians</span>
+<span class="sd">    raan : float</span>
+<span class="sd">        Kozai mean right ascension of the ascending node in radians</span>
+<span class="sd">    trueAnomaly : float</span>
+<span class="sd">        Kozai mean true anomaly in radians</span>
+<span class="sd">    t : float</span>
+<span class="sd">        GPS seconds; i.e., seconds since 1980-01-06 00:00:00 UTC</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Dynamic TLE terms, including the drag coefficient and ballistic coefficient,</span>
+<span class="sd">    are ignored in this function.</span>
+<span class="sd">    """</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">sgp4.ext</span><span class="w"> </span><span class="kn">import</span> <span class="n">days2mdhms</span><span class="p">,</span> <span class="n">invjday</span><span class="p">,</span> <span class="n">jday</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.orbit</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+        <span class="n">_ellipticalEccentricToTrueAnomaly</span><span class="p">,</span>
+        <span class="n">_ellipticalMeanToEccentricAnomaly</span>
+    <span class="p">)</span>
+    <span class="c1"># just grabbing the bits we care about for now.</span>
+    <span class="n">line1</span><span class="p">,</span> <span class="n">line2</span> <span class="o">=</span> <span class="n">tle</span>
+    <span class="k">assert</span> <span class="n">line1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'1'</span>
+    <span class="k">assert</span> <span class="n">line2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'2'</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line1</span><span class="p">[</span><span class="mi">18</span><span class="p">:</span><span class="mi">20</span><span class="p">])</span>
+    <span class="n">epochDay</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line1</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">32</span><span class="p">])</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line2</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">16</span><span class="p">])</span>
+    <span class="n">raan</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line2</span><span class="p">[</span><span class="mi">17</span><span class="p">:</span><span class="mi">25</span><span class="p">])</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line2</span><span class="p">[</span><span class="mi">26</span><span class="p">:</span><span class="mi">33</span><span class="p">])</span> <span class="o">/</span> <span class="mf">1e7</span>
+    <span class="n">pa</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line2</span><span class="p">[</span><span class="mi">34</span><span class="p">:</span><span class="mi">42</span><span class="p">])</span>
+    <span class="n">meanAnomaly</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line2</span><span class="p">[</span><span class="mi">43</span><span class="p">:</span><span class="mi">51</span><span class="p">])</span>
+    <span class="n">meanMotion</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line2</span><span class="p">[</span><span class="mi">52</span><span class="p">:</span><span class="mi">63</span><span class="p">])</span>
+
+    <span class="c1"># Adjust units</span>
+    <span class="k">if</span> <span class="n">year</span> <span class="o">&gt;=</span> <span class="mi">57</span><span class="p">:</span>
+        <span class="n">year</span> <span class="o">+=</span> <span class="mi">1900</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">year</span> <span class="o">+=</span> <span class="mi">2000</span>
+    <span class="n">mon</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hr</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">sec</span> <span class="o">=</span> <span class="n">days2mdhms</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">epochDay</span><span class="p">)</span>
+    <span class="n">jdsatepoch</span> <span class="o">=</span> <span class="n">jday</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">mon</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hr</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">sec</span><span class="p">)</span>
+    <span class="n">sec_whole</span><span class="p">,</span> <span class="n">sec_frac</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">sec</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">epoch</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span>
+            <span class="n">year</span><span class="p">,</span> <span class="n">mon</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hr</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">sec_whole</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">sec_frac</span> <span class="o">*</span> <span class="mf">1e6</span> <span class="o">//</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">year</span><span class="p">,</span> <span class="n">mon</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hr</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">sec</span> <span class="o">=</span> <span class="n">invjday</span><span class="p">(</span><span class="n">jdsatepoch</span><span class="p">)</span>
+        <span class="n">epoch</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span>
+            <span class="n">year</span><span class="p">,</span> <span class="n">mon</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hr</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">sec_whole</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">sec_frac</span> <span class="o">*</span> <span class="mf">1e6</span> <span class="o">//</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Assuming decimal year UTC?</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">raan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">raan</span><span class="p">)</span>
+    <span class="n">pa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">pa</span><span class="p">)</span>
+    <span class="n">meanAnomaly</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">meanAnomaly</span><span class="p">)</span>
+    <span class="n">epoch</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span>
+
+    <span class="n">period</span> <span class="o">=</span> <span class="mf">86400.</span> <span class="o">/</span> <span class="n">meanMotion</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="n">period</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">EARTH_MU</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">trueAnomaly</span> <span class="o">=</span> <span class="n">_ellipticalEccentricToTrueAnomaly</span><span class="p">(</span>
+        <span class="n">_ellipticalMeanToEccentricAnomaly</span><span class="p">(</span>
+            <span class="n">meanAnomaly</span><span class="p">,</span> <span class="n">e</span>
+        <span class="p">),</span>
+        <span class="n">e</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">pa</span><span class="p">,</span> <span class="n">raan</span><span class="p">,</span> <span class="n">trueAnomaly</span><span class="p">,</span> <span class="n">epoch</span><span class="o">.</span><span class="n">gps</span></div>
+
+
+<div class="viewcode-block" id="make_tle"><a class="viewcode-back" href="../../api/ssapy.io.make_tle.html#ssapy.io.make_tle">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">make_tle</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">pa</span><span class="p">,</span> <span class="n">raan</span><span class="p">,</span> <span class="n">trueAnomaly</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Create a TLE from Kozai mean orbital elements</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a : float</span>
+<span class="sd">        Kozai mean semi-major axis in meters</span>
+<span class="sd">    e : float</span>
+<span class="sd">        Kozai mean eccentricity</span>
+<span class="sd">    i : float</span>
+<span class="sd">        Kozai mean inclination in radians</span>
+<span class="sd">    pa : float</span>
+<span class="sd">        Kozai mean periapsis argument in radians</span>
+<span class="sd">    raan : float</span>
+<span class="sd">        Kozai mean right ascension of the ascending node in radians</span>
+<span class="sd">    trueAnomaly : float</span>
+<span class="sd">        Kozai mean true anomaly in radians</span>
+<span class="sd">    t : float or astropy.time.Time</span>
+<span class="sd">        If float, then should correspond to GPS seconds; i.e., seconds since</span>
+<span class="sd">        1980-01-06 00:00:00 UTC</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Dynamic TLE terms, including the drag coefficient and ballistic coefficient,</span>
+<span class="sd">    are ignored in this function.</span>
+<span class="sd">    """</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.orbit</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+        <span class="n">_ellipticalEccentricToMeanAnomaly</span><span class="p">,</span>
+        <span class="n">_ellipticalTrueToEccentricAnomaly</span>
+    <span class="p">)</span>
+
+    <span class="n">line1</span> <span class="o">=</span> <span class="s2">"1 99999U 99999ZZZ "</span>
+    <span class="n">line2</span> <span class="o">=</span> <span class="s2">"2 99999 "</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Time</span><span class="p">):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">'gps'</span><span class="p">)</span>
+    <span class="n">year</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">sec</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">utc</span><span class="o">.</span><span class="n">yday</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">':'</span><span class="p">)</span>
+
+    <span class="n">day</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">day</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">hour</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">minute</span><span class="p">)</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">sec</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span><span class="p">)</span> <span class="o">/</span> <span class="mi">24</span>
+
+    <span class="n">line1</span> <span class="o">+=</span> <span class="s2">"</span><span class="si">{:02d}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">year</span><span class="p">)</span> <span class="o">%</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">line1</span> <span class="o">+=</span> <span class="s2">"</span><span class="si">{:012.8f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">day</span><span class="p">)</span>
+    <span class="n">line1</span> <span class="o">+=</span> <span class="s2">" +.00000000 +00000-0  99999-0 0 0000"</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">checksum</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="n">check</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="s2">"-"</span><span class="p">:</span>
+                <span class="n">check</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">d</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">check</span> <span class="o">+=</span> <span class="n">d</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">check</span> <span class="o">%</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">line1</span> <span class="o">+=</span> <span class="n">checksum</span><span class="p">(</span><span class="n">line1</span><span class="p">)</span>
+
+    <span class="n">line2</span> <span class="o">+=</span> <span class="s2">"</span><span class="si">{:8.4f}</span><span class="s2"> "</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+    <span class="n">line2</span> <span class="o">+=</span> <span class="s2">"</span><span class="si">{:8.4f}</span><span class="s2"> "</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">raan</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)))</span>
+    <span class="n">line2</span> <span class="o">+=</span> <span class="s2">"</span><span class="si">{:07d}</span><span class="s2"> "</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">e</span> <span class="o">*</span> <span class="mf">1e7</span><span class="p">))</span>
+    <span class="n">line2</span> <span class="o">+=</span> <span class="s2">"</span><span class="si">{:8.4f}</span><span class="s2"> "</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">pa</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)))</span>
+    <span class="n">meanAnomaly</span> <span class="o">=</span> <span class="n">_ellipticalEccentricToMeanAnomaly</span><span class="p">(</span>
+        <span class="n">_ellipticalTrueToEccentricAnomaly</span><span class="p">(</span>
+            <span class="n">trueAnomaly</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">),</span> <span class="n">e</span>
+        <span class="p">),</span>
+        <span class="n">e</span>
+    <span class="p">)</span>
+
+    <span class="n">line2</span> <span class="o">+=</span> <span class="s2">"</span><span class="si">{:8.4f}</span><span class="s2"> "</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">meanAnomaly</span> <span class="o">%</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)))</span>
+    <span class="n">meanMotion</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">EARTH_MU</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">a</span><span class="o">**</span><span class="mi">3</span><span class="p">))</span>  <span class="c1"># rad/s</span>
+    <span class="n">meanMotion</span> <span class="o">*=</span> <span class="mi">86400</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="n">line2</span> <span class="o">+=</span> <span class="s2">"</span><span class="si">{:11.8f}</span><span class="s2"> "</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">meanMotion</span><span class="p">)</span>
+    <span class="n">line2</span> <span class="o">+=</span> <span class="s2">"   0"</span>
+    <span class="n">line2</span> <span class="o">+=</span> <span class="n">checksum</span><span class="p">(</span><span class="n">line2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">line1</span><span class="p">,</span> <span class="n">line2</span></div>
+
+
+<div class="viewcode-block" id="get_tel_pos_itrf_to_gcrs"><a class="viewcode-back" href="../../api/ssapy.io.get_tel_pos_itrf_to_gcrs.html#ssapy.io.get_tel_pos_itrf_to_gcrs">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_tel_pos_itrf_to_gcrs</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">tel_label</span><span class="o">=</span><span class="s2">"511"</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Convert telescope locations in ITRF (i.e., fixed to the earth) to GCRS</span>
+<span class="sd">    (i.e., geocentric celestial frame)</span>
+
+<span class="sd">    :param time: Time at which to evaluate the position</span>
+<span class="sd">    :type time: astropy.time.Time</span>
+<span class="sd">    """</span>
+    <span class="n">tp</span> <span class="o">=</span> <span class="n">telescope_catalog</span><span class="p">[</span><span class="n">tel_label</span><span class="p">]</span>
+    <span class="c1"># Astropy:</span>
+    <span class="n">rITRF</span> <span class="o">=</span> <span class="n">ac</span><span class="o">.</span><span class="n">CartesianRepresentation</span><span class="p">(</span><span class="n">tp</span><span class="p">[</span><span class="s2">"x"</span><span class="p">],</span> <span class="n">tp</span><span class="p">[</span><span class="s2">"y"</span><span class="p">],</span> <span class="n">tp</span><span class="p">[</span><span class="s2">"z"</span><span class="p">])</span>
+    <span class="n">itrs</span> <span class="o">=</span> <span class="n">ac</span><span class="o">.</span><span class="n">ITRS</span><span class="p">(</span><span class="n">rITRF</span><span class="p">,</span> <span class="n">obstime</span><span class="o">=</span><span class="n">time</span><span class="p">)</span>
+    <span class="n">gcrs</span> <span class="o">=</span> <span class="n">itrs</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">ac</span><span class="o">.</span><span class="n">GCRS</span><span class="p">(</span><span class="n">obstime</span><span class="o">=</span><span class="n">time</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">gcrs</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">xyz</span></div>
+
+<span class="c1"># Additional reference:</span>
+<span class="c1"># https://fas.org/spp/military/program/track/space_pulvermacher.pdf</span>
+<span class="c1">#</span>
+<span class="c1"># Right ascension:</span>
+<span class="c1"># The angle between the vernal equinox</span>
+<span class="c1"># and the projection of the radius vector on the equatorial plane, regarded as</span>
+<span class="c1"># positive when measured eastward from the vernal equinox. [AFSPCI 60-102]</span>
+<span class="c1"># Measurement units must be degrees.</span>
+<span class="c1">#</span>
+<span class="c1"># Declination:</span>
+<span class="c1"># The angle between the celestial equator and a radius vector, regarded as</span>
+<span class="c1"># positive when measured north from the celestial equator.</span>
+<span class="c1"># [AFSPCI 60-102] Measurement units must be degrees.</span>
+<span class="c1">#</span>
+<span class="c1"># For type 9:</span>
+<span class="c1"># SensorLocation described as an E,F,G (Earth-Fixed Geocentric) position vector</span>
+<span class="c1"># of mobile sensor measured in meters</span>
+<span class="c1"># Values are epoched to the observation's epoch.</span>
+<span class="c1">#</span>
+<span class="c1"># Reference: [AFSPCI 60-102] Air Force Space Command (AFSPC) Astrodynamic</span>
+<span class="c1"># Standards, AFSPC Instruction 60-102, 11 March 1996.</span>
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># JEM implementation</span>
+<span class="c1"># =============================================================================</span>
+
+
+<span class="n">b3dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([</span>
+    <span class="p">(</span><span class="s1">'secClass'</span><span class="p">,</span> <span class="s1">'U1'</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'satID'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'sensID'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'year'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'day'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'hour'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'minute'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'second'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'polarAngle'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'azimuthAngle'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'range'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'x'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'y'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'z'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'slantRangeRate'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'type'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">),</span>
+    <span class="p">(</span><span class="s1">'equinoxType'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+<span class="p">])</span>
+
+
+<div class="viewcode-block" id="parseB3Line"><a class="viewcode-back" href="../../api/ssapy.io.parseB3Line.html#ssapy.io.parseB3Line">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">parseB3Line</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Read one line of a B3 file and parse into distinct catalog components</span>
+<span class="sd">    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">type_</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">74</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">type_</span> <span class="o">=</span> <span class="o">-</span><span class="mi">999</span>
+
+    <span class="n">secClass</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">satID</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">])</span>
+    <span class="n">sensID</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">9</span><span class="p">])</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">9</span><span class="p">:</span><span class="mi">11</span><span class="p">])</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="mi">1900</span> <span class="o">+</span> <span class="n">year</span> <span class="k">if</span> <span class="n">year</span> <span class="o">&gt;</span> <span class="mi">50</span> <span class="k">else</span> <span class="mi">2000</span> <span class="o">+</span> <span class="n">year</span>
+    <span class="n">day</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">11</span><span class="p">:</span><span class="mi">14</span><span class="p">])</span>
+    <span class="n">hour</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">14</span><span class="p">:</span><span class="mi">16</span><span class="p">])</span>
+    <span class="n">minute</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">18</span><span class="p">])</span>
+    <span class="n">millisec</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">18</span><span class="p">:</span><span class="mi">23</span><span class="p">])</span>
+    <span class="n">sec</span> <span class="o">=</span> <span class="n">millisec</span> <span class="o">/</span> <span class="mf">1000.0</span>
+    <span class="c1"># Note, I'm assuming that "-51280" is -5.128 degrees, and that</span>
+    <span class="c1"># the overpunching only applies when dec &lt;= -10 degrees.</span>
+    <span class="n">polarAngleStr</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">23</span><span class="p">:</span><span class="mi">29</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">ch</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="s2">"JKLMNOPQR"</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)):</span>
+        <span class="n">polarAngleStr</span> <span class="o">=</span> <span class="n">polarAngleStr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">ch</span><span class="p">,</span> <span class="s2">"-</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+    <span class="n">polarAngle</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">polarAngleStr</span><span class="p">)</span> <span class="o">/</span> <span class="mf">1e4</span>
+    <span class="k">if</span> <span class="n">type_</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">]:</span>
+        <span class="n">hh</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">30</span><span class="p">:</span><span class="mi">32</span><span class="p">])</span>
+        <span class="n">mm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">32</span><span class="p">:</span><span class="mi">34</span><span class="p">])</span>
+        <span class="n">sss</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">34</span><span class="p">:</span><span class="mi">37</span><span class="p">])</span> <span class="o">/</span> <span class="mi">10</span>
+        <span class="n">azimuthAngle</span> <span class="o">=</span> <span class="mi">15</span> <span class="o">*</span> <span class="p">(</span><span class="n">hh</span> <span class="o">+</span> <span class="p">(</span><span class="n">mm</span> <span class="o">+</span> <span class="n">sss</span> <span class="o">/</span> <span class="mi">60</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">azimuthAngle</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">30</span><span class="p">:</span><span class="mi">37</span><span class="p">])</span> <span class="o">/</span> <span class="mf">1e4</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">range_</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">38</span><span class="p">:</span><span class="mi">45</span><span class="p">])</span> <span class="o">/</span> <span class="mf">1e5</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">range_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rangeExp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">45</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">rangeExp</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">range_</span> <span class="o">=</span> <span class="n">range_</span> <span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="n">rangeExp</span>
+    <span class="k">if</span> <span class="n">type_</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]:</span>
+        <span class="n">slantRangeRate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">46</span><span class="p">:</span><span class="mi">55</span><span class="p">])</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">55</span><span class="p">:</span><span class="mi">64</span><span class="p">])</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">64</span><span class="p">:</span><span class="mi">73</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">y</span> <span class="o">=</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">y</span> <span class="o">=</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">slantRangeRate</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">47</span><span class="p">:</span><span class="mi">54</span><span class="p">])</span><span class="o">/</span><span class="mf">1e5</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">slantRangeRate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">if</span> <span class="n">type_</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">]:</span>
+        <span class="n">equinoxType</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">75</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">equinoxType</span> <span class="o">=</span> <span class="o">-</span><span class="mi">999</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span>
+        <span class="n">secClass</span><span class="p">,</span>
+        <span class="n">satID</span><span class="p">,</span>
+        <span class="n">sensID</span><span class="p">,</span>
+        <span class="n">year</span><span class="p">,</span> <span class="n">day</span><span class="p">,</span> <span class="n">hour</span><span class="p">,</span> <span class="n">minute</span><span class="p">,</span> <span class="n">sec</span><span class="p">,</span>
+        <span class="n">polarAngle</span><span class="p">,</span> <span class="n">azimuthAngle</span><span class="p">,</span>
+        <span class="n">range_</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span>
+        <span class="n">slantRangeRate</span><span class="p">,</span>
+        <span class="n">type_</span><span class="p">,</span>
+        <span class="n">equinoxType</span>
+    <span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">b3dtype</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="parseB3"><a class="viewcode-back" href="../../api/ssapy.io.parseB3.html#ssapy.io.parseB3">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">parseB3</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Load data from a B3 observation file</span>
+
+<span class="sd">    :param filename: Name of the B3 obs file to load</span>
+<span class="sd">    :type filename: string</span>
+
+<span class="sd">    :return: A catalog of observations</span>
+<span class="sd">    :rtype: astropy.table.Table</span>
+
+<span class="sd">    Note that angles and positions are output in TEME frame.</span>
+<span class="sd">    """</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">):</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">parseB3Line</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="n">dts</span> <span class="o">=</span> <span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="s2">"</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">d</span><span class="p">[</span><span class="s1">'year'</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="s1">'day'</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="s1">'hour'</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="s1">'minute'</span><span class="p">]),</span>
+                                      <span class="s2">"%Y %j %H %M"</span><span class="p">)</span>
+           <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">seconds</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="s1">'second'</span><span class="p">])</span>
+           <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">'date'</span><span class="p">]</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">dts</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">'mjd'</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">'date'</span><span class="p">]</span><span class="o">.</span><span class="n">mjd</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">'gps'</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">'date'</span><span class="p">]</span><span class="o">.</span><span class="n">gps</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># MDS implementation</span>
+<span class="c1"># =============================================================================</span>
+<span class="n">b3obs_types</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"Range rate only"</span><span class="p">,</span>  <span class="c1"># 0</span>
+    <span class="s2">"Azimuth &amp; elevation"</span><span class="p">,</span>  <span class="c1"># 1</span>
+    <span class="s2">"Range, azimuth, &amp; elevation"</span><span class="p">,</span>  <span class="c1"># 2</span>
+    <span class="s2">"Range, azimuth, elevation, &amp; range rate"</span><span class="p">,</span>  <span class="c1"># 3</span>
+    <span class="c1"># 4</span>
+    <span class="s2">"Range, azimuth, elevation, &amp; range rate (extra measurements for azimuth rate, elevation rate, etc are ignored)"</span><span class="p">,</span>
+    <span class="s2">"Right Ascension &amp; Declination"</span><span class="p">,</span>  <span class="c1"># 5</span>
+    <span class="s2">"Range only"</span><span class="p">,</span>  <span class="c1"># 6</span>
+    <span class="s2">"UNDEFINED"</span><span class="p">,</span>  <span class="c1"># 7</span>
+    <span class="s2">"Space-based azimuth, elevation, sometimes range and EFG position of the sensor"</span><span class="p">,</span>  <span class="c1"># 8</span>
+    <span class="s2">"Space-based right ascension, declination, sometimes range and EFG position of the sensor"</span><span class="p">,</span>  <span class="c1"># 9</span>
+<span class="p">]</span>
+
+
+<span class="n">overpunched</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'J'</span><span class="p">,</span> <span class="s1">'K'</span><span class="p">,</span> <span class="s1">'L'</span><span class="p">,</span> <span class="s1">'M'</span><span class="p">,</span> <span class="s1">'N'</span><span class="p">,</span> <span class="s1">'O'</span><span class="p">,</span> <span class="s1">'P'</span><span class="p">,</span> <span class="s1">'Q'</span><span class="p">,</span> <span class="s1">'R'</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="parse_overpunched"><a class="viewcode-back" href="../../api/ssapy.io.parse_overpunched.html#ssapy.io.parse_overpunched">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">parse_overpunched</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Parse and adjust a string containing overpunched numeric values.</span>
+
+<span class="sd">    This function processes a given string to handle overpunched numeric values, </span>
+<span class="sd">    which are a legacy encoding method for representing negative numbers in specific </span>
+<span class="sd">    positions. If the first character of the string matches an overpunched value, </span>
+<span class="sd">    it is replaced with its corresponding negative numeric value.</span>
+
+<span class="sd">    Overpunched values are defined as:</span>
+<span class="sd">        ['J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R']</span>
+
+<span class="sd">    The index of the overpunched character determines the numeric value, starting </span>
+<span class="sd">    from -1 for 'J', -2 for 'K', and so on.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        line (str): The input string to be parsed and adjusted.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The modified string where overpunched values have been replaced </span>
+<span class="sd">             with their numeric equivalents.</span>
+<span class="sd">    """</span>
+    <span class="n">line_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">line_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="n">overpunched</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">overpunched</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">line_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">line_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line_vals</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">line</span></div>
+
+
+<div class="viewcode-block" id="b3obs2pos"><a class="viewcode-back" href="../../api/ssapy.io.b3obs2pos.html#ssapy.io.b3obs2pos">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">b3obs2pos</span><span class="p">(</span><span class="n">b3line</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Return an SGP4 Satellite imported from B3OBS data.</span>
+
+<span class="sd">    Intended to mimic the sgp4 twoline2rv function</span>
+
+<span class="sd">    Data format reference:</span>
+<span class="sd">    http://help.agi.com/odtk/index.html?page=source%2Fod%2FODObjectsMeasurementFormatsandMeasurementTypes.htm</span>
+<span class="sd">    """</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.coordinates</span><span class="w"> </span><span class="kn">import</span> <span class="n">Angle</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">b3line</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">76</span><span class="p">):</span>
+        <span class="n">security_classification</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">b3line</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">satellite_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">b3line</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">])</span>  <span class="c1"># corresponds to SSC number</span>
+        <span class="n">sensor_id</span> <span class="o">=</span> <span class="n">b3line</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">9</span><span class="p">]</span>
+        <span class="n">two_digit_year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">b3line</span><span class="p">[</span><span class="mi">9</span><span class="p">:</span><span class="mi">11</span><span class="p">])</span>
+        <span class="n">day_of_year</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">b3line</span><span class="p">[</span><span class="mi">11</span><span class="p">:</span><span class="mi">14</span><span class="p">])</span>
+        <span class="c1"># hms = float(b3line[14:20] + '.' + b3line[20:23])</span>
+        <span class="n">hours</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">b3line</span><span class="p">[</span><span class="mi">14</span><span class="p">:</span><span class="mi">16</span><span class="p">])</span>
+        <span class="n">minutes</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">b3line</span><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">18</span><span class="p">])</span>
+        <span class="n">seconds</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">b3line</span><span class="p">[</span><span class="mi">18</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'.'</span> <span class="o">+</span> <span class="n">b3line</span><span class="p">[</span><span class="mi">20</span><span class="p">:</span><span class="mi">23</span><span class="p">])</span>
+        <span class="c1">#</span>
+        <span class="n">obs_type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">b3line</span><span class="p">[</span><span class="mi">74</span><span class="p">])</span>
+        <span class="c1"># print("obs_type:", obs_type)</span>
+        <span class="c1">#</span>
+        <span class="n">el_or_dec</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parse_overpunched</span><span class="p">(</span><span class="n">b3line</span><span class="p">[</span><span class="mi">23</span><span class="p">:</span><span class="mi">25</span><span class="p">])</span> <span class="o">+</span>
+                          <span class="s1">'.'</span> <span class="o">+</span> <span class="n">b3line</span><span class="p">[</span><span class="mi">25</span><span class="p">:</span><span class="mi">29</span><span class="p">])</span>  <span class="c1"># degrees</span>
+        <span class="c1"># Column 30 is blank</span>
+        <span class="k">if</span> <span class="n">obs_type</span> <span class="o">==</span> <span class="mi">5</span> <span class="ow">or</span> <span class="n">obs_type</span> <span class="o">==</span> <span class="mi">9</span><span class="p">:</span> <span class="c1"># Have RA</span>
+            <span class="n">az_or_ra</span> <span class="o">=</span> <span class="n">Angle</span><span class="p">(</span><span class="n">b3line</span><span class="p">[</span><span class="mi">30</span><span class="p">:</span><span class="mi">32</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'h'</span> <span class="o">+</span> <span class="n">b3line</span><span class="p">[</span><span class="mi">32</span><span class="p">:</span><span class="mi">34</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'m'</span> <span class="o">+</span>
+                             <span class="n">b3line</span><span class="p">[</span><span class="mi">34</span><span class="p">:</span><span class="mi">36</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'.'</span> <span class="o">+</span> <span class="n">b3line</span><span class="p">[</span><span class="mi">36</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'s'</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># Have azimuth</span>
+            <span class="n">az_or_ra</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">b3line</span><span class="p">[</span><span class="mi">30</span><span class="p">:</span><span class="mi">33</span><span class="p">]</span> <span class="o">+</span>
+                             <span class="s1">'.'</span> <span class="o">+</span> <span class="n">b3line</span><span class="p">[</span><span class="mi">33</span><span class="p">:</span><span class="mi">37</span><span class="p">])</span>  <span class="c1"># degrees</span>
+        <span class="c1"># Column 38 is blank</span>
+        <span class="n">range_in_km</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">b3line</span><span class="p">[</span><span class="mi">38</span><span class="p">:</span><span class="mi">45</span><span class="p">]</span><span class="o">.</span><span class="n">isspace</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">b3line</span><span class="p">[</span><span class="mi">45</span><span class="p">]</span><span class="o">.</span><span class="n">isspace</span><span class="p">():</span>
+            <span class="n">range_in_km</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">b3line</span><span class="p">[</span><span class="mi">38</span><span class="p">:</span><span class="mi">40</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'.'</span> <span class="o">+</span> <span class="n">b3line</span><span class="p">[</span><span class="mi">40</span><span class="p">:</span><span class="mi">45</span><span class="p">])</span>
+            <span class="n">range_exp</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">b3line</span><span class="p">[</span><span class="mi">45</span><span class="p">])</span>
+            <span class="n">range_in_km</span> <span class="o">*=</span> <span class="mf">10.</span><span class="o">**</span><span class="n">range_exp</span>
+
+        <span class="n">obs_type_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">if</span> <span class="n">obs_type</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">b3line</span><span class="p">[</span><span class="mi">46</span><span class="p">:</span><span class="mi">73</span><span class="p">]</span><span class="o">.</span><span class="n">isspace</span><span class="p">():</span>
+                <span class="n">slant_range</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">b3line</span><span class="p">[</span><span class="mi">47</span><span class="p">:</span><span class="mi">49</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'.'</span> <span class="o">+</span> <span class="n">b3line</span><span class="p">[</span><span class="mi">49</span><span class="p">:</span><span class="mi">54</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># obs_type == 8 or 9</span>
+            <span class="n">x_sat</span> <span class="o">=</span> <span class="n">b3line</span><span class="p">[</span><span class="mi">46</span><span class="p">:</span><span class="mi">55</span><span class="p">]</span>
+            <span class="n">y_sat</span> <span class="o">=</span> <span class="n">b3line</span><span class="p">[</span><span class="mi">55</span><span class="p">:</span><span class="mi">64</span><span class="p">]</span>
+            <span class="n">z_sat</span> <span class="o">=</span> <span class="n">b3line</span><span class="p">[</span><span class="mi">64</span><span class="p">:</span><span class="mi">73</span><span class="p">]</span>
+        <span class="c1"># Column 74 is blank</span>
+        <span class="k">if</span> <span class="n">obs_type</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">):</span>
+            <span class="n">equinox</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">b3line</span><span class="p">[</span><span class="mi">75</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">equinox</span> <span class="o">=</span> <span class="o">-</span><span class="mi">999</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"B3OBS format error"</span><span class="p">)</span>
+
+    <span class="n">epochdays</span> <span class="o">=</span> <span class="n">day_of_year</span>
+
+    <span class="k">if</span> <span class="n">two_digit_year</span> <span class="o">&lt;=</span> <span class="mi">50</span><span class="p">:</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="n">two_digit_year</span> <span class="o">+</span> <span class="mi">2000</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="n">two_digit_year</span> <span class="o">+</span> <span class="mi">1900</span>
+
+    <span class="n">epoch</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> \
+        <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="n">day_of_year</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">hours</span><span class="o">=</span><span class="n">hours</span><span class="p">,</span>
+                           <span class="n">minutes</span><span class="o">=</span><span class="n">minutes</span><span class="p">,</span> <span class="n">seconds</span><span class="o">=</span><span class="n">seconds</span><span class="p">)</span>
+
+    <span class="n">ra_deg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">dec_deg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">if</span> <span class="n">obs_type</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="c1"># Convert from hms to deg</span>
+        <span class="n">ra_deg</span> <span class="o">=</span> <span class="n">az_or_ra</span><span class="o">.</span><span class="n">deg</span>
+        <span class="n">dec_deg</span> <span class="o">=</span> <span class="n">el_or_dec</span>  <span class="c1"># already in degrees</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">tel</span> <span class="o">=</span> <span class="n">telescope_catalog</span><span class="p">[</span><span class="n">sensor_id</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">tel</span><span class="p">[</span><span class="s2">"x"</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">km</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">tel</span><span class="p">[</span><span class="s2">"y"</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">km</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">tel</span><span class="p">[</span><span class="s2">"z"</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">km</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">tel_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">])</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="n">tel_pos</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"satnum"</span><span class="p">:</span> <span class="n">satellite_id</span><span class="p">,</span>
+            <span class="s2">"sensnum"</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">sensor_id</span><span class="p">),</span>
+            <span class="s2">"epoch"</span><span class="p">:</span> <span class="n">epoch</span><span class="p">,</span>
+            <span class="s2">"ra"</span><span class="p">:</span> <span class="n">ra_deg</span><span class="p">,</span>
+            <span class="s2">"dec"</span><span class="p">:</span> <span class="n">dec_deg</span><span class="p">,</span>
+            <span class="s2">"range"</span><span class="p">:</span> <span class="n">range_in_km</span><span class="p">,</span>
+            <span class="s2">"tel_pos"</span><span class="p">:</span> <span class="n">tel_pos</span>
+            <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="load_b3obs_file"><a class="viewcode-back" href="../../api/ssapy.io.load_b3obs_file.html#ssapy.io.load_b3obs_file">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">load_b3obs_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Convenience function to load all entries in a B3OBS file</span>
+<span class="sd">    """</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">)</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="p">[</span><span class="n">b3obs2pos</span><span class="p">(</span><span class="n">dat</span><span class="p">[</span><span class="n">iline</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">76</span><span class="p">])</span> <span class="k">for</span> <span class="n">iline</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dat</span><span class="p">))]</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">catalog</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"ra"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s2">"ra"</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">pos</span><span class="p">]),</span>
+        <span class="s2">"dec"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s2">"dec"</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">pos</span><span class="p">]),</span>
+        <span class="s2">"time"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s2">"epoch"</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">pos</span><span class="p">]),</span>
+        <span class="s2">"sensnum"</span><span class="p">:</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s2">"sensnum"</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">pos</span><span class="p">],</span>
+        <span class="s2">"satnum"</span><span class="p">:</span> <span class="p">[</span><span class="n">d</span><span class="p">[</span><span class="s2">"satnum"</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">pos</span><span class="p">],</span>
+        <span class="s2">"tel_pos"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">d</span><span class="p">[</span><span class="s2">"tel_pos"</span><span class="p">]</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">pos</span><span class="p">])</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">catalog</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

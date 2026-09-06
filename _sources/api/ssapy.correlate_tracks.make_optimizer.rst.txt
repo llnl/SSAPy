@@ -1,0 +1,6 @@
+make_optimizer
+==============
+
+.. currentmodule:: ssapy.correlate_tracks
+
+.. autofunction:: make_optimizer

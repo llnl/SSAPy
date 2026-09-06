@@ -1,0 +1,6 @@
+summarize_tracklets
+===================
+
+.. currentmodule:: ssapy.correlate_tracks
+
+.. autofunction:: summarize_tracklets
