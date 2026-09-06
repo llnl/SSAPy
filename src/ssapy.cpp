@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <algorithm>
 #include <exception>
+#include <stdexcept>
 
 namespace ssapy {
 
@@ -23,9 +24,25 @@ namespace ssapy {
         double& lon, double& lat, double& height
     ) const {
         const double r2 = x*x + y*y;
+        if (r2 == 0.0 && z == 0.0) {
+            // The geocenter has no well-defined geodetic longitude or
+            // latitude, and MG (5.87) below evaluates 0/0 there: slat
+            // becomes NaN, fabs(dz-dz1) < 1e-6 is then never true, and the
+            // loop never exits.  Return the conventional (0, 0) direction
+            // with the height measured to the equatorial surface.
+            lon = 0.0;
+            lat = 0.0;
+            height = -_Req;
+            return;
+        }
         double dz = _e2*z;
         double dz1;
         double zdz, slat, N;
+        // MG (5.87) converges in a handful of iterations for any physical
+        // input; the cap only fires on degenerate or non-finite arguments,
+        // which would otherwise spin forever.
+        const int maxiter = 100;
+        int iter = 0;
         while (true) {
             // MG (5.87)
             zdz = z + dz;
@@ -34,6 +51,11 @@ namespace ssapy {
             dz1 = N*_e2*slat;
             if (fabs(dz-dz1) < 1e-6) break; // micron precision is plenty
             dz = dz1;
+            if (++iter >= maxiter) {
+                throw std::runtime_error(
+                    "Ellipsoid::cartToSphere failed to converge"
+                );
+            }
         }
         zdz = z+dz;
         // MG (5.88)

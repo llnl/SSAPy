@@ -55,3 +55,36 @@ def test_cart_to_sphere_broadcasting_safe(sample_ellipsoid):
     assert np.all((lat >= -np.pi / 2) & (lat <= np.pi / 2))
     assert np.all((lon >= -np.pi) & (lon <= np.pi))
 
+
+@pytest.mark.timeout(30)
+def test_cart_to_sphere_at_geocenter(sample_ellipsoid):
+    """The geocenter must return, not spin forever.
+
+    MG (5.87) computes slat = zdz/sqrt(r2 + zdz*zdz), which is 0/0 at the
+    origin. slat, N and dz1 all become NaN, the convergence test
+    fabs(dz - dz1) < 1e-6 is never true, and the loop never exits. Reached
+    through HarrisPriester::density this hung the whole propagation with no
+    error and no way to interrupt it from Python.
+    """
+    lon, lat, height = sample_ellipsoid.cartToSphere(0.0, 0.0, 0.0)
+
+    assert np.all(np.isfinite(lon))
+    assert np.all(np.isfinite(lat))
+    assert np.all(np.isfinite(height))
+    assert np.allclose(lon, 0.0)
+    assert np.allclose(lat, 0.0)
+    assert np.allclose(height, -6378137.0)
+
+
+@pytest.mark.timeout(30)
+def test_cart_to_sphere_geocenter_in_array(sample_ellipsoid):
+    """A single degenerate entry must not hang a vectorized call."""
+    x = np.array([6378137.0 + 500e3, 0.0, 0.0])
+    y = np.array([0.0, 6378137.0 + 500e3, 0.0])
+    z = np.array([0.0, 0.0, 0.0])
+
+    lon, lat, height = sample_ellipsoid.cartToSphere(x, y, z)
+
+    assert np.all(np.isfinite(height))
+    assert np.isclose(height[0], 500e3, atol=1.0)
+    assert np.isclose(height[2], -6378137.0)
