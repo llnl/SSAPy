@@ -500,7 +500,14 @@ class SciPyPropagator(Propagator):
             container.clear()
             container.append(sol)
         
-        tQuery = tQuery[tQuery <= sol.ts[-1]]
+        # A terminating event truncates the dense solution at whichever end
+        # the integration was running towards, so both ends must be checked.
+        # scipy's OdeSolution will happily evaluate outside its interpolation
+        # interval, and gives no accuracy guarantee when it does; a backward
+        # reentry that terminates mid-arc otherwise returns extrapolated
+        # garbage (|r| ~ 1e18 km) for the earlier requested times, with no
+        # mask, NaN or exception to mark it.
+        tQuery = tQuery[(tQuery >= sol.ts[0]) & (tQuery <= sol.ts[-1])]
         if len(tQuery) == 0:
             return np.empty((0, 3)), np.empty((0, 3))
     
