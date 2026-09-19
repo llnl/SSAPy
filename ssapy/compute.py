@@ -126,6 +126,7 @@ def _countOrbit(orbit):
 def _countTime(time):
     if isinstance(time, Time):
         time = time.gps
+    time = np.asarray(time, dtype=float)
     squeezeTime = False
     try:
         nTime = len(time)
@@ -267,17 +268,20 @@ class HashableArrayContainer:
     """
 
     def __init__(self, arr):
-        self.arr = arr
+        self.arr = np.array(arr, copy=True)
         self.arr.flags.writeable = False
 
     def __hash__(self):
-        return hash(self.arr.data.tobytes())
+        return hash((self.arr.dtype.str, self.arr.shape, self.arr.tobytes()))
 
     def __eq__(self, rhs):
-        return np.all(self.arr == rhs.arr)
+        if not isinstance(rhs, HashableArrayContainer):
+            return NotImplemented
+        return (self.arr.dtype == rhs.arr.dtype and self.arr.shape == rhs.arr.shape
+                and self.arr.tobytes() == rhs.arr.tobytes())
 
 
-def rv(orbit, time, propagator=KeplerianPropagator()):
+def rv(orbit, time, propagator=KeplerianPropagator(), *, return_times=False):
     """Calculate positions and velocities on the outer product of all supplied
     orbits and times.
 
@@ -290,6 +294,9 @@ def rv(orbit, time, propagator=KeplerianPropagator()):
         since 1980-01-06 00:00:00 UTC
     propagator : Propagator, optional
         The propagator instance to use.
+    return_times : bool, optional
+        Also return the one-dimensional array of GPS epochs corresponding to
+        the returned states. Useful when a numerical propagator terminates.
 
     Notes
     -----
@@ -299,19 +306,35 @@ def rv(orbit, time, propagator=KeplerianPropagator()):
     For Keplerian orbit propagation it is more efficient to use a "vector Orbit"
     instead of a list of single scalar Orbits.
 
+    Numerical termination can remove requested epochs at either end. A batch
+    retains only epochs valid for every orbit, preserving the requested order
+    (including duplicates). Use ``return_times=True`` to identify those epochs;
+    a shortened result is not necessarily a prefix of the requested grid.
+
     Returns
     -------
     r : array_like (n, m, 3)
         Position in meters.
     v : array_like (n, m, 3)
         Velocity in meters per second.
+    times : ndarray (m,), optional
+        Retained GPS epochs when ``return_times=True``; always one-dimensional.
     """
     nOrbit, squeezeOrbit, orbit = _countOrbit(orbit)
     nTime, squeezeTime, time = _countTime(time)
     # print(nOrbit, squeezeOrbit, orbit, nTime, squeezeTime, time)
-    outR, outV = _rv(orbit, HashableArrayContainer(time), propagator)
-
-    return _doSqueeze(squeezeOrbit, squeezeTime, outR, outV)
+    if return_times:
+        outR, outV, valid = propagator._getRVManyWithMask(orbit, time)
+    else:
+        outR, outV = _rv(orbit, HashableArrayContainer(time), propagator)
+    # A terminated scalar query can have no state to squeeze to a scalar.
+    out = _doSqueeze(squeezeOrbit, squeezeTime and outR.shape[1] == 1, outR, outV)
+    # The rv cache owns its arrays. Unit conversion or light-time corrections
+    # applied by a caller must not alter future results for the same query.
+    out = tuple(value.copy() for value in out)
+    if return_times:
+        return (*out, time[valid].copy())
+    return out
 
 
 def __rv(orbit, time, propagator):

@@ -54,6 +54,18 @@ _BURNUP_RADIUS = EARTH_RADIUS + 100e3
 _MOON_CHECK_MARGIN = 50e6
 
 
+def _positive_step(h):
+    h = float(h)
+    if not np.isfinite(h) or h <= 0:
+        raise ValueError("h must be finite and positive")
+    return h
+
+
+def _check_step_progress(t, h):
+    if not np.isfinite(h) or not np.isfinite(t + h) or t + h == t:
+        raise RuntimeError("integration step cannot advance the epoch at the requested step size")
+
+
 def _burnup_event(t, s):
     return np.linalg.norm(s[0:3]) - _BURNUP_RADIUS
 
@@ -117,23 +129,28 @@ class Propagator(ABC):
     #         outR[j], outV[j] = self._getRVOne(orb, time)
     #     return outR, outV
     def _getRVMany(self, orbit, time):
-        nOrbit = len(orbit)
-        outR_list = []
-        outV_list = []
-        min_len = len(time)
+        r, v, _ = self._getRVManyWithMask(orbit, time)
+        return r, v
 
-        for j, orb in enumerate(orbit):
-            rj, vj = self._getRVOne(orb, time)
-            if len(rj) < min_len:
-                min_len = len(rj)
-            outR_list.append(rj)
-            outV_list.append(vj)
+    def _getRVOneWithMask(self, orbit, time):
+        """Legacy subclasses return prefixes; truncating subclasses override."""
+        r, v = self._getRVOne(orbit, time)
+        return r, v, np.arange(len(time)) < len(r)
 
-        # Truncate all results and time array to minimum length returned
-        outR = np.array([r[:min_len] for r in outR_list])
-        outV = np.array([v[:min_len] for v in outV_list])
-
-        return outR, outV
+    def _getRVManyWithMask(self, orbit, time):
+        """Keep only requested epochs valid for every orbit, in query order."""
+        results = [self._getRVOneWithMask(orb, time) for orb in orbit]
+        common = np.ones(len(time), dtype=bool)
+        for r, v, valid in results:
+            if valid.shape != common.shape or len(r) != valid.sum() or v.shape != r.shape:
+                raise ValueError("propagator returned inconsistent state/time coverage")
+            common &= valid
+        if not results:
+            empty = np.empty((0, len(time), 3))
+            return empty, empty.copy(), common
+        r = np.stack([r[common[valid]] for r, _, valid in results])
+        v = np.stack([v[common[valid]] for _, v, valid in results])
+        return r, v, common
 
 class KeplerianPropagator(Propagator):
     """ A basic Keplerian propagator for finding the position and velocity of an
@@ -177,6 +194,10 @@ class KeplerianPropagator(Propagator):
 
     def __hash__(self):
         return hash("KeplerianPropagator")
+
+    def _getRVManyWithMask(self, orbit, time):
+        r, v = self._getRVMany(orbit, time)
+        return r, v, np.ones(len(time), dtype=bool)
 
     def __eq__(self, rhs):
         return isinstance(rhs, KeplerianPropagator)
@@ -389,7 +410,13 @@ class SciPyPropagator(Propagator):
         self.accel = accel
         if ode_kwargs is None:
             ode_kwargs = {'rtol': 1e-7}
-        self.ode_kwargs = ode_kwargs
+        self.ode_kwargs = dict(ode_kwargs)
+        # Component tolerances are documented solve_ivp inputs and must also
+        # form stable, hashable interpolant-cache keys. Copy caller-owned data.
+        for name in ('rtol', 'atol'):
+            if name in self.ode_kwargs:
+                value = np.asarray(self.ode_kwargs[name], dtype=float)
+                self.ode_kwargs[name] = float(value) if value.ndim == 0 else tuple(value)
 
     def __repr__(self):
         return "SciPyPropagator({!r}, {!r})".format(self.accel, self.ode_kwargs)
@@ -456,14 +483,26 @@ class SciPyPropagator(Propagator):
                     2: "Moon impact",
                 }[event_index]
                 print(f"{label} detected at t = {event_time:.2f} s")
+                # Retain termination even if rounding puts the final state
+                # slightly inside the event surface, where restarting would
+                # not produce another zero crossing.
+                sol._ssapy_stopped_direction = 1 if t1 > t0 else -1
                 return sol
         return sol
 
     def _getRVOne(self, orbit, tQuery):
+        r, v, _ = self._getRVOneWithMask(orbit, tQuery)
+        return r, v
+
+    def _getRVOneWithMask(self, orbit, tQuery):
         from scipy.integrate._ivp.base import ConstantDenseOutput
         from scipy.integrate._ivp.common import OdeSolution
-        # Pattern for ScipyPropagator interpolant is just:
-        # OdeSolution
+        # Cache the dense solution and whether each end is terminal.
+        tQuery = np.asarray(tQuery, dtype=float)
+        if tQuery.ndim != 1 or not np.all(np.isfinite(tQuery)):
+            raise ValueError("query times must be a finite one-dimensional array")
+        if tQuery.size == 0:
+            return np.empty((0, 3)), np.empty((0, 3)), np.zeros(0, dtype=bool)
         container = _InterpolantCache(orbit, self)
         
         def fp(t, s):
@@ -473,6 +512,7 @@ class SciPyPropagator(Propagator):
 
         tmin, tmax = np.min(tQuery), np.max(tQuery)
         update = False
+        stopped_before = stopped_after = False
         if len(container) == 0:
             ts = np.array([orbit.t, orbit.t])
             interpolants = [ConstantDenseOutput(
@@ -484,21 +524,27 @@ class SciPyPropagator(Propagator):
             update = True
         else:
             sol = container[0]
-        if tmin < sol.ts[0]:
+            if len(container) == 3:
+                _, stopped_before, stopped_after = container
+        if tmin < sol.ts[0] and not stopped_before:
             sol = self._solve_piecewise_ivp(
                 fp,
                 [sol.ts[0], tmin],
                 sol)
+            stopped_before = (getattr(sol, '_ssapy_stopped_direction', 0) == -1
+                              or sol.ts[0] > tmin)
             update = True
-        if tmax > sol.ts[-1]:
+        if tmax > sol.ts[-1] and not stopped_after:
             sol = self._solve_piecewise_ivp(
                 fp,
                 [sol.ts[-1], tmax],
                 sol)
+            stopped_after = (getattr(sol, '_ssapy_stopped_direction', 0) == 1
+                             or sol.ts[-1] < tmax)
             update = True
         if update:
             container.clear()
-            container.append(sol)
+            container.extend([sol, stopped_before, stopped_after])
         
         # A terminating event truncates the dense solution at whichever end
         # the integration was running towards, so both ends must be checked.
@@ -507,12 +553,13 @@ class SciPyPropagator(Propagator):
         # reentry that terminates mid-arc otherwise returns extrapolated
         # garbage (|r| ~ 1e18 km) for the earlier requested times, with no
         # mask, NaN or exception to mark it.
-        tQuery = tQuery[(tQuery >= sol.ts[0]) & (tQuery <= sol.ts[-1])]
+        valid = (tQuery >= sol.ts[0]) & (tQuery <= sol.ts[-1])
+        tQuery = tQuery[valid]
         if len(tQuery) == 0:
-            return np.empty((0, 3)), np.empty((0, 3))
+            return np.empty((0, 3)), np.empty((0, 3)), valid
     
         out = sol(tQuery).T
-        return out[:, 0:3], out[:, 3:6]
+        return out[:, 0:3], out[:, 3:6], valid
 
     def __hash__(self):
         return hash((
@@ -559,6 +606,10 @@ class RKPropagator(Propagator, ABC):
         ...  # Subclasses must override
 
     def _getRVOne(self, orbit, tQuery):
+        r, v, _ = self._getRVOneWithMask(orbit, tQuery)
+        return r, v
+
+    def _getRVOneWithMask(self, orbit, tQuery):
         from collections import deque
         from scipy.interpolate import make_interp_spline
         # Pattern for RK interpolant is:
@@ -590,11 +641,12 @@ class RKPropagator(Propagator, ABC):
         states_arr = np.asarray(states, dtype=np.float64)
         if times_arr.size == 1:
             # Only defined exactly at the single cached time
-            tQuery = tQuery[tQuery == times_arr[0]]
+            valid = tQuery == times_arr[0]
+            tQuery = tQuery[valid]
             if tQuery.size == 0:
-                return np.empty((0, 3)), np.empty((0, 3))
+                return np.empty((0, 3)), np.empty((0, 3)), valid
             out = np.repeat(states_arr, tQuery.size, axis=0)
-            return out[:, 0:3], out[:, 3:6]
+            return out[:, 0:3], out[:, 3:6], valid
 
         if remake_spline or spline is None:
             k = min(3, len(times_arr) - 1)  # cubic, stable
@@ -604,9 +656,10 @@ class RKPropagator(Propagator, ABC):
             times_arr = np.asarray(times, dtype=np.float64)
             states_arr = np.asarray(states, dtype=np.float64)
 
-        tQuery = tQuery[(tQuery >= times_arr[0]) & (tQuery <= times_arr[-1])]
+        valid = (tQuery >= times_arr[0]) & (tQuery <= times_arr[-1])
+        tQuery = tQuery[valid]
         if tQuery.size == 0:
-            return np.empty((0, 3)), np.empty((0, 3))
+            return np.empty((0, 3)), np.empty((0, 3)), valid
 
         # Exact knot lookup (prevents tiny spline-at-knot drift)
         idx = np.searchsorted(times_arr, tQuery)
@@ -621,7 +674,7 @@ class RKPropagator(Propagator, ABC):
             out[exact] = states_arr[idx[exact]]
             out[~exact] = spline(tQuery[~exact])
 
-        return out[:, 0:3], out[:, 3:6]
+        return out[:, 0:3], out[:, 3:6], valid
 
 
 class RK4Propagator(RKPropagator):
@@ -640,7 +693,7 @@ class RK4Propagator(RKPropagator):
 
     def __init__(self, accel, h):
         self.accel = accel
-        self.h = h
+        self.h = _positive_step(h)
 
     def __repr__(self):
         return "RK4Propagator({!r}, {!r})".format(self.accel, self.h)
@@ -682,6 +735,7 @@ class RK4Propagator(RKPropagator):
 
         keepGoing = True
         while keepGoing:
+            _check_step_progress(t, h)
             # test here so we always get 1 extra iteration...
             if not pred(t) and len(times) >= self._minPoints:
                 keepGoing = False
@@ -734,7 +788,7 @@ class RK8Propagator(RKPropagator):
 
     def __init__(self, accel, h):
         self.accel = accel
-        self.h = h
+        self.h = _positive_step(h)
 
     # Class level variables for Butcher tableau
     c = np.array([0, 1 / 18, 1 / 12, 1 / 8, 5 / 16, 3 / 8, 59 / 400, 93 / 200, 5490023248 / 9719169821, 13 / 20, 1201146811 / 1299019798, 1, 1], dtype=np.float64)
@@ -798,6 +852,7 @@ class RK8Propagator(RKPropagator):
             pred = lambda t: t >= tthresh
         keepGoing = True
         while keepGoing:
+            _check_step_progress(t, h)
             # test here so we always get 1 extra iteration, which seems to
             # interpolate better
             if not pred(t) and len(times) >= self._minPoints:
@@ -854,8 +909,11 @@ class RK78Propagator(RK8Propagator):
 
     def __init__(self, accel, h, tol=(1e-6,) * 3 + (1e-9,) * 3):
         self.accel = accel
-        self.h = h
-        self.tol = tol
+        self.h = _positive_step(h)
+        tolerance = np.broadcast_to(np.asarray(tol, dtype=float), (6,))
+        if not np.all(np.isfinite(tolerance)) or np.any(tolerance <= 0):
+            raise ValueError("tol must contain finite positive tolerances")
+        self.tol = tuple(float(value) for value in tolerance)
 
     # Inherit most class vars from RK8Propagator, but need b7 coefficients
     b7 = np.array([13451932 / 455176623, 0, 0, 0, 0, -808719846 / 976000145, 1757004468 / 5645159321, 656045339 / 265891186, -3867574721 / 1518517206, 465885868 / 322736535, 53011238 / 667516719, 2 / 45, 0])
@@ -898,12 +956,15 @@ class RK78Propagator(RK8Propagator):
 
         def step(h, t, state):
             while True:
+                _check_step_progress(t, h)
                 k = np.zeros((13, 6), dtype=np.float64)
                 for i in range(13):
                     k[i] = h * fp(state + np.dot(a[i], k), t + c[i] * h)
                 result7 = state + np.dot(b7, k)
                 result8 = state + np.dot(b8, k)
                 errmax = np.max(np.abs(result7 - result8) / self.tol)
+                if not np.isfinite(errmax) or not np.all(np.isfinite(result8)):
+                    raise RuntimeError("RK78 encountered a non-finite state or error estimate")
                 if errmax > (1.0):
                     h *= max(0.1, 0.9 * errmax**(-1 / 7))
                     continue
@@ -983,7 +1044,7 @@ class LeapfrogPropagator(RKPropagator):
 
     def __init__(self, accel, h):
         self.accel = accel
-        self.h = h
+        self.h = _positive_step(h)
 
     def __repr__(self):
         return "LeapfrogPropagator({!r}, {!r})".format(
@@ -1005,6 +1066,7 @@ class LeapfrogPropagator(RKPropagator):
 
         keepGoing = True
         while keepGoing:
+            _check_step_progress(t, h)
             if not pred(t) and len(times) >= self._minPoints:
                 keepGoing = False
 
@@ -1071,7 +1133,7 @@ class Leapfrog4Propagator(RKPropagator):
 
     def __init__(self, accel, h):
         self.accel = accel
-        self.h = h
+        self.h = _positive_step(h)
 
     def __repr__(self):
         return "Leapfrog4Propagator({!r}, {!r})".format(
@@ -1102,6 +1164,7 @@ class Leapfrog4Propagator(RKPropagator):
 
         keepGoing = True
         while keepGoing:
+            _check_step_progress(t, h)
             if not pred(t) and len(times) >= self._minPoints:
                 keepGoing = False
 
