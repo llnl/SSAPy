@@ -724,7 +724,8 @@ class Orbit:
             if hasattr(self, "_sat_epoch"):
                 out._sat_epoch = self._sat_epoch
             if hasattr(self, "_propagation_root"):
-                out._propagation_root = self._propagation_root
+                root = self._propagation_root
+                out._propagation_root = root[self._iter] if root.r.ndim == 2 else root
                 out._propagation_propagator = self._propagation_propagator
             # TODO: iterate through already-instantiated lazy_properties and
             # copy them over too.
@@ -750,7 +751,8 @@ class Orbit:
         if hasattr(self, "_sat_epoch"):
             out._sat_epoch = self._sat_epoch
         if hasattr(self, "_propagation_root"):
-            out._propagation_root = self._propagation_root
+            root = self._propagation_root
+            out._propagation_root = root[idx] if root.r.ndim == 2 else root
             out._propagation_propagator = self._propagation_propagator
         return out
 
