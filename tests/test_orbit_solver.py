@@ -156,6 +156,7 @@ def testKappaSignPlane():
         np.testing.assert_allclose(solver1.i, np.pi-solver2.i, rtol=0, atol=1e-9)
 
 
+@pytest.mark.timeout(90)
 @timer
 def testThreeAngles():
     np.random.seed(57721)
