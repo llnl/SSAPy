@@ -1,0 +1,6 @@
+rightascension_to_hourangle
+===========================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: rightascension_to_hourangle

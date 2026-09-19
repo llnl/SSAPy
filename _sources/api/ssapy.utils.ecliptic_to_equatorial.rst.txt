@@ -1,0 +1,6 @@
+ecliptic_to_equatorial
+======================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: ecliptic_to_equatorial

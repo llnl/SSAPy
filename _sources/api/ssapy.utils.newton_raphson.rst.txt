@@ -1,0 +1,6 @@
+newton_raphson
+==============
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: newton_raphson

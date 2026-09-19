@@ -1,0 +1,6 @@
+unit_to_lb
+==========
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: unit_to_lb

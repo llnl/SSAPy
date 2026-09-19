@@ -1,0 +1,6 @@
+dircos
+======
+
+.. currentmodule:: ssapy.compute
+
+.. autofunction:: dircos

@@ -1,0 +1,5 @@
+ssapy.linker
+============
+
+.. automodapi:: ssapy.linker
+    :no-heading:

@@ -1,0 +1,6 @@
+einsum_norm
+===========
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: einsum_norm

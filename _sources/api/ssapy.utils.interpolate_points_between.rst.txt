@@ -1,0 +1,6 @@
+interpolate_points_between
+==========================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: interpolate_points_between

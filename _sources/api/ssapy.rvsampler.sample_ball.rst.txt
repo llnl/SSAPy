@@ -1,0 +1,6 @@
+sample_ball
+===========
+
+.. currentmodule:: ssapy.rvsampler
+
+.. autofunction:: sample_ball

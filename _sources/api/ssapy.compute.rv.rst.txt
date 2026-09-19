@@ -1,0 +1,6 @@
+rv
+==
+
+.. currentmodule:: ssapy.compute
+
+.. autofunction:: rv

@@ -1,0 +1,6 @@
+dms_to_deg
+==========
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: dms_to_deg

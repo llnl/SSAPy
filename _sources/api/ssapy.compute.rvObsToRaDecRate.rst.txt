@@ -1,0 +1,6 @@
+rvObsToRaDecRate
+================
+
+.. currentmodule:: ssapy.compute
+
+.. autofunction:: rvObsToRaDecRate

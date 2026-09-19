@@ -1,0 +1,6 @@
+deg0to360array
+==============
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: deg0to360array

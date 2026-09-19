@@ -1,0 +1,6 @@
+time_ordered_satIDs
+===================
+
+.. currentmodule:: ssapy.correlate_tracks
+
+.. autofunction:: time_ordered_satIDs

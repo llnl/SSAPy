@@ -1,0 +1,6 @@
+num_wraps
+=========
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: num_wraps

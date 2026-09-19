@@ -1,0 +1,21 @@
+HarmonicCoefficients
+====================
+
+.. currentmodule:: ssapy.gravity
+
+.. autoclass:: HarmonicCoefficients
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~HarmonicCoefficients.fromEGM
+      ~HarmonicCoefficients.fromTAB
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: fromEGM
+      :noindex:
+   .. automethod:: fromTAB
+      :noindex:

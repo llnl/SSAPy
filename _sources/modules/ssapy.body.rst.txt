@@ -1,0 +1,5 @@
+ssapy.body
+==========
+
+.. automodapi:: ssapy.body
+    :no-heading:

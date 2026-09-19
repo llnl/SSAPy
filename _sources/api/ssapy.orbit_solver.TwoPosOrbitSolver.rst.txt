@@ -1,0 +1,18 @@
+TwoPosOrbitSolver
+=================
+
+.. currentmodule:: ssapy.orbit_solver
+
+.. autoclass:: TwoPosOrbitSolver
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~TwoPosOrbitSolver.solve
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: solve
+      :noindex:

@@ -1,0 +1,6 @@
+moon_impact_event
+=================
+
+.. currentmodule:: ssapy.propagator
+
+.. autofunction:: moon_impact_event

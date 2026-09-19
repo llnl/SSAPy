@@ -1,0 +1,80 @@
+ThreeAngleOrbitSolver
+=====================
+
+.. currentmodule:: ssapy.orbit_solver
+
+.. autoclass:: ThreeAngleOrbitSolver
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~ThreeAngleOrbitSolver.D
+      ~ThreeAngleOrbitSolver.D11
+      ~ThreeAngleOrbitSolver.D12
+      ~ThreeAngleOrbitSolver.D13
+      ~ThreeAngleOrbitSolver.D21
+      ~ThreeAngleOrbitSolver.D22
+      ~ThreeAngleOrbitSolver.D23
+      ~ThreeAngleOrbitSolver.D31
+      ~ThreeAngleOrbitSolver.D32
+      ~ThreeAngleOrbitSolver.D33
+      ~ThreeAngleOrbitSolver.d1
+      ~ThreeAngleOrbitSolver.d2
+      ~ThreeAngleOrbitSolver.d3
+      ~ThreeAngleOrbitSolver.t21
+      ~ThreeAngleOrbitSolver.t2131
+      ~ThreeAngleOrbitSolver.t31
+      ~ThreeAngleOrbitSolver.t32
+      ~ThreeAngleOrbitSolver.t3231
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~ThreeAngleOrbitSolver.solve
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: D
+      :noindex:
+   .. autoattribute:: D11
+      :noindex:
+   .. autoattribute:: D12
+      :noindex:
+   .. autoattribute:: D13
+      :noindex:
+   .. autoattribute:: D21
+      :noindex:
+   .. autoattribute:: D22
+      :noindex:
+   .. autoattribute:: D23
+      :noindex:
+   .. autoattribute:: D31
+      :noindex:
+   .. autoattribute:: D32
+      :noindex:
+   .. autoattribute:: D33
+      :noindex:
+   .. autoattribute:: d1
+      :noindex:
+   .. autoattribute:: d2
+      :noindex:
+   .. autoattribute:: d3
+      :noindex:
+   .. autoattribute:: t21
+      :noindex:
+   .. autoattribute:: t2131
+      :noindex:
+   .. autoattribute:: t31
+      :noindex:
+   .. autoattribute:: t32
+      :noindex:
+   .. autoattribute:: t3231
+      :noindex:
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: solve
+      :noindex:

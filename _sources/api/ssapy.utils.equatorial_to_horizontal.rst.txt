@@ -1,0 +1,6 @@
+equatorial_to_horizontal
+========================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: equatorial_to_horizontal

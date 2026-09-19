@@ -1,0 +1,354 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contribution Guide &mdash; SSAPy 1.1.10 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="_static/ssapy_logo.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=5d9df9de"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="References" href="references.html" />
+    <link rel="prev" title="SSAPy Concepts" href="concepts.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contribution Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#branches">Branches</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#continuous-integration">Continuous Integration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#unit-tests">Unit Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#style-tests">Style Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#documentation-tests">Documentation Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#coverage">Coverage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#git-workflows">Git Workflows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#branching">Branching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#cherry-picking">Cherry-Picking</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rebasing">Rebasing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#rebasing-with-cherry-pick">Rebasing with cherry-pick</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#re-writing-history">Re-writing History</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Contribution Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/contribution_guide.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="contribution-guide">
+<span id="id1"></span><h1>Contribution Guide<a class="headerlink" href="#contribution-guide" title="Permalink to this heading"></a></h1>
+<p>This guide is intended for developers and administrators who want to
+contribute a new feature or bug fix to SSAPy. It assumes some familiarity
+with Git and GitHub.</p>
+<p>A pull request (PR) is the primary mechanism for contributing changes to
+SSAPy. In general, each PR should correspond to a single completed feature,
+bug fix, refactor, or documentation improvement. Smaller, focused PRs are
+much easier to review and maintain than large PRs covering unrelated changes.</p>
+<p>If possible, follow a <strong>one PR, one feature</strong> rule.</p>
+<section id="branches">
+<h2>Branches<a class="headerlink" href="#branches" title="Permalink to this heading"></a></h2>
+<p>SSAPy’s <code class="docutils literal notranslate"><span class="pre">main</span></code> branch contains the latest development work. Nearly all pull
+requests should start from <code class="docutils literal notranslate"><span class="pre">main</span></code> and target <code class="docutils literal notranslate"><span class="pre">main</span></code>.</p>
+<p>There may also be release branches for major release series. Important bug
+fixes may be backported to those branches by the maintainers as needed.</p>
+</section>
+<section id="continuous-integration">
+<h2>Continuous Integration<a class="headerlink" href="#continuous-integration" title="Permalink to this heading"></a></h2>
+<p>SSAPy uses <a class="reference external" href="https://docs.github.com/en/actions">GitHub Actions</a> for
+continuous integration (CI). Every pull request and relevant push will trigger
+automated checks such as package builds, tests, and documentation builds.</p>
+<p><strong>Your PR will not be accepted until the required CI checks pass.</strong></p>
+<p>Sometimes CI fails for reasons unrelated to your PR, such as transient network
+issues or package manager failures. If this happens, inspect the failing job in
+GitHub Actions before assuming your changes are at fault. If the failure appears
+transient, rerun the workflow if you have permission, or push a small follow-up
+commit / reopen the PR to trigger CI again.</p>
+<p>The exact test matrix may change over time. Refer to the repository’s GitHub
+Actions workflow files for the current platforms and Python versions being
+tested.</p>
+<section id="unit-tests">
+<h3>Unit Tests<a class="headerlink" href="#unit-tests" title="Permalink to this heading"></a></h3>
+<p>SSAPy uses <a class="reference external" href="https://pytest.org/">pytest</a> for unit testing.</p>
+<p>To run the full test suite locally:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pytest<span class="w"> </span>-v
+</pre></div>
+</div>
+<p>To run a specific test file:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pytest<span class="w"> </span>-v<span class="w"> </span>tests/test_compute.py
+</pre></div>
+</div>
+<p>To run a specific test:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pytest<span class="w"> </span>-v<span class="w"> </span>tests/test_compute.py::test_example
+</pre></div>
+</div>
+<p>To see test output live while tests run:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pytest<span class="w"> </span>-v<span class="w"> </span>-s
+</pre></div>
+</div>
+<p>If your PR changes core SSAPy functionality, please run the relevant tests
+locally before submitting the PR. If you add new functionality or fix a bug,
+please also add or update tests where appropriate.</p>
+</section>
+<section id="style-tests">
+<h3>Style Tests<a class="headerlink" href="#style-tests" title="Permalink to this heading"></a></h3>
+<p>SSAPy uses <a class="reference external" href="https://flake8.pycqa.org/">Flake8</a> for style checking.</p>
+<p>To run style checks locally:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>flake8<span class="w"> </span>ssapy<span class="w"> </span>tests
+</pre></div>
+</div>
+<p>Please ensure that any code you contribute passes the project’s style checks.</p>
+<p>If additional static analysis tools are enabled in CI in the future, contributors
+should also ensure those checks pass before requesting review.</p>
+</section>
+<section id="documentation-tests">
+<h3>Documentation Tests<a class="headerlink" href="#documentation-tests" title="Permalink to this heading"></a></h3>
+<p>SSAPy uses <a class="reference external" href="https://www.sphinx-doc.org/">Sphinx</a> to build documentation.</p>
+<p>To build the documentation locally:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>docs/requirements.txt
+<span class="gp">$ </span><span class="nb">cd</span><span class="w"> </span>docs
+<span class="gp">$ </span>make<span class="w"> </span>clean
+<span class="gp">$ </span>make<span class="w"> </span>html
+</pre></div>
+</div>
+<p>If your PR changes documentation, public APIs, or import structure, please build
+the docs locally to make sure they still render correctly.</p>
+<p>Depending on the current documentation configuration, additional system packages
+such as <code class="docutils literal notranslate"><span class="pre">graphviz</span></code> may be required.</p>
+</section>
+</section>
+<section id="coverage">
+<h2>Coverage<a class="headerlink" href="#coverage" title="Permalink to this heading"></a></h2>
+<p>SSAPy uses <a class="reference external" href="https://codecov.io/">Codecov</a> to report unit test coverage.</p>
+<p>Coverage checks help identify whether changed code is exercised by tests.
+Although coverage alone does not guarantee correctness, changes to core library
+code should ideally be accompanied by tests covering the modified behavior.</p>
+</section>
+<section id="git-workflows">
+<h2>Git Workflows<a class="headerlink" href="#git-workflows" title="Permalink to this heading"></a></h2>
+<p>SSAPy development is active, and <code class="docutils literal notranslate"><span class="pre">main</span></code> may change frequently. To keep your
+work manageable and reviewable, it is best to make changes on a dedicated branch.</p>
+<section id="branching">
+<h3>Branching<a class="headerlink" href="#branching" title="Permalink to this heading"></a></h3>
+<p>Start by updating your local <code class="docutils literal notranslate"><span class="pre">main</span></code> branch and creating a new feature branch:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>pull<span class="w"> </span>upstream<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>&lt;descriptive_branch_name&gt;
+</pre></div>
+</div>
+<p>Make your changes, then commit them in logically grouped commits:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>add<span class="w"> </span>&lt;files&gt;
+<span class="gp">$ </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"&lt;descriptive message&gt;"</span>
+</pre></div>
+</div>
+<p>Push the branch to your fork:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>&lt;descriptive_branch_name&gt;<span class="w"> </span>--set-upstream
+</pre></div>
+</div>
+<p>Then open a pull request targeting <code class="docutils literal notranslate"><span class="pre">main</span></code>.</p>
+<p>Please use descriptive commit messages so future contributors can understand the
+intent of the changes.</p>
+</section>
+<section id="cherry-picking">
+<h3>Cherry-Picking<a class="headerlink" href="#cherry-picking" title="Permalink to this heading"></a></h3>
+<p>If you already made commits on another branch and later decide to submit some of
+them upstream, you can create a new branch from <code class="docutils literal notranslate"><span class="pre">main</span></code> and cherry-pick the
+relevant commits.</p>
+<p>First, find the commit hashes you want:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>log
+</pre></div>
+</div>
+<p>Then create a branch from updated <code class="docutils literal notranslate"><span class="pre">main</span></code> and cherry-pick the commits:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>pull<span class="w"> </span>upstream<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>&lt;descriptive_branch_name&gt;
+<span class="gp">$ </span>git<span class="w"> </span>cherry-pick<span class="w"> </span>&lt;hash&gt;
+</pre></div>
+</div>
+<p>Push the new branch and open a pull request:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>&lt;descriptive_branch_name&gt;<span class="w"> </span>--set-upstream
+</pre></div>
+</div>
+</section>
+<section id="rebasing">
+<h3>Rebasing<a class="headerlink" href="#rebasing" title="Permalink to this heading"></a></h3>
+<p>If <code class="docutils literal notranslate"><span class="pre">main</span></code> has moved forward and your branch has conflicts or is out of date,
+rebase your branch on top of the latest <code class="docutils literal notranslate"><span class="pre">main</span></code>:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>pull<span class="w"> </span>upstream<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>&lt;descriptive_branch_name&gt;
+<span class="gp">$ </span>git<span class="w"> </span>rebase<span class="w"> </span>main
+</pre></div>
+</div>
+<p>If Git reports conflicts, resolve them, then continue:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>add<span class="w"> </span>&lt;resolved_files&gt;
+<span class="gp">$ </span>git<span class="w"> </span>rebase<span class="w"> </span>--continue
+</pre></div>
+</div>
+<p>Repeat until the rebase completes. Then force-push the updated branch:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>push<span class="w"> </span>--force<span class="w"> </span>origin<span class="w"> </span>&lt;descriptive_branch_name&gt;
+</pre></div>
+</div>
+</section>
+<section id="rebasing-with-cherry-pick">
+<h3>Rebasing with cherry-pick<a class="headerlink" href="#rebasing-with-cherry-pick" title="Permalink to this heading"></a></h3>
+<p>You can also rebase manually by resetting a branch to <code class="docutils literal notranslate"><span class="pre">main</span></code> and cherry-picking
+back the commits you want to keep.</p>
+<p>Create a backup branch first:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>&lt;descriptive_branch_name&gt;
+<span class="gp">$ </span>git<span class="w"> </span>branch<span class="w"> </span>tmp
+</pre></div>
+</div>
+<p>Record the commit hashes you want to preserve:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>log
+</pre></div>
+</div>
+<p>Update <code class="docutils literal notranslate"><span class="pre">main</span></code> and reset your working branch:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>pull<span class="w"> </span>upstream<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>checkout<span class="w"> </span>&lt;descriptive_branch_name&gt;
+<span class="gp">$ </span>git<span class="w"> </span>reset<span class="w"> </span>--hard<span class="w"> </span>main
+</pre></div>
+</div>
+<p>Then cherry-pick the desired commits:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>cherry-pick<span class="w"> </span>&lt;hash1&gt;
+<span class="gp">$ </span>git<span class="w"> </span>cherry-pick<span class="w"> </span>&lt;hash2&gt;
+</pre></div>
+</div>
+<p>Push the updated branch:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>push<span class="w"> </span>--force<span class="w"> </span>origin<span class="w"> </span>&lt;descriptive_branch_name&gt;
+</pre></div>
+</div>
+<p>If everything looks good, remove the backup branch:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>branch<span class="w"> </span>--delete<span class="w"> </span>--force<span class="w"> </span>tmp
+</pre></div>
+</div>
+</section>
+<section id="re-writing-history">
+<h3>Re-writing History<a class="headerlink" href="#re-writing-history" title="Permalink to this heading"></a></h3>
+<p>Sometimes a branch diverges so far from <code class="docutils literal notranslate"><span class="pre">main</span></code> that a clean rebase is difficult.
+If only the final result matters, you may choose to rewrite the branch history.</p>
+<p>On the branch in question:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>merge<span class="w"> </span>main
+<span class="gp">$ </span>git<span class="w"> </span>reset<span class="w"> </span>main
+</pre></div>
+</div>
+<p>At this point, your branch points to the same commit as <code class="docutils literal notranslate"><span class="pre">main</span></code>, but your local
+file modifications remain in the working tree. Review them with:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>status
+<span class="gp">$ </span>git<span class="w"> </span>diff
+</pre></div>
+</div>
+<p>Then create a new, clean set of commits:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>add<span class="w"> </span>&lt;files&gt;
+<span class="gp">$ </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"&lt;descriptive message&gt;"</span>
+</pre></div>
+</div>
+<p>Finally, push the rewritten branch to your fork and open or update the PR:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>git<span class="w"> </span>push<span class="w"> </span>--force<span class="w"> </span>origin<span class="w"> </span>&lt;descriptive_branch_name&gt;
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="concepts.html" class="btn btn-neutral float-left" title="SSAPy Concepts" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="references.html" class="btn btn-neutral float-right" title="References" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

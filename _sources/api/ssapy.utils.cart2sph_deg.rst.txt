@@ -1,0 +1,6 @@
+cart2sph_deg
+============
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: cart2sph_deg

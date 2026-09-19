@@ -1,0 +1,7 @@
+KeplerianPropagator
+===================
+
+.. currentmodule:: ssapy.propagator
+
+.. autoclass:: KeplerianPropagator
+   :show-inheritance:

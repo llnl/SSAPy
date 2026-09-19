@@ -1,0 +1,6 @@
+wrap_angle_difference
+=====================
+
+.. currentmodule:: ssapy.correlate_tracks
+
+.. autofunction:: wrap_angle_difference

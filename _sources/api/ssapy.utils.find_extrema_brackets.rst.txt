@@ -1,0 +1,6 @@
+find_extrema_brackets
+=====================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: find_extrema_brackets
