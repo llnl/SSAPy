@@ -134,6 +134,8 @@ def _countTime(time):
         time = np.array([time])
         nTime = 1
         squeezeTime = True
+    else:
+        time = np.asarray(time)
     return nTime, squeezeTime, time
 
 

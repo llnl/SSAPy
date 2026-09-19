@@ -631,6 +631,24 @@ def test_rv():
     np.testing.assert_allclose(v, v2, rtol=0, atol=1e-2)
 
 
+def test_rv_accepts_list_and_tuple_times():
+    orbit = ssapy.Orbit(
+        np.array([7000e3, 0.0, 0.0]),
+        np.array([0.0, 7500.0, 0.0]),
+        0.0,
+    )
+    times = [0.0, 60.0, 120.0]
+
+    r_list, v_list = ssapy.rv(orbit, times)
+    r_tuple, v_tuple = ssapy.rv(orbit, tuple(times))
+    r_array, v_array = ssapy.rv(orbit, np.asarray(times))
+
+    np.testing.assert_allclose(r_list, r_array)
+    np.testing.assert_allclose(v_list, v_array)
+    np.testing.assert_allclose(r_tuple, r_array)
+    np.testing.assert_allclose(v_tuple, v_array)
+
+
 @timer
 # def test_groundTrack():
 #     np.random.seed(5772156)
