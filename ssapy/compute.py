@@ -453,7 +453,7 @@ def _obsAngleCorrection(
         dist = norm(r - obsPos)
         dt, dt_previous = dist / 299792458, np.inf
         iter = 0
-        while np.any(np.abs(dt - dt_previous)) > 1e-12:  # picosecond accurate
+        while not np.all(np.abs(dt - dt_previous) <= 1e-12):  # 1 ps
             if iter > max_iter:
                 raise RuntimeError(
                     "Exact light time correction did not converge in "
