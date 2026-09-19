@@ -1061,6 +1061,9 @@ def sample_points(x, C, npts, sqrt=False):
     if not sqrt:
         sqrtdiag = np.sqrt(np.diag(C))
         scalecovar = sqrtdiag[None, :] * sqrtdiag[:, None]
+        # Zero variance implies a zero covariance row and column.
+        # Keep its marginal scale zero, but avoid 0/0 in normalization.
+        scalecovar[scalecovar == 0] = 1.0
         uu, ss, vvh = np.linalg.svd(C / scalecovar)
         sqrtC = uu.dot(np.diag(ss**0.5)).dot(vvh)
     else:
@@ -1104,6 +1107,9 @@ def sigma_points(f, x, C, scale=1, fixed_dimensions=None):
     # sqrtC = linalg.sqrtm(C)
     sqrtdiag = np.sqrt(np.diag(C))
     scalecovar = sqrtdiag.reshape(1, -1) * sqrtdiag.reshape(-1, 1)
+    # Zero variance implies a zero covariance row and column.
+    # Keep its marginal scale zero, but avoid 0/0 in normalization.
+    scalecovar[scalecovar == 0] = 1.0
     uu, ss, vvh = np.linalg.svd(C / scalecovar)
     sqrtC = uu.dot(np.diag(ss**0.5)).dot(vvh)
     n = C.shape[0]
