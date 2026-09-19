@@ -184,7 +184,7 @@ class Linker(object):
         for j in range(n):
             # FIXME: Add prior on orbit model parameters here?
             theta = self.iods[j].draw_orbit()
-            lnL[j] = lnlike(theta)
+            lnL[j] = np.asarray(lnlike(theta)).item()
 
         if verbose:
             print("lnL:", lnL)
