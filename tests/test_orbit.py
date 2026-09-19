@@ -1766,6 +1766,28 @@ def test_orbit_scalar_vector_api_branches_and_reprs(tmp_path):
     assert "propagator=" in repr(orbital_observer)
 
 
+def test_orbit_equality_and_hash_respect_propkw_mapping():
+    r = np.array([7.0e6, 0.0, 0.0])
+    v = np.array([0.0, 7.5e3, 0.0])
+
+    plain = ssapy.Orbit(r, v, 0.0)
+    with_area = ssapy.Orbit(r, v, 0.0, propkw={"area": 2.0})
+    assert plain != with_area
+    assert with_area != plain
+
+    first = ssapy.Orbit(
+        r, v, 0.0, propkw={"area": 2.0, "mass": np.array([5.0])}
+    )
+    second = ssapy.Orbit(
+        r, v, 0.0, propkw={"mass": np.array([5.0]), "area": 2.0}
+    )
+    assert first == second
+    assert second == first
+    assert hash(first) == hash(second)
+    assert isinstance(hash(with_area), int)
+    assert plain.__eq__(object()) is NotImplemented
+
+
 def test_orbit_mixed_vector_bound_unbound_regression():
     a = np.array([7.0e6, -1.0e7])
     e = np.array([0.1, 1.5])
