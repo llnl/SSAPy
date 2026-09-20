@@ -1866,17 +1866,16 @@ def rightascension_to_hourangle(right_ascension, local_time):
         rightascension_to_hourangle("10:30:00", "12:45:00") -> "02:15:00"
         rightascension_to_hourangle(157.5, 191.25) -> "02:15:00"
     """
-    if type(right_ascension) is not str:
-        right_ascension = dd_to_hms(right_ascension)
-    if type(local_time) is not str:
-        local_time = dd_to_dms(local_time)
-    _ra = float(right_ascension.split(':')[0])
-    _lt = float(local_time.split(':')[0])
-    if _ra > _lt:
-        __ltm, __lts = local_time.split(':')[1:]
-        local_time = f'{24 + _lt}:{__ltm}:{__lts}'
-
-    return dd_to_dms(hms_to_dd(local_time) - hms_to_dd(right_ascension))
+    if isinstance(right_ascension, str):
+        right_ascension = hms_to_dd(right_ascension)
+    else:
+        right_ascension = float(right_ascension)
+    if isinstance(local_time, str):
+        local_time = hms_to_dd(local_time)
+    else:
+        local_time = float(local_time)
+    hour_angle = (local_time - right_ascension) % 360.0
+    return dd_to_hms(hour_angle)
 
 
 def equatorial_to_horizontal(observer_latitude, declination, right_ascension=None, hour_angle=None, local_time=None, hms=False):
@@ -1907,9 +1906,7 @@ def equatorial_to_horizontal(observer_latitude, declination, right_ascension=Non
         if hms:
             hour_angle = hms_to_dd(hour_angle)
     elif right_ascension is not None:
-        hour_angle = rightascension_to_hourangle(right_ascension, local_time)
-        if hms:
-            hour_angle = hms_to_dd(hour_angle)
+        hour_angle = hms_to_dd(rightascension_to_hourangle(right_ascension, local_time))
     elif hour_angle is not None:
         if hms:
             hour_angle = hms_to_dd(hour_angle)

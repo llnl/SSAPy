@@ -184,8 +184,8 @@ def test_small_coordinate_and_angle_helpers(capsys):
     assert utils.zenithangle_to_altitude(60.0) == 30.0
     assert np.isclose(utils.altitude_to_zenithangle(np.pi / 6, deg=False), np.pi / 3)
     assert np.isclose(utils.zenithangle_to_altitude(np.pi / 3, deg=False), np.pi / 6)
-    assert utils.rightascension_to_hourangle(30.0, 2.0) == "0:0:0"
-    assert utils.rightascension_to_hourangle("02:00:00", "01:00:00").count(":") == 2
+    assert utils.hms_to_dd(utils.rightascension_to_hourangle(30.0, 2.0)) == pytest.approx(332.0)
+    assert utils.hms_to_dd(utils.rightascension_to_hourangle("02:00:00", "01:00:00")) == pytest.approx(345.0)
 
     assert utils.dms_to_dd("12:30:00") == 12.5
     assert utils.dms_to_dd(["12:30:00", "-12:30:00"]) == [12.5, -12.5]
