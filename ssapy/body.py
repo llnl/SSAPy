@@ -82,11 +82,10 @@ class MoonOrientation(_KernelBacked):
     orientation matrix at a given time.
     """
     def __init__(self):
-        import os
         from jplephem.pck import PCK
-        from . import datadir
+        from .utils import find_file
 
-        fn = os.path.join(datadir, "moon_pa_de440_200625.bpc")
+        fn = find_file("moon_pa_de440_200625.bpc")
         self.kernel = PCK.open(fn)
 
     def __call__(self, t, _E=None):
@@ -133,11 +132,10 @@ class MoonPosition(_KernelBacked):
     position vector at a given time.
     """
     def __init__(self):
-        import os
         from jplephem.spk import SPK
-        from . import datadir
+        from .utils import find_file
 
-        fn = os.path.join(datadir, "de430.bsp")  # https://naif.jpl.nasa.gov/pub/naif/LUCY/kernels/spk/de430s.bsp.lbl
+        fn = find_file("de430.bsp")  # https://naif.jpl.nasa.gov/pub/naif/LUCY/kernels/spk/de430s.bsp.lbl
         self.kernel = SPK.open(fn)
 
     def __call__(self, t):
@@ -164,11 +162,10 @@ class SunPosition(_KernelBacked):
     position vector at a given time.
     """
     def __init__(self):
-        import os
         from jplephem.spk import SPK
-        from . import datadir
+        from .utils import find_file
 
-        fn = os.path.join(datadir, "de430.bsp")  # https://naif.jpl.nasa.gov/pub/naif/LUCY/kernels/spk/de430s.bsp.lbl
+        fn = find_file("de430.bsp")  # https://naif.jpl.nasa.gov/pub/naif/LUCY/kernels/spk/de430s.bsp.lbl
         self.kernel = SPK.open(fn)
 
     def __call__(self, t):
@@ -197,11 +194,10 @@ class PlanetPosition(_KernelBacked):
     position vector at a given time.
     """
     def __init__(self, planet_index):
-        import os
         from jplephem.spk import SPK
-        from . import datadir
+        from .utils import find_file
 
-        fn = os.path.join(datadir, "de430.bsp")
+        fn = find_file("de430.bsp")
         self.kernel = SPK.open(fn)
         self.planet_index = planet_index
 

@@ -31,22 +31,57 @@ except ImportError:
     import astropy._erfa as erfa
 
 
+_LFS_POINTER_PREFIX = b"version https://git-lfs.github.com/spec/v1"
+
+
+def _is_lfs_pointer(path):
+    """True if ``path`` is an un-fetched git LFS pointer rather than data."""
+    try:
+        if os.path.getsize(path) > 1024:
+            return False
+        with open(path, "rb") as f:
+            return f.read(len(_LFS_POINTER_PREFIX)) == _LFS_POINTER_PREFIX
+    except OSError:
+        return False
+
+
+def _ssapy_data_files():
+    """Paths of the files shipped by the optional ``llnl-ssapy-data`` package."""
+    try:
+        import ssapy_data
+    except ImportError:
+        return []
+    try:
+        return [os.fspath(path) for path in ssapy_data.iter_data_files()]
+    except Exception:
+        return []
+
+
 def find_file(filename, ext=None):
     """ Find a file in the current directory or the ssapy datadir.  If ext is
     not None, also try appending ext to the filename.
+
+    Un-fetched git LFS pointer files (a clone without ``git lfs pull``) are
+    skipped. If the file is not found locally, the ``llnl-ssapy-data``
+    package is searched by file name when it is installed.
     """
-    candidates = [
-        filename,
-        os.path.join(datadir, filename),
-    ]
-    if ext is not None:
-        candidates.extend([
-            filename + ext,
-            os.path.join(datadir, filename + ext),
-        ])
+    names = [filename] if ext is None else [filename, filename + ext]
+    candidates = []
+    for name in names:
+        candidates.extend([name, os.path.join(datadir, name)])
+    for candidate in candidates:
+        if os.path.isfile(candidate) and not _is_lfs_pointer(candidate):
+            return candidate
+    basenames = {os.path.basename(name) for name in names}
+    for path in _ssapy_data_files():
+        if os.path.basename(path) in basenames and os.path.isfile(path) and not _is_lfs_pointer(path):
+            return path
     for candidate in candidates:
         if os.path.isfile(candidate):
-            return candidate
+            raise FileNotFoundError(
+                f"{candidate} is a git LFS pointer, not the data file; run `git lfs pull` "
+                "in the SSAPy clone or install a release of SSAPy."
+            )
     raise FileNotFoundError(filename)
 
 
