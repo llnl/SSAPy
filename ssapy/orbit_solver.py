@@ -9,6 +9,7 @@ References:
 
 import abc
 import numpy as np
+import warnings
 from astropy.time import Time
 
 from .orbit import Orbit
@@ -132,6 +133,12 @@ class GaussTwoPosOrbitSolver(TwoPosOrbitSolver):
     and implements a method to compute the orbital parameter `p` based on 
     Shefer's equations.
 
+    Gauss's fixed-point iteration converges only for short arcs: it recovers
+    the velocity to 1e-11 m/s for a 38 deg LEO arc but diverges for sweeps
+    near 90 deg and beyond (2.7 km/s error for a quarter GEO orbit). It warns
+    with a RuntimeWarning when it does not converge; SheferTwoPosOrbitSolver
+    handles long arcs.
+
     Attributes:
         eps (float): Convergence tolerance for iterative calculations.
         maxiter (int): Maximum number of iterations allowed for convergence.
@@ -167,10 +174,20 @@ class GaussTwoPosOrbitSolver(TwoPosOrbitSolver):
                 h = 2 * np.arcsinh(np.sqrt(-x))
                 X = (np.sinh(2 * h) - 2 * h) / np.sinh(h)**3
             else:  # -1e-15<x<1e-15
-                X = 4. / 3 + 8. / 5 * x + 64. / 35 * x
+                X = 4. / 3 + 8. / 5 * x + 64. / 35 * x**2
             d_eta = 1. + (self.ell + x) * X - eta
             eta += d_eta
             niter += 1
+        # Gauss's fixed-point iteration diverges for long arcs (sweeps beyond
+        # roughly 90 deg); it used to return the last iterate silently, giving
+        # velocities off by km/s. Warn so the caller can switch solvers.
+        if not np.isfinite(eta) or np.abs(d_eta) > 1e-10 * max(1.0, np.abs(eta)):
+            warnings.warn(
+                "Gauss two-position iteration did not converge (|d_eta| = {:.3g} after {} iterations); "
+                "the solution is unreliable. Use SheferTwoPosOrbitSolver for long arcs.".format(abs(d_eta), niter),
+                RuntimeWarning,
+                stacklevel=3,
+            )
         # Plug eta into (2) to obtain p
         p = (0.5 * eta * self.kappa * self.sigma / self.tau)**2 / self.mu
         return p
