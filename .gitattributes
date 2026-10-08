@@ -1,9 +1,0 @@
-*.png filter=lfs diff=lfs merge=lfs -text
-*.jpg filter=lfs diff=lfs merge=lfs -text
-*.egm* filter=lfs diff=lfs merge=lfs -text
-gggrx_1200a_sha* filter=lfs diff=lfs merge=lfs -text
-*.bpc filter=lfs diff=lfs merge=lfs -text
-*.bsp filter=lfs diff=lfs merge=lfs -text
-*.dbf filter=lfs diff=lfs merge=lfs -text
-*.shp filter=lfs diff=lfs merge=lfs -text
-*.shx filter=lfs diff=lfs merge=lfs -text

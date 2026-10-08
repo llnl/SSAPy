@@ -45,7 +45,6 @@ setup(
     ext_modules=[CMakeExtension("ssapy._ssapy")],
     cmdclass={"build_ext": CMakeBuild},
     packages=find_namespace_packages(include=["ssapy", "ssapy.*"]),
-    package_data={'ssapy': ['data/*']},
     zip_safe=False,
     include_package_data=True,
 )

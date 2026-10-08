@@ -28,6 +28,7 @@ dependencies = [
     "ipython_genutils",
     "jplephem",
     "tqdm",
+    "llnl-ssapy-data>=0.2.0",
 ]
 
 [project.optional-dependencies]
@@ -70,7 +71,7 @@ packages = { find = { include = ["ssapy", "ssapy.*"], namespaces = true } }
 include-package-data = true
 
 [tool.setuptools.package-data]
-ssapy = ["*.cpp", "*.h", "data/*"]
+ssapy = ["*.cpp", "*.h"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

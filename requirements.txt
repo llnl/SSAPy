@@ -2,6 +2,7 @@ graphviz
 numpy
 scipy
 jplephem
+llnl-ssapy-data>=0.2.0
 astropy
 pyerfa
 emcee

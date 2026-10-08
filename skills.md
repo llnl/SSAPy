@@ -115,11 +115,13 @@ r, v = rv(orbit, times, propagator=KeplerianPropagator())
 
 ## Data and Binary Rules
 
-SSAPy currently includes required package data under `ssapy/data`, and that data
-is still part of the base package. Do not migrate or delete it unless the task
-explicitly calls for a coordinated data migration.
+SSAPy's data (ephemerides, gravity models, textures) comes from the required
+`llnl-ssapy-data` package, under its `ssapy/` tree; the repository no longer
+stores data or uses Git LFS. The planetary ephemeris is JPL DE440's short
+kernel (`de440s.bsp`, 1849-2150); a full `de440.bsp` in the working directory
+is used instead when present.
 
-Use `ssapy.datadir` or `ssapy.utils.find_file()` when reading existing bundled
+Use `ssapy.datadir` or `ssapy.utils.find_file()` when reading bundled
 resources. Some model loaders already resolve packaged gravity, SPICE, and Earth
 orientation files internally; prefer those public loaders over hard-coded paths.
 
@@ -184,7 +186,7 @@ python -m twine check dist/*
 
 ## Common Pitfalls
 
-- Do not assume all packaged resources are small; base SSAPy still carries existing required data.
+- Do not add data files to this repository; add them to SSAPy-Data and release a new `llnl-ssapy-data`.
 - Do not add Git LFS as a default solution for new data in this repository.
 - Do not commit generated `_ssapy*.so`, `build/`, `dist/`, egg-info, docs build output, caches, or local environments.
 - Do not rely on unbuilt in-tree imports for code paths that require `ssapy._ssapy`.

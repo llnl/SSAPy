@@ -25,9 +25,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install build-essential git git-lfs cmake
-          git lfs install
-          git lfs pull
+          sudo apt-get install build-essential git cmake
           python -m pip install --upgrade pip build twine
           python -m pip install -r requirements.txt
           

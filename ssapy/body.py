@@ -15,6 +15,27 @@ def _close_if_possible(obj):
         close()
 
 
+#: Planetary ephemeris kernels, in order of preference. llnl-ssapy-data ships
+#: JPL DE440's short kernel ``de440s.bsp`` (1849-12-26 to 2150-01-22), consistent
+#: with the DE440 lunar orientation kernel; the full ``de440.bsp`` (1550-2650,
+#: 114 MB) placed in the working directory is used instead when present.
+PLANETARY_EPHEMERIS_FILES = ("de440.bsp", "de440s.bsp")
+
+
+def _planetary_ephemeris_path():
+    from .utils import find_file
+    for name in PLANETARY_EPHEMERIS_FILES:
+        try:
+            return find_file(name)
+        except FileNotFoundError:
+            continue
+    raise FileNotFoundError(
+        "No planetary ephemeris found ({}); install 'llnl-ssapy-data>=0.2.0'.".format(
+            ", ".join(PLANETARY_EPHEMERIS_FILES)
+        )
+    )
+
+
 class _KernelBacked:
     def close(self):
         kernel = getattr(self, "kernel", None)
@@ -133,9 +154,8 @@ class MoonPosition(_KernelBacked):
     """
     def __init__(self):
         from jplephem.spk import SPK
-        from .utils import find_file
 
-        fn = find_file("de430.bsp")  # https://naif.jpl.nasa.gov/pub/naif/LUCY/kernels/spk/de430s.bsp.lbl
+        fn = _planetary_ephemeris_path()
         self.kernel = SPK.open(fn)
 
     def __call__(self, t):
@@ -163,9 +183,8 @@ class SunPosition(_KernelBacked):
     """
     def __init__(self):
         from jplephem.spk import SPK
-        from .utils import find_file
 
-        fn = find_file("de430.bsp")  # https://naif.jpl.nasa.gov/pub/naif/LUCY/kernels/spk/de430s.bsp.lbl
+        fn = _planetary_ephemeris_path()
         self.kernel = SPK.open(fn)
 
     def __call__(self, t):
@@ -195,9 +214,8 @@ class PlanetPosition(_KernelBacked):
     """
     def __init__(self, planet_index):
         from jplephem.spk import SPK
-        from .utils import find_file
 
-        fn = find_file("de430.bsp")
+        fn = _planetary_ephemeris_path()
         self.kernel = SPK.open(fn)
         self.planet_index = planet_index
 

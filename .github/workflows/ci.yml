@@ -23,7 +23,6 @@ concurrency:
 
 env:
   CI_PROJECT_DIR: ${{ github.workspace }}
-  GIT_LFS_SKIP_SMUDGE: 1
 
 jobs:
   test:
@@ -39,7 +38,6 @@ jobs:
     - uses: actions/checkout@v4
       with:
         submodules: 'recursive'
-        lfs: false
         token: ${{ github.token }}
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
@@ -50,14 +48,10 @@ jobs:
       run: |
         # Install dependencies
         sudo apt-get update
-        sudo apt-get install build-essential git git-lfs python3 python3-setuptools python3-venv graphviz cmake
+        sudo apt-get install build-essential git python3 python3-setuptools python3-venv graphviz cmake
     
         # Initialize and update submodules
         git submodule update --init --recursive
-    
-        # Install Git LFS and pull LFS objects
-        # git lfs install
-        # git lfs pull
     
         # Upgrade pip and install Python dependencies
         python -m pip install --upgrade pip setuptools flake8
@@ -77,12 +71,6 @@ jobs:
         # Use the actions/setup-python toolchain and avoid Homebrew updates,
         # which can fail CI when the hosted runner's brew state is stale.
         python -m pip install --upgrade pip setuptools flake8 cmake
-
-        # Make LFS usable if the runner already has it, but do not require
-        # Homebrew just for CI wheel/import checks.
-        if command -v git-lfs >/dev/null 2>&1; then
-          git lfs install --skip-repo
-        fi
         git config --global credential.helper ""   # avoid Keychain prompts
 
         # Use the actions/setup-python toolchain consistently

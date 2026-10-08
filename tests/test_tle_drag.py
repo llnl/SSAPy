@@ -1,5 +1,4 @@
 import warnings
-from pathlib import Path
 
 import numpy as np
 import pytest
@@ -16,22 +15,31 @@ from ssapy.tle_drag import (bstar_to_cd_a_over_m, numerical_from_tle,
                             _sgp4_reference_arc, fit_drag)
 
 
-def _is_lfs_pointer(path):
+# The numerical drag propagator needs the gravity and ephemeris data from
+# llnl-ssapy-data; skip those tests if it is not installed.
+def _has_data(name):
+    # SSAPy's data comes from llnl-ssapy-data; skip only if it is missing.
     try:
-        with open(path, "rb") as f:
-            return f.readline().startswith(b"version https://git-lfs.github.com/spec/v1")
-    except Exception:
+        ssapy.utils.find_file(name)
+        return True
+    except FileNotFoundError:
         return False
 
 
-# The numerical drag propagator needs the (Git LFS) gravity + ephemeris data,
-# which is absent in CI; skip those tests there, as tests/test_accel.py does.
-HAS_EGM84 = not _is_lfs_pointer(Path(ssapy.datadir) / "egm84.egm.cof")
-HAS_DE430 = not _is_lfs_pointer(Path(ssapy.datadir) / "de430.bsp")
-HAS_MOON_PA = not _is_lfs_pointer(Path(ssapy.datadir) / "moon_pa_de440_200625.bpc")
-HAS_BODY_DATA = HAS_EGM84 and HAS_DE430 and HAS_MOON_PA
+def _has_ephemeris():
+    try:
+        ssapy.body._planetary_ephemeris_path()
+        return True
+    except FileNotFoundError:
+        return False
+
+
+HAS_EGM84 = _has_data("egm84.egm.cof")
+HAS_EPHEMERIS = _has_ephemeris()
+HAS_MOON_PA = _has_data("moon_pa_de440_200625.bpc")
+HAS_BODY_DATA = HAS_EGM84 and HAS_EPHEMERIS and HAS_MOON_PA
 needs_body_data = pytest.mark.skipif(
-    not HAS_BODY_DATA, reason="body data unavailable (Git LFS pointer)")
+    not HAS_BODY_DATA, reason="body data unavailable (llnl-ssapy-data not installed)")
 
 ISS = ("1 25544U 98067A   24015.54791435  .00016717  00000-0  30074-3 0  9993",
        "2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.49514637123456")

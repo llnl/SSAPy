@@ -58,12 +58,13 @@ def _ssapy_data_files():
 
 
 def find_file(filename, ext=None):
-    """ Find a file in the current directory or the ssapy datadir.  If ext is
-    not None, also try appending ext to the filename.
+    """ Find a file in the current directory or the ssapy datadir (the
+    ``ssapy/`` tree of the ``llnl-ssapy-data`` package).  If ext is not None,
+    also try appending ext to the filename.
 
-    Un-fetched git LFS pointer files (a clone without ``git lfs pull``) are
-    skipped. If the file is not found locally, the ``llnl-ssapy-data``
-    package is searched by file name when it is installed.
+    Git LFS pointer files (left over from SSAPy versions that stored data
+    with Git LFS) are skipped, and the rest of ``llnl-ssapy-data`` is searched
+    by file name.
     """
     names = [filename] if ext is None else [filename, filename + ext]
     candidates = []
@@ -79,10 +80,13 @@ def find_file(filename, ext=None):
     for candidate in candidates:
         if os.path.isfile(candidate):
             raise FileNotFoundError(
-                f"{candidate} is a git LFS pointer, not the data file; run `git lfs pull` "
-                "in the SSAPy clone or install a release of SSAPy."
+                f"{candidate} is a git LFS pointer, not the data file. SSAPy's data now "
+                "comes from the llnl-ssapy-data package: pip install 'llnl-ssapy-data>=0.2.0'."
             )
-    raise FileNotFoundError(filename)
+    raise FileNotFoundError(
+        f"{filename} was not found in the working directory or in llnl-ssapy-data "
+        f"({datadir}); install it with pip install 'llnl-ssapy-data>=0.2.0'."
+    )
 
 
 def _wrapToPi(angle):

@@ -2,7 +2,20 @@ import os
 
 __version__ = "1.1.10"
 
-datadir = os.path.join(os.path.dirname(__file__), "data")
+
+
+def _datadir():
+    """Directory holding SSAPy's data files: ssapy/ in llnl-ssapy-data."""
+    try:
+        from importlib.resources import files
+        return os.fspath(files("ssapy_data") / "data" / "ssapy")
+    except (ImportError, TypeError):
+        # llnl-ssapy-data is a required dependency; without it find_file
+        # raises a FileNotFoundError that says how to install it.
+        return os.path.join(os.path.dirname(__file__), "data")
+
+
+datadir = _datadir()
 
 from . import _ssapy
 from .orbit import Orbit, EarthObserver, OrbitalObserver
