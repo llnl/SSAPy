@@ -1099,3 +1099,16 @@ def test_iterate_mht_trims_long_tracks_and_runs_new_mht(monkeypatch):
     )
     assert created['kwargs']['approximate'] is True
     assert newmht.run_kwargs == {'first': 2, 'last': 5}
+
+
+def test_volume_distance_prior_uses_the_requested_scale():
+    # lnp(d) = 2 ln(d/s) - d/s - (2 ln 2 - 2 + 1e-9) peaks at d = 2 s with
+    # lnp = -1e-9 (closed form, 1e-12). With s = 1000 km the peak is at 2000 km;
+    # the scale argument used to be ignored in favour of RGEO.
+    scale = 1000e3
+    prior = VolumeDistancePrior(scale=scale)
+    orbit = sample_LEO_orbit(t=0)
+    assert prior(orbit, 2 * scale) == pytest.approx(-1e-9, abs=1e-12)
+    d = 500e3
+    expected = 2 * np.log(d / scale) - d / scale - (2 * np.log(2) - 2 + 1e-9)
+    assert prior(orbit, d) == pytest.approx(expected, abs=1e-12)
