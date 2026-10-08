@@ -853,18 +853,15 @@ def radecRate(
 
     Returns
     -------
-    ra : array_like (n, m)
-        right ascension in radians
     raRate : array_like (n, m)
         Rate of change of right ascension*cos(dec) in radians per second.
-    dec : array_link (n, m)
-        declination in radians
     decRate : array_like (n, m)
         Rate of change of declination in radians per second.
-    slantRange : array_like (n, m)
-        Range in meters
     slantRangeRate : array_like (n, m)
         Slant range rate in meters per second.
+
+    Only the three rates are returned (the docstring previously listed six
+    values); use ``radec(..., rate=True)`` for angles, range and rates.
     """
     import warnings
     warnings.warn("This function is deprecated; use "
