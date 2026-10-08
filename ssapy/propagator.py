@@ -311,7 +311,11 @@ class SGP4Propagator(Propagator):
 
         sat_epoch = orbit.t
         if self.truncate:
-            line1, line2 = make_tle(*orbit.kozaiMeanKeplerianElements, orbit.t)
+            # Keep the drag terms of the TLE the orbit came from, so truncation
+            # changes only the precision of the mean elements.
+            source = getattr(orbit, "_tle", None)
+            drag_fields = source[0][33:61] if source is not None else None
+            line1, line2 = make_tle(*orbit.kozaiMeanKeplerianElements, orbit.t, drag_fields=drag_fields)
             sat = Satrec.twoline2rv(line1, line2)
         elif getattr(orbit, "_sat", None) is not None:
             # Path A: the orbit was built from a TLE and still carries its
