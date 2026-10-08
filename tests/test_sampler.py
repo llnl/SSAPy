@@ -930,3 +930,25 @@ if __name__ == '__main__':
                 import subprocess
                 cmd = "gprof2dot -f pstats {} -n1 -e1 | dot -Tpng -o {}".format(args.prof_out, args.prof_png)
                 subprocess.run(cmd, shell=True)
+
+
+def test_circular_guess_with_rates_uses_the_selected_row():
+    # With 'pmra'/'pmdec' columns only one observation is needed; the one
+    # used must be the first of `indices` (row 0 used to be taken regardless).
+    orbit, arc = _circular_guess_arc()
+    rows = []
+    for k in range(2):
+        ra, dec, _, pmra, pmdec, _ = ssapy.radec(
+            orbit, arc['time'][k].gps, obsPos=arc['rStation_GCRF'][k].to(u.m).value,
+            obsVel=arc['vStation_GCRF'][k].to(u.m / u.s).value, rate=True)
+        rows.append((ra, dec, pmra, pmdec))
+    arcpm = QTable()
+    arcpm['ra'] = [r[0] for r in rows] * u.rad
+    arcpm['dec'] = [r[1] for r in rows] * u.rad
+    arcpm['time'] = arc['time'][:2]
+    arcpm['rStation_GCRF'] = arc['rStation_GCRF'][:2]
+    arcpm['vStation_GCRF'] = arc['vStation_GCRF'][:2]
+    arcpm['pmra'] = [r[2] for r in rows] * u.rad / u.s
+    arcpm['pmdec'] = [r[3] for r in rows] * u.rad / u.s
+    _state, epoch = ssapy.circular_guess(arcpm, indices=[1, 0])
+    assert abs((epoch - arcpm['time'][1]).to(u.s).value) < 1e-6
