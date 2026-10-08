@@ -242,43 +242,83 @@ class DanchickTwoPosOrbitSolver(TwoPosOrbitSolver):
         """Compute dX(g)/dg from Shefer (12)."""
         return (2 * (1 - np.cos(2 * g)) - 3 * (2 * g - np.sin(2 * g)) / np.tan(g)) / (np.sin(g)**3)
 
+    def _eta_iteration(self):
+        """Newton iteration on eta (Shefer 14); returns eta."""
+        with np.errstate(divide="ignore", invalid="ignore"):
+            eta = 0.5 * (np.sqrt(np.float64(self.m) / (self.ell + 1)) + np.sqrt(np.float64(self.m) / self.ell))
+        if not np.isfinite(eta):
+            raise RuntimeError("Invalid x")
+        Geta = 1
+        niter = 0
+        while np.abs(Geta) > self.eps and niter < self.maxiter:
+            x = self.m / eta**2 - self.ell  # Shefer (14)
+            if not np.isfinite(x) or (1 - 2 * x) > 1 or (1 - 2 * x) < -1:
+                raise RuntimeError("Invalid x")
+            g = np.arccos(1 - 2 * x)  # Shefer (9)
+            dgdx = 2 / np.sin(g)  # Shefer (10)
+            dxdeta = -2 * self.m / eta**3  # next few lines are Shefer (14ish)
+            dXdeta = self.dXdg(g) * dgdx * dxdeta
+            Geta = eta - 1 - (self.ell + x) * self.X(g)
+            dGdeta = 1 - self.X(g) * dxdeta - (self.ell + x) * dXdeta
+            eta -= Geta / dGdeta
+            niter += 1
+        if np.abs(Geta) > 1e-9 * max(1.0, np.abs(eta)):
+            raise RuntimeError("Danchick eta iteration did not converge")
+        return eta
+
+    def _x_iteration(self):
+        """Damped Newton iteration on x in (0, 1) (Shefer 15); returns eta."""
+        x = 0.5
+        Fx = 1
+        niter = 0
+        while np.abs(Fx) > self.eps and niter < self.maxiter:
+            g = np.arccos(1 - 2 * x)  # Shefer (9)
+            dgdx = 2 / np.sin(g)  # Shefer (10)
+            eta = 1 + (self.ell + x) * self.X(g)  # Shefer (15)
+            detadx = (self.ell + x) * self.dXdg(g) * dgdx + self.X(g)
+            Fx = x - self.m / eta**2 + self.ell  # Shefer (15ish)
+            dFdx = 1 + (2 * self.m / eta**3) * detadx
+            step = Fx / dFdx
+            if not np.isfinite(step):
+                raise RuntimeError("Invalid x")
+            # Halve the step until x stays strictly inside (0, 1).
+            for _ in range(60):
+                if 0.0 < x - step < 1.0:
+                    break
+                step *= 0.5
+            else:
+                raise RuntimeError("Invalid x")
+            x -= step
+            niter += 1
+        if np.abs(Fx) > 1e-9:
+            raise RuntimeError("Danchick x iteration did not converge")
+        return 1 + (self.ell + x) * self.X(np.arccos(1 - 2 * x))
+
     def _getP(self):
-        if self.cos2f >= 0:
-            # TODO: rewrite to use newton_raphson function.
-            eta = 0.5 * (np.sqrt(self.m / (self.ell + 1)) + np.sqrt(self.m / self.ell))
-            Geta = 1
-            niter = 0
-            while np.abs(Geta) > self.eps and niter < self.maxiter:
-                x = self.m / eta**2 - self.ell  # Shefer (14)
-                if (1 - 2 * x) > 1 or (1 - 2 * x) < -1:
-                    raise RuntimeError("Invalid x")
-                g = np.arccos(1 - 2 * x)  # Shefer (9)
-                dgdx = 2 / np.sin(g)  # Shefer (10)
-                dxdeta = -2 * self.m / eta**3  # next few lines are Shefer (14ish)
-                dXdeta = self.dXdg(g) * dgdx * dxdeta
-                Geta = eta - 1 - (self.ell + x) * self.X(g)
-                dGdeta = 1 - self.X(g) * dxdeta - (self.ell + x) * dXdeta
-                eta -= Geta / dGdeta
-                niter += 1
-            x = self.m / eta**2 - self.ell  # Shefer (9)
-        elif self.cos2f < 0:
-            x = 0.5
-            Fx = 1
-            niter = 0
-            while np.abs(Fx) > self.eps and niter < self.maxiter:
-                if 1 - 2 * x > 1 or 1 - 2 * x < -1:
-                    raise RuntimeError("Invalid x")
-                g = np.arccos(1 - 2 * x)  # Shefer (9)
-                dgdx = 2 / np.sin(g)  # Shefer (10)
-                eta = 1 + (self.ell + x) * self.X(g)  # Shefer (15)
-                detadx = (self.ell + x) * self.dXdg(g) * dgdx + self.X(g)
-                Fx = x - self.m / eta**2 + self.ell  # Shefer (15ish)
-                dFdx = 1 + (2 * self.m / eta**3) * detadx
-                x -= Fx / dFdx
-                niter += 1
-            eta = 1 + (self.ell + x) * self.X(np.arccos(1 - 2 * x))
-        else:
+        # Danchick's eta iteration suits short-way arcs with cos(2f) >= 0 and
+        # the x iteration the rest. Long-way arcs beyond 270 deg also have
+        # cos(2f) >= 0 but negative kappa, and fast perigee passages can
+        # have cos(2f) < 0 on short arcs where the x iteration's plain Newton
+        # step leaves 0 < x < 1; both used to raise "Invalid x". The
+        # preferred iteration is tried first, then the other one, and the x
+        # iteration damps any step that would leave its domain.
+        if not np.isfinite(self.cos2f):
             raise ValueError("Invalid value of cos2f")
+        order = (self._eta_iteration, self._x_iteration)
+        if not (self.cos2f >= 0 and self.kappa > 0):
+            order = order[::-1]
+        errors = []
+        for iteration in order:
+            try:
+                eta = iteration()
+            except RuntimeError as exc:
+                errors.append(str(exc))
+                continue
+            if np.isfinite(eta):
+                break
+            errors.append("non-finite eta")
+        else:
+            raise RuntimeError("Danchick two-position iteration failed: " + "; ".join(errors))
 
         # Shefer (2)
         p = (0.5 * eta * self.kappa * self.sigma / self.tau)**2 / self.mu

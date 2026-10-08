@@ -312,7 +312,10 @@ def test_two_position_solver_edge_branches(monkeypatch):
     danchick.ell = 0.0
     monkeypatch.setattr(ssapy.DanchickTwoPosOrbitSolver, 'X', staticmethod(lambda g: 1.0))
     monkeypatch.setattr(ssapy.DanchickTwoPosOrbitSolver, 'dXdg', staticmethod(lambda g: 0.0))
-    with pytest.raises(RuntimeError, match='Invalid x'):
+    # The x iteration now damps steps that would leave 0 < x < 1 and falls
+    # back to the eta iteration, so a non-converging case fails with a
+    # RuntimeError naming both attempts.
+    with pytest.raises(RuntimeError, match='Danchick two-position iteration failed'):
         ssapy.DanchickTwoPosOrbitSolver._getP(danchick)
 
     danchick.cos2f = np.nan
