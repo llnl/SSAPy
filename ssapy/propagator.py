@@ -1174,14 +1174,19 @@ class Leapfrog4Propagator(RKPropagator):
             h1 = w1 * h
             h0 = w0 * h
 
+            # Substep epochs are offsets from t, and t itself advances by
+            # exactly one h per step. Chaining t + h1 + h0 + h1 rounds three
+            # times at the ulp of t (2.4e-7 s at GPS 1.4e9), and the bias
+            # accumulates: the stored epochs drifted from the integrated
+            # states and capped the method near 2 m over 6000 s.
             r, v = self._leapfrog_step(self.accel, r, v, t, h1, propkw)
             t1 = t + h1
 
             r, v = self._leapfrog_step(self.accel, r, v, t1, h0, propkw)
-            t2 = t1 + h0
+            t2 = t + (h1 + h0)
 
             r, v = self._leapfrog_step(self.accel, r, v, t2, h1, propkw)
-            t = t2 + h1
+            t = t + h
 
             state = np.hstack([r, v])
 
