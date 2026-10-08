@@ -1197,7 +1197,12 @@ def sunPos(t, fast=True):
         # MG section 3.3.2
         T = (_gpsToTT(t) - 51544.5) / 36525.0
         M = 6.239998880168239 + 628.3019326367721 * T
-        lam = (4.938234585592756 + M + 0.03341335890206922 * np.sin(M) + 0.00034906585039886593 * np.sin(2 * M))
+        # Omega + omega = 282.9400 deg at J2000, advancing 0.32327364 deg per
+        # Julian century in the J2000 frame (JPL approximate elements of the
+        # Earth-Moon barycentre). MG treat it as constant, which lets the
+        # longitude drift 11.6 arcsec/yr: 5.3 arcmin by 2026.
+        lam = (4.938234585592756 + 0.005642189402906841 * T + M
+               + 0.03341335890206922 * np.sin(M) + 0.00034906585039886593 * np.sin(2 * M))
         rs = (149.619 - 2.499 * np.cos(M) - 0.021 * np.cos(2 * M)) * 1e9
         obliquity = 0.40909280420293637
         co, so = np.cos(obliquity), np.sin(obliquity)
