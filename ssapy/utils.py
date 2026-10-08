@@ -988,15 +988,13 @@ def lb_to_tan(lb, b, mul=None, mub=None, lcen=None, bcen=None):
         dechat2 = np.cross(unit, rahat2)
         dechat2 /= np.sqrt(np.sum(dechat2**2, axis=1, keepdims=True))
         vv = mul[:, None] * rahat2 + mub[:, None] * dechat2
+        # x = rahat . unit and y = dechat . unit with fixed rahat/dechat, so
+        # their time derivatives are exactly rahat . (d unit/dt) and
+        # dechat . (d unit/dt). The radial 1/cos(rho) stretch that used to
+        # follow is the gnomonic derivative; applied to this orthographic
+        # projection it overstated the rates by 1/cos(rho).
         vx = np.sum(rahat * vv, axis=1)
         vy = np.sum(dechat * vv, axis=1)
-        rr = np.hypot(xx, yy)
-        m = np.abs(rr) > 1e-9
-        vr = (vx[m] * xx[m] + vy[m] * yy[m]) / rr[m]
-        va = (vy[m] * xx[m] - vx[m] * yy[m]) / rr[m]
-        vr /= np.sum(unitcen[m, :] * unit[m, :], axis=1)
-        vx[m] = vr * xx[m] / rr[m] - va * yy[m] / rr[m]
-        vy[m] = vr * yy[m] / rr[m] + va * xx[m] / rr[m]
         res = res + (vx, vy)
     return res
 
