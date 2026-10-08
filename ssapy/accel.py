@@ -430,10 +430,9 @@ class AccelDrag(Accel):
             dec_sun
         )
         if not np.isfinite(density):
-            print(f"r_tod = {r_tod}")
-            print(f"ra_sun = {ra_sun}")
-            print(f"dec_sun = {dec_sun}")
-            raise ValueError("non finite density")
+            raise ValueError(
+                f"non finite density at r_tod = {r_tod}, ra_sun = {ra_sun}, dec_sun = {dec_sun}"
+            )
         a_tod = -0.5 * kw['CD'] * kw['area'] / kw['mass'] * density * v_rel * norm(v_rel)
         return _T.T @ a_tod
 

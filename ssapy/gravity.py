@@ -5,6 +5,7 @@ Classes for gravity-related accelerations.
 # from functools import lru_cache
 
 import numpy as np
+import warnings
 
 from .accel import Accel as _Accel, _invnorm
 from .utils import find_file, norm
@@ -279,8 +280,8 @@ class AccelHarmonic(_Accel):
             m_max = body.harmonics.m_max
         self.body = body
         if n_max > body.harmonics.n_max:
-            print(
-                f"WARNING::The provided degree ({n_max}) is higher than the maximum value allowed by the "
+            warnings.warn(
+                f"The provided degree ({n_max}) is higher than the maximum value allowed by the "
                 f"{body.harmonics.name} model ({body.harmonics.n_max}).\nSetting the degree to "
                 f"{body.harmonics.n_max}."
             )
@@ -288,8 +289,8 @@ class AccelHarmonic(_Accel):
         else:
             self.n_max = n_max
         if m_max > body.harmonics.m_max:
-            print(
-                f"WARNING::The provided order ({m_max}) is higher than the maximum value allowed by the "
+            warnings.warn(
+                f"The provided order ({m_max}) is higher than the maximum value allowed by the "
                 f"{body.harmonics.name} model ({body.harmonics.m_max}).\nSetting the order to "
                 f"{body.harmonics.m_max}."
             )
@@ -297,8 +298,8 @@ class AccelHarmonic(_Accel):
         else:
             self.m_max = m_max
         if self.m_max > self.n_max:
-            print(
-                f"WARNING::The provided order ({self.m_max}) is higher than the selected degree "
+            warnings.warn(
+                f"The provided order ({self.m_max}) is higher than the selected degree "
                 f"({self.n_max}).\nSetting the order to {self.n_max}."
             )
             self.m_max = self.n_max

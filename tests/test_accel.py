@@ -86,7 +86,7 @@ def test_harmonic_coefficients_error_and_identity_paths(tmp_path):
     assert hc1 != object()
 
 
-def test_accel_harmonic_clamps_requested_degree_and_order(capsys):
+def test_accel_harmonic_clamps_requested_degree_and_order():
     harmonics = SimpleNamespace(
         name="tiny",
         radius=1.0,
@@ -100,12 +100,13 @@ def test_accel_harmonic_clamps_requested_degree_and_order(capsys):
     assert default_accel.n_max == 1
     assert default_accel.m_max == 1
 
-    clamped = ssapy.AccelHarmonic(body, n_max=5, m_max=6)
+    with pytest.warns(UserWarning) as record:
+        clamped = ssapy.AccelHarmonic(body, n_max=5, m_max=6)
     assert clamped.n_max == 1
     assert clamped.m_max == 1
-    out = capsys.readouterr().out
-    assert "provided degree" in out
-    assert "provided order" in out
+    messages = " ".join(str(w.message) for w in record)
+    assert "provided degree" in messages
+    assert "provided order" in messages
 
 
 def _make_body_dependent_objects():
