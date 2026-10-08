@@ -303,8 +303,12 @@ class AccelHarmonic(_Accel):
                 f"({self.n_max}).\nSetting the order to {self.n_max}."
             )
             self.m_max = self.n_max
+        # The coefficients are normalised to the model's own GM and reference
+        # radius, so both scale the expansion. Using the body's central GM
+        # instead put GRGM1200A lunar accelerations 2.2e-7 low (DE200 Moon GM)
+        # and EGM2008 Earth accelerations 7.5e-10 high.
         self._harmonic = _ssapy.AccelHarmonic(
-            self.body.mu,
+            getattr(self.body.harmonics, "MG", None) or self.body.mu,
             self.body.harmonics.radius,
             self.body.harmonics.CS.shape[0],
             self.body.harmonics.CS.ctypes.data
