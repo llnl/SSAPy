@@ -28,6 +28,7 @@ dependencies = [
     "ipython_genutils",
     "jplephem",
     "tqdm",
+    "llnl-ssapy-data>=0.2.0",
 ]
 
 [project.optional-dependencies]

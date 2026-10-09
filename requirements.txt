@@ -10,6 +10,7 @@ sgp4
 pytest
 pytest-timeout
 tqdm
+llnl-ssapy-data>=0.2.0
 build
 cibuildwheel
 delocate
