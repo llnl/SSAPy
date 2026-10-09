@@ -285,11 +285,12 @@ class Body:
     def __exit__(self, exc_type, exc, tb):
         self.close()
 
-    def __del__(self):
-        try:
-            self.close()
-        except Exception:
-            pass
+    # No __del__: a Body does not own its position/orientation providers
+    # exclusively (``get_body("moon").position`` hands one out), so closing them
+    # when the Body is collected broke ``get_body(name).position(t)`` -- the
+    # temporary Body was collected before the call. Each kernel-backed provider
+    # closes itself when it is collected; use ``close()`` or ``with`` to release
+    # kernels deterministically.
 
 
 def get_body(name, model=None):

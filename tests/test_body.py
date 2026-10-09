@@ -124,10 +124,6 @@ def test_destructors_suppress_close_errors():
     moon_position.__del__()
     assert kernel.called is True
 
-    position = BadClose()
-    obj = body.Body(1.0, 2.0, position=position)
-    obj.__del__()
-    assert position.called is True
 
 
 def test_body_close_closes_position_and_orientation_once():
@@ -277,3 +273,25 @@ def test_get_body_uses_expected_models_without_loading_data(monkeypatch):
     assert tab_calls == ["gggrx_1200a_sha.tab"]
     with pytest.raises(ValueError, match="Unknown body pluto"):
         body.get_body("pluto")
+
+
+def test_temporary_body_does_not_close_the_provider_it_hands_out(monkeypatch):
+    # get_body(name).position(t) evaluates the position of a temporary Body.
+    # Collecting the Body must not close the provider the caller still holds.
+    monkeypatch.setattr(body, "_gpsToTT", lambda t: 7.0)
+    kernel = _FakeKernel({(3, 301): [4.0, 5.0, 6.0], (3, 399): [1.0, 2.0, 3.0]})
+
+    def make_body():
+        position = body.MoonPosition.__new__(body.MoonPosition)
+        position.kernel = kernel
+        return body.Body(1.0, 2.0, position=position)
+
+    np.testing.assert_allclose(make_body().position(123.0), [3000.0, 3000.0, 3000.0])
+
+
+def test_get_body_position_on_a_temporary_body():
+    # Regression for TypeError('NoneType' object is not subscriptable) from
+    # get_body("moon").position(t) with the DE430 kernel.
+    position = body.get_body("moon").position(1.4e9)
+    assert np.all(np.isfinite(position))
+    assert 3.5e8 < np.linalg.norm(position) < 4.1e8
