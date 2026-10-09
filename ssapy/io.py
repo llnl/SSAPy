@@ -202,7 +202,7 @@ def parse_tle(tle):
     return a, e, i, pa, raan, trueAnomaly, epoch.gps
 
 
-def make_tle(a, e, i, pa, raan, trueAnomaly, t):
+def make_tle(a, e, i, pa, raan, trueAnomaly, t, drag_fields=None):
     """
     Create a TLE from Kozai mean orbital elements
 
@@ -223,11 +223,16 @@ def make_tle(a, e, i, pa, raan, trueAnomaly, t):
     t : float or astropy.time.Time
         If float, then should correspond to GPS seconds; i.e., seconds since
         1980-01-06 00:00:00 UTC
+    drag_fields : str, optional
+        Line-1 columns 34-61 (ndot/2, nddot/6 and B*, 28 characters) to copy
+        verbatim, e.g. ``line1[33:61]`` of the TLE an orbit came from. By default
+        all three terms are written as zero.
 
     Notes
     -----
-    Dynamic TLE terms, including the drag coefficient and ballistic coefficient,
-    are ignored in this function.
+    Unless ``drag_fields`` is given, the dynamic TLE terms are zero. They used
+    to be written with B* = '99999-0', which SGP4 reads as 0.99999 per Earth
+    radius: an enormous drag term for LEO (11,900 km of drift in 3 days).
     """
     from .orbit import (
         _ellipticalEccentricToMeanAnomaly,
@@ -245,7 +250,12 @@ def make_tle(a, e, i, pa, raan, trueAnomaly, t):
 
     line1 += "{:02d}".format(int(year) % 100)
     line1 += "{:012.8f}".format(day)
-    line1 += " +.00000000 +00000-0  99999-0 0 0000"
+    # Columns 34-61: ndot/2, nddot/6 and B*, zero unless supplied.
+    if drag_fields is None:
+        drag_fields = "+.00000000 +00000-0 +00000-0"
+    if len(drag_fields) != 28:
+        raise ValueError("drag_fields must be the 28 characters of TLE line-1 columns 34-61.")
+    line1 += " " + drag_fields + " 0 0000"
 
     def checksum(s):
         check = 0

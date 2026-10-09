@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pytest
 
@@ -163,7 +164,7 @@ def test_planet_position_init_loads_kernel(monkeypatch):
 
     assert planet_position.kernel == "planet-kernel"
     assert planet_position.planet_index == 5
-    assert opened[0].endswith("de430.bsp")
+    assert os.path.basename(opened[0]) == "de440s.bsp"
 
 
 def test_orientation_helpers(monkeypatch):

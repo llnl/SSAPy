@@ -530,16 +530,18 @@ def circular_guess(arc, indices=[0, 1]):
 
     Returns
     -------
-    state: array_like, (6,)
+    state : array_like, (6,)
         state corresponding to orbit passing through points
+    epoch : astropy.time.Time
+        epoch of `state`: the midpoint of the two observations, or the
+        first selected observation when the arc carries rates ('pmra').
     """
     from astropy import units as u
 
     usepm = 'pmra' in arc.dtype.names
-    if not usepm:
-        observations = arc[indices]
-    else:
-        observations = arc
+    # With rates only the first selected row is needed (so a one-row arc
+    # works); it used to be row 0 of the whole arc whatever `indices` said.
+    observations = arc[[indices[0]]] if usepm else arc[indices]
     rStation = observations['rStation_GCRF'].to(u.m).value
     ra = observations['ra']
     dec = observations['dec']

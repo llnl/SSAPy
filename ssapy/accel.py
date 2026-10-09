@@ -365,12 +365,14 @@ class AccelDrag(Accel):
     ----------
     recalc_threshold : float, optional
         Number of seconds past which the code will recompute the
-        precession/nutation matrix.  Default: 86400*30  (30 days)
+        precession/nutation matrix.  Default: 3600 (1 hour), matching
+        EarthOrientation; the previous 30-day default let the frame drift
+        5 arcsec.
     defaultkw : dict
         default parameters for kwargs passed to __call__,
         (area, mass, CR)
     """
-    def __init__(self, recalc_threshold=86400 * 30, **defaultkw):
+    def __init__(self, recalc_threshold=3600.0, **defaultkw):
         from . import _ssapy
 
         self.recalc_threshold = recalc_threshold
@@ -412,7 +414,10 @@ class AccelDrag(Accel):
                 self._t = t
                 self._T = erfa.pnm80(2400000.5, mjd_tt)
             _T = self._T
-        r_sun = sunPos(t)
+        # The density model works in the true-of-date frame, so the Sun's
+        # right ascension and declination must be of date too; sunPos is
+        # GCRF, which put the diurnal bulge 0.37 deg off in 2026.
+        r_sun = _T @ sunPos(t)
         r_tod = _T @ r
         v_tod = _T @ v
 
@@ -425,10 +430,9 @@ class AccelDrag(Accel):
             dec_sun
         )
         if not np.isfinite(density):
-            print(f"r_tod = {r_tod}")
-            print(f"ra_sun = {ra_sun}")
-            print(f"dec_sun = {dec_sun}")
-            raise ValueError("non finite density")
+            raise ValueError(
+                f"non finite density at r_tod = {r_tod}, ra_sun = {ra_sun}, dec_sun = {dec_sun}"
+            )
         a_tod = -0.5 * kw['CD'] * kw['area'] / kw['mass'] * density * v_rel * norm(v_rel)
         return _T.T @ a_tod
 

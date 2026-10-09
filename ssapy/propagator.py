@@ -311,7 +311,11 @@ class SGP4Propagator(Propagator):
 
         sat_epoch = orbit.t
         if self.truncate:
-            line1, line2 = make_tle(*orbit.kozaiMeanKeplerianElements, orbit.t)
+            # Keep the drag terms of the TLE the orbit came from, so truncation
+            # changes only the precision of the mean elements.
+            source = getattr(orbit, "_tle", None)
+            drag_fields = source[0][33:61] if source is not None else None
+            line1, line2 = make_tle(*orbit.kozaiMeanKeplerianElements, orbit.t, drag_fields=drag_fields)
             sat = Satrec.twoline2rv(line1, line2)
         elif getattr(orbit, "_sat", None) is not None:
             # Path A: the orbit was built from a TLE and still carries its
@@ -576,6 +580,51 @@ class SciPyPropagator(Propagator):
         )
 
 
+class _StateInterpolant:
+    """Piecewise quintic Hermite interpolant through cached RK states.
+
+    Positions are interpolated from position, velocity and acceleration at
+    each step boundary, and velocities are the derivative of that quintic, so
+    the interpolation error is O(h^6) in position. The cubic spline through
+    positions and velocities that this replaces was O(h^4): an RK8 arc
+    accurate to 1e-8 m at its steps was only 2.5 cm accurate between them at
+    h = 40 s in LEO. Accelerations are evaluated once per step boundary and
+    reused when the cache grows.
+    """
+
+    def __init__(self, interpolant, accels):
+        self._interpolant = interpolant
+        self.accels = accels
+
+    @classmethod
+    def build(cls, propagator, times, states, propkw, previous=None, fallback=None):
+        accels = dict(previous.accels) if isinstance(previous, cls) else {}
+        accel = getattr(propagator, "accel", None)
+        if accel is not None and len(times) >= 2:
+            try:
+                from scipy.interpolate import BPoly
+                derivs = np.empty((len(times), 3, 3), dtype=np.float64)
+                for k, (t, state) in enumerate(zip(times, states)):
+                    key = float(t)
+                    if key not in accels:
+                        accels[key] = np.asarray(
+                            _safe_accel(accel, state[0:3], state[3:6], t, propkw), dtype=np.float64
+                        ).reshape(3)
+                    derivs[k, 0] = state[0:3]
+                    derivs[k, 1] = state[3:6]
+                    derivs[k, 2] = accels[key]
+                return cls(BPoly.from_derivatives(times, derivs), accels)
+            except Exception:  # fall back to the cubic spline below
+                pass
+        k = min(3, len(times) - 1)
+        return fallback(times, states, k=k)
+
+    def __call__(self, t):
+        position = self._interpolant(t)
+        velocity = self._interpolant.derivative()(t)
+        return np.concatenate([position, velocity], axis=-1)
+
+
 class RKPropagator(Propagator, ABC):
     """Abstract base class for Runge-Kutta-based orbit propagators.
 
@@ -649,8 +698,10 @@ class RKPropagator(Propagator, ABC):
             return out[:, 0:3], out[:, 3:6], valid
 
         if remake_spline or spline is None:
-            k = min(3, len(times_arr) - 1)  # cubic, stable
-            spline = make_interp_spline(times_arr, states_arr, k=k)
+            spline = _StateInterpolant.build(
+                self, times_arr, states_arr, orbit.propkw,
+                previous=spline, fallback=make_interp_spline,
+            )
             container.clear()
             container.extend([times, states, h_pre, h_app, spline])
             times_arr = np.asarray(times, dtype=np.float64)
@@ -1174,14 +1225,19 @@ class Leapfrog4Propagator(RKPropagator):
             h1 = w1 * h
             h0 = w0 * h
 
+            # Substep epochs are offsets from t, and t itself advances by
+            # exactly one h per step. Chaining t + h1 + h0 + h1 rounds three
+            # times at the ulp of t (2.4e-7 s at GPS 1.4e9), and the bias
+            # accumulates: the stored epochs drifted from the integrated
+            # states and capped the method near 2 m over 6000 s.
             r, v = self._leapfrog_step(self.accel, r, v, t, h1, propkw)
             t1 = t + h1
 
             r, v = self._leapfrog_step(self.accel, r, v, t1, h0, propkw)
-            t2 = t1 + h0
+            t2 = t + (h1 + h0)
 
             r, v = self._leapfrog_step(self.accel, r, v, t2, h1, propkw)
-            t = t2 + h1
+            t = t + h
 
             state = np.hstack([r, v])
 

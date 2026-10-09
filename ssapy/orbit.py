@@ -1846,7 +1846,9 @@ class Orbit:
         """Two line element for this Orbit.
         """
         from .io import make_tle
-        return make_tle(*self.kozaiMeanKeplerianElements, self.t)
+        source = getattr(self, "_tle", None)
+        drag_fields = source[0][33:61] if source is not None else None
+        return make_tle(*self.kozaiMeanKeplerianElements, self.t, drag_fields=drag_fields)
 
 
 class EarthObserver:

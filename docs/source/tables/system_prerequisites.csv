@@ -3,5 +3,4 @@ Python, 3.10--3.12, , Interpreter
 C/C++ Compilers, , , Building software
 make, , , Build software
 git, , , Manage software repositories
-git-lfs, , , Track large binary files
 graphviz, , , Local documentation building

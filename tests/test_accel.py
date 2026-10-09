@@ -4,7 +4,6 @@ import astropy.units as u
 import sys
 import subprocess
 from types import SimpleNamespace
-from pathlib import Path
 import pytest
 import erfa
 
@@ -18,20 +17,29 @@ from ssapy.accel import (
 from ssapy.constants import EARTH_MU, EARTH_RADIUS
 
 
-def _is_lfs_pointer(path):
+
+def _has_data(name):
+    # SSAPy's data comes from llnl-ssapy-data; skip only if it is missing.
     try:
-        with open(path, "rb") as f:
-            first = f.readline()
-        return first.startswith(b"version https://git-lfs.github.com/spec/v1")
-    except Exception:
+        ssapy.utils.find_file(name)
+        return True
+    except FileNotFoundError:
         return False
 
 
-HAS_EGM84 = not _is_lfs_pointer(Path(ssapy.datadir) / "egm84.egm.cof")
-HAS_DE430 = not _is_lfs_pointer(Path(ssapy.datadir) / "de430.bsp")
-HAS_MOON_PA = not _is_lfs_pointer(Path(ssapy.datadir) / "moon_pa_de440_200625.bpc")
+def _has_ephemeris():
+    try:
+        ssapy.body._planetary_ephemeris_path()
+        return True
+    except FileNotFoundError:
+        return False
 
-HAS_BODY_DATA = HAS_EGM84 and HAS_DE430 and HAS_MOON_PA
+
+HAS_EGM84 = _has_data("egm84.egm.cof")
+HAS_EPHEMERIS = _has_ephemeris()
+HAS_MOON_PA = _has_data("moon_pa_de440_200625.bpc")
+
+HAS_BODY_DATA = HAS_EGM84 and HAS_EPHEMERIS and HAS_MOON_PA
 
 
 def test_harmonic_coefficients_error_and_identity_paths(tmp_path):
@@ -86,7 +94,7 @@ def test_harmonic_coefficients_error_and_identity_paths(tmp_path):
     assert hc1 != object()
 
 
-def test_accel_harmonic_clamps_requested_degree_and_order(capsys):
+def test_accel_harmonic_clamps_requested_degree_and_order():
     harmonics = SimpleNamespace(
         name="tiny",
         radius=1.0,
@@ -100,12 +108,13 @@ def test_accel_harmonic_clamps_requested_degree_and_order(capsys):
     assert default_accel.n_max == 1
     assert default_accel.m_max == 1
 
-    clamped = ssapy.AccelHarmonic(body, n_max=5, m_max=6)
+    with pytest.warns(UserWarning) as record:
+        clamped = ssapy.AccelHarmonic(body, n_max=5, m_max=6)
     assert clamped.n_max == 1
     assert clamped.m_max == 1
-    out = capsys.readouterr().out
-    assert "provided degree" in out
-    assert "provided order" in out
+    messages = " ".join(str(w.message) for w in record)
+    assert "provided degree" in messages
+    assert "provided order" in messages
 
 
 def _make_body_dependent_objects():
@@ -142,7 +151,7 @@ else:
     earth = moon = sun = earth_MG = moon_MG = sun_MG = None
 
 
-@pytest.mark.skipif(not HAS_EGM84, reason="EGM84 gravity file unavailable (Git LFS pointer)")
+@pytest.mark.skipif(not HAS_EGM84, reason="EGM84 gravity file unavailable (llnl-ssapy-data not installed)")
 @timer
 def test_MG_3_1():
     """Exercise 3.1 from Montenbruck and Gill

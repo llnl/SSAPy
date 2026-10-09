@@ -229,3 +229,37 @@ def test_b3obs2pos_blank_equinox_column():
     pos = b3obs2pos("".join(line))
     assert pos["satnum"] == 12345
     assert pos["sensnum"] == 511
+
+
+def test_make_tle_writes_zero_drag_terms_that_sgp4_reads_back():
+    # The TLE line-1 format puts ndot/2, nddot/6 and B* in columns 34-61.
+    # make_tle documents that dynamic terms are ignored, so sgp4 must read all
+    # three as 0 and the epoch to 1 ms; the checksum digit must match the
+    # mod-10 rule. B* was previously written as 0.99999 per Earth radius.
+    from astropy.time import Time
+    from sgp4.api import Satrec
+
+    t = Time("2026-10-08T06:30:15.5", scale="utc")
+    line1, line2 = io.make_tle(7000e3, 0.001, np.radians(51.6), np.radians(30.0), np.radians(120.0), np.radians(75.0), t)
+    sat = Satrec.twoline2rv(line1, line2)
+    assert (sat.bstar, sat.ndot, sat.nddot) == (0.0, 0.0, 0.0)
+    assert abs((sat.jdsatepoch + sat.jdsatepochF) - t.utc.jd) * 86400.0 < 1e-3
+    for line in (line1, line2):
+        digits = sum(int(c) if c.isdigit() else (1 if c == "-" else 0) for c in line[:68])
+        assert line[68] == str(digits % 10)
+
+
+def test_tle_from_a_tle_orbit_keeps_its_drag_terms():
+    # Orbit.tle and SGP4Propagator(truncate=True) rebuild a TLE from Kozai
+    # elements; for an orbit read from a TLE they must keep its ndot, nddot and
+    # B* (here the ISS element set from the TLE format documentation, B* =
+    # -1.1606e-5), as sgp4 reads them, exactly.
+    import ssapy
+    from sgp4.api import Satrec
+
+    line1 = "1 25544U 98067A   08264.51782528 -.00002182  00000-0 -11606-4 0  2927"
+    line2 = "2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.72125391563537"
+    orbit = ssapy.Orbit.fromTLETuple((line1, line2))
+    rebuilt = Satrec.twoline2rv(*orbit.tle)
+    original = Satrec.twoline2rv(line1, line2)
+    assert (rebuilt.bstar, rebuilt.ndot, rebuilt.nddot) == (original.bstar, original.ndot, original.nddot)

@@ -222,7 +222,9 @@ class VolumeDistancePrior:
     """
 
     def __init__(self, scale=RGEO):
-        self.scale = RGEO
+        # The argument used to be ignored (self.scale = RGEO), so every prior
+        # peaked at 2 RGEO whatever scale was requested.
+        self.scale = scale
 
     def __call__(self, orbit, distance, chi=False):
         """Return log prior probability of given orbit.

@@ -5,6 +5,7 @@ import sys
 import os
 import re
 import numpy as np
+import warnings
 from astropy.time import Time as _Time
 import astropy.units as u
 from typing import Union, Tuple
@@ -30,23 +31,62 @@ except ImportError:
     import astropy._erfa as erfa
 
 
+_LFS_POINTER_PREFIX = b"version https://git-lfs.github.com/spec/v1"
+
+
+def _is_lfs_pointer(path):
+    """True if ``path`` is an un-fetched git LFS pointer rather than data."""
+    try:
+        if os.path.getsize(path) > 1024:
+            return False
+        with open(path, "rb") as f:
+            return f.read(len(_LFS_POINTER_PREFIX)) == _LFS_POINTER_PREFIX
+    except OSError:
+        return False
+
+
+def _ssapy_data_files():
+    """Paths of the files shipped by the optional ``llnl-ssapy-data`` package."""
+    try:
+        import ssapy_data
+    except ImportError:
+        return []
+    try:
+        return [os.fspath(path) for path in ssapy_data.iter_data_files()]
+    except Exception:
+        return []
+
+
 def find_file(filename, ext=None):
-    """ Find a file in the current directory or the ssapy datadir.  If ext is
-    not None, also try appending ext to the filename.
+    """ Find a file in the current directory or the ssapy datadir (the
+    ``ssapy/`` tree of the ``llnl-ssapy-data`` package).  If ext is not None,
+    also try appending ext to the filename.
+
+    Git LFS pointer files (left over from SSAPy versions that stored data
+    with Git LFS) are skipped, and the rest of ``llnl-ssapy-data`` is searched
+    by file name.
     """
-    candidates = [
-        filename,
-        os.path.join(datadir, filename),
-    ]
-    if ext is not None:
-        candidates.extend([
-            filename + ext,
-            os.path.join(datadir, filename + ext),
-        ])
+    names = [filename] if ext is None else [filename, filename + ext]
+    candidates = []
+    for name in names:
+        candidates.extend([name, os.path.join(datadir, name)])
+    for candidate in candidates:
+        if os.path.isfile(candidate) and not _is_lfs_pointer(candidate):
+            return candidate
+    basenames = {os.path.basename(name) for name in names}
+    for path in _ssapy_data_files():
+        if os.path.basename(path) in basenames and os.path.isfile(path) and not _is_lfs_pointer(path):
+            return path
     for candidate in candidates:
         if os.path.isfile(candidate):
-            return candidate
-    raise FileNotFoundError(filename)
+            raise FileNotFoundError(
+                f"{candidate} is a git LFS pointer, not the data file. SSAPy's data now "
+                "comes from the llnl-ssapy-data package: pip install 'llnl-ssapy-data>=0.2.0'."
+            )
+    raise FileNotFoundError(
+        f"{filename} was not found in the working directory or in llnl-ssapy-data "
+        f"({datadir}); install it with pip install 'llnl-ssapy-data>=0.2.0'."
+    )
 
 
 def _wrapToPi(angle):
@@ -987,15 +1027,13 @@ def lb_to_tan(lb, b, mul=None, mub=None, lcen=None, bcen=None):
         dechat2 = np.cross(unit, rahat2)
         dechat2 /= np.sqrt(np.sum(dechat2**2, axis=1, keepdims=True))
         vv = mul[:, None] * rahat2 + mub[:, None] * dechat2
+        # x = rahat . unit and y = dechat . unit with fixed rahat/dechat, so
+        # their time derivatives are exactly rahat . (d unit/dt) and
+        # dechat . (d unit/dt). The radial 1/cos(rho) stretch that used to
+        # follow is the gnomonic derivative; applied to this orthographic
+        # projection it overstated the rates by 1/cos(rho).
         vx = np.sum(rahat * vv, axis=1)
         vy = np.sum(dechat * vv, axis=1)
-        rr = np.hypot(xx, yy)
-        m = np.abs(rr) > 1e-9
-        vr = (vx[m] * xx[m] + vy[m] * yy[m]) / rr[m]
-        va = (vy[m] * xx[m] - vx[m] * yy[m]) / rr[m]
-        vr /= np.sum(unitcen[m, :] * unit[m, :], axis=1)
-        vx[m] = vr * xx[m] / rr[m] - va * yy[m] / rr[m]
-        vy[m] = vr * yy[m] / rr[m] + va * xx[m] / rr[m]
         res = res + (vx, vy)
     return res
 
@@ -1196,7 +1234,12 @@ def sunPos(t, fast=True):
         # MG section 3.3.2
         T = (_gpsToTT(t) - 51544.5) / 36525.0
         M = 6.239998880168239 + 628.3019326367721 * T
-        lam = (4.938234585592756 + M + 0.03341335890206922 * np.sin(M) + 0.00034906585039886593 * np.sin(2 * M))
+        # Omega + omega = 282.9400 deg at J2000, advancing 0.32327364 deg per
+        # Julian century in the J2000 frame (JPL approximate elements of the
+        # Earth-Moon barycentre). MG treat it as constant, which lets the
+        # longitude drift 11.6 arcsec/yr: 5.3 arcmin by 2026.
+        lam = (4.938234585592756 + 0.005642189402906841 * T + M
+               + 0.03341335890206922 * np.sin(M) + 0.00034906585039886593 * np.sin(2 * M))
         rs = (149.619 - 2.499 * np.cos(M) - 0.021 * np.cos(2 * M)) * 1e9
         obliquity = 0.40909280420293637
         co, so = np.cos(obliquity), np.sin(obliquity)
@@ -1863,20 +1906,15 @@ def rightascension_to_hourangle(right_ascension, local_time):
 
     Example:
     --------
-        rightascension_to_hourangle("10:30:00", "12:45:00") -> "02:15:00"
-        rightascension_to_hourangle(157.5, 191.25) -> "02:15:00"
+        rightascension_to_hourangle("10:30:00", "12:45:00") -> "2:15:0"
+        rightascension_to_hourangle(157.5, 191.25) -> "2:15:0"
     """
-    if type(right_ascension) is not str:
-        right_ascension = dd_to_hms(right_ascension)
-    if type(local_time) is not str:
-        local_time = dd_to_dms(local_time)
-    _ra = float(right_ascension.split(':')[0])
-    _lt = float(local_time.split(':')[0])
-    if _ra > _lt:
-        __ltm, __lts = local_time.split(':')[1:]
-        local_time = f'{24 + _lt}:{__ltm}:{__lts}'
-
-    return dd_to_dms(hms_to_dd(local_time) - hms_to_dd(right_ascension))
+    ra_deg = hms_to_dd(right_ascension) if isinstance(right_ascension, str) else float(right_ascension)
+    lst_deg = hms_to_dd(local_time) if isinstance(local_time, str) else float(local_time)
+    # Hour angle = local sidereal time - right ascension, wrapped to [0, 24) h
+    # and returned as hours. The previous code formatted the difference in
+    # degrees as D:M:S, so a 2 h hour angle came back as "30:0:0".
+    return dd_to_hms((lst_deg - ra_deg) % 360.0)
 
 
 def equatorial_to_horizontal(observer_latitude, declination, right_ascension=None, hour_angle=None, local_time=None, hms=False):
@@ -1902,17 +1940,18 @@ def equatorial_to_horizontal(observer_latitude, declination, right_ascension=Non
     tuple
         Azimuth and altitude in degrees.
     """
-    if right_ascension is not None and hour_angle is not None:
-        print('Both right_ascension and hour_angle parameters are provided.\nUsing hour_angle for calculations.')
-        if hms:
+    if hour_angle is not None:
+        if right_ascension is not None:
+            warnings.warn(
+                "Both right_ascension and hour_angle parameters are provided; using hour_angle.",
+                UserWarning,
+                stacklevel=2,
+            )
+        if hms or isinstance(hour_angle, str):
             hour_angle = hms_to_dd(hour_angle)
     elif right_ascension is not None:
-        hour_angle = rightascension_to_hourangle(right_ascension, local_time)
-        if hms:
-            hour_angle = hms_to_dd(hour_angle)
-    elif hour_angle is not None:
-        if hms:
-            hour_angle = hms_to_dd(hour_angle)
+        # rightascension_to_hourangle always returns an HH:MM:SS string.
+        hour_angle = hms_to_dd(rightascension_to_hourangle(right_ascension, local_time))
     else:
         raise ValueError('Either right_ascension or hour_angle must be provided.')
 
@@ -1922,12 +1961,14 @@ def equatorial_to_horizontal(observer_latitude, declination, right_ascension=Non
 
     altitude = zenithangle_to_altitude(zenith_angle, deg=False)
 
-    _num = np.sin(declination) - np.sin(observer_latitude) * np.cos(zenith_angle)
-    _den = np.cos(observer_latitude) * np.sin(zenith_angle)
-    azimuth = np.arccos(_num / _den)
-
-    if observer_latitude < 0:
-        azimuth = np.pi - azimuth
+    # Azimuth from north through east. arccos cannot tell east from west and
+    # put every object west of the meridian in the east; the sign of
+    # sin(hour angle) does (positive hour angle = west).
+    azimuth = np.mod(np.arctan2(
+        -np.cos(declination) * np.sin(hour_angle),
+        np.sin(declination) * np.cos(observer_latitude)
+        - np.cos(declination) * np.sin(observer_latitude) * np.cos(hour_angle),
+    ), 2 * np.pi)
     altitude, azimuth = np.degrees([altitude, azimuth])
 
     return azimuth, altitude
@@ -1954,18 +1995,20 @@ def horizontal_to_equatorial(observer_latitude, azimuth, altitude):
     altitude, azimuth, latitude = np.radians([altitude, azimuth, observer_latitude])
     zenith_angle = altitude_to_zenithangle(altitude, deg=False)
 
-    zenith_angle = [-zenith_angle if latitude < 0 else zenith_angle][0]
+    declination = np.arcsin(
+        np.sin(latitude) * np.cos(zenith_angle)
+        + np.cos(latitude) * np.sin(zenith_angle) * np.cos(azimuth)
+    )
 
-    declination = np.sin(latitude) * np.cos(zenith_angle)
-    declination = declination + (np.cos(latitude) * np.sin(zenith_angle) * np.cos(azimuth))
-    declination = np.arcsin(declination)
-
-    _num = np.cos(zenith_angle) - np.sin(latitude) * np.sin(declination)
-    _den = np.cos(latitude) * np.cos(declination)
-    hour_angle = np.arccos(_num / _den)
-
-    if (latitude > 0 > declination) or (latitude < 0 < declination):
-        hour_angle = 2 * np.pi - hour_angle
+    # atan2 resolves the quadrant (east of the meridian, sin azimuth > 0, is a
+    # negative hour angle, i.e. above 12 h) and stays well conditioned on the
+    # meridian, where arccos of a value near 1 loses half its digits. The
+    # previous test on the signs of latitude and declination mirrored the hour
+    # angle in the wrong cases.
+    hour_angle = np.mod(np.arctan2(
+        -np.sin(azimuth) * np.sin(zenith_angle),
+        np.cos(zenith_angle) * np.cos(latitude) - np.sin(zenith_angle) * np.sin(latitude) * np.cos(azimuth),
+    ), 2 * np.pi)
 
     declination, hour_angle = np.degrees([declination, hour_angle])
 
@@ -2123,7 +2166,9 @@ def equatorial_to_ecliptic(right_ascension, declination, degrees=False):
     else:
         ra, dec = right_ascension, declination
     ec_latitude = np.arcsin(cos_ec * np.sin(dec) - sin_ec * np.cos(dec) * np.sin(ra))
-    ec_longitude = np.arctan((cos_ec * np.cos(dec) * np.sin(ra) + sin_ec * np.sin(dec)) / (np.cos(dec) * np.cos(ra)))
+    # arctan2, not arctan of the ratio: arctan folds right ascensions between
+    # 90 and 270 deg onto the opposite side of the sky.
+    ec_longitude = np.arctan2(cos_ec * np.cos(dec) * np.sin(ra) + sin_ec * np.sin(dec), np.cos(dec) * np.cos(ra))
     if degrees:
         return deg0to360(np.degrees(ec_longitude)), np.degrees(ec_latitude)
     else:
@@ -2150,7 +2195,9 @@ def ecliptic_to_equatorial(lon, lat, degrees=False):
         lon, lat = np.radians(lon), np.radians(lat)
     else:
         lon, lat = lon, lat
-    ra = np.arctan((cos_ec * np.cos(lat) * np.sin(lon) - sin_ec * np.sin(lat)) / (np.cos(lat) * np.cos(lon)))
+    # arctan2 resolves the quadrant; arctan of the ratio returned right
+    # ascensions between 90 and 270 deg on the opposite side of the sky.
+    ra = rad0to2pi(np.arctan2(cos_ec * np.cos(lat) * np.sin(lon) - sin_ec * np.sin(lat), np.cos(lat) * np.cos(lon)))
     dec = np.arcsin(cos_ec * np.sin(lat) + sin_ec * np.cos(lat) * np.sin(lon))
     if degrees:
         return np.degrees(ra), np.degrees(dec)
@@ -2267,10 +2314,12 @@ def dms_to_dd(dms):  # Degree minute second to Degree decimal
     """
     dms, out = [[dms] if type(dms) is str else dms][0], []
     for i in dms:
-        deg, minute, sec = [float(j) for j in i.split(':')]
-        if deg < 0:
-            minute, sec = float(f'-{minute}'), float(f'-{sec}')
-        out.append(deg + minute / 60 + sec / 3600)
+        text = i.strip()
+        # The sign belongs to the whole angle, so "-00:30:00" is -0.5 deg; a
+        # sign carried only by the degree field is lost when degrees are 0.
+        sign = -1.0 if text.startswith('-') else 1.0
+        deg, minute, sec = [abs(float(j)) for j in text.lstrip('+-').split(':')]
+        out.append(sign * (deg + minute / 60 + sec / 3600))
     return [out[0] if type(dms) is str or len(dms) == 1 else out][0]
 
 
@@ -2393,9 +2442,8 @@ def dd_to_hms(degree_decimal):
 
     Notes:
     ------
-        - Decimal degrees are divided by 15 to convert to hours.
-        - If the input DD value is negative, the function assumes the absolute value for conversion 
-          and prints a warning message.
+        - Decimal degrees are wrapped into [0, 360) and divided by 15 to convert to hours, so
+          the result always lies in [0, 24) h.
         - Handles edge cases where seconds reach 60, incrementing minutes accordingly.
         - Returns seconds as an integer if the value is a whole number.
 
@@ -2405,18 +2453,16 @@ def dd_to_hms(degree_decimal):
         '12:34:56'
 
         >>> dd_to_hms(-236.375)
-        '15:45:30'  # Assumes positive value for conversion.
+        '8:14:30'  # -236.375 deg is 123.625 deg.
 
         >>> dd_to_hms("12:34:56")  # DMS string converted to DD first.
         '0:50:18.4'
     """
     if type(degree_decimal) is str:
         degree_decimal = dms_to_dd(degree_decimal)
-    if degree_decimal < 0:
-        print('dd for HMS conversion cannot be negative, assuming positive.')
-        _dd = -degree_decimal / 15
-    else:
-        _dd = degree_decimal / 15
+    # Angles are wrapped into [0, 360) deg, so -15 deg is 23h; taking the
+    # absolute value would turn it into 1h.
+    _dd = float(np.mod(degree_decimal, 360.0)) / 15
     _h = int(np.trunc(_dd))
     __h = _dd - np.trunc(_dd)
     _m, __m = np.trunc(__h * 60), __h * 60 - np.trunc(__h * 60)
@@ -2426,6 +2472,8 @@ def dd_to_hms(degree_decimal):
         _m, _s = _m + 1, '00'
     if _m == 60:
         _h, _m = _h + 1, 0
+    if _h >= 24:
+        _h = 0
 
     return f'{int(_h)}:{int(_m)}:{_s}'
 
