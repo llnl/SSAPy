@@ -184,9 +184,8 @@ def test_small_coordinate_and_angle_helpers(capsys):
     assert utils.zenithangle_to_altitude(60.0) == 30.0
     assert np.isclose(utils.altitude_to_zenithangle(np.pi / 6, deg=False), np.pi / 3)
     assert np.isclose(utils.zenithangle_to_altitude(np.pi / 3, deg=False), np.pi / 6)
-    # Numeric arguments are degrees (docstring): LST 2 deg - RA 30 deg = -28 deg = 22h08m.
-    assert utils.rightascension_to_hourangle(30.0, 2.0) == "22:8:00"
-    assert utils.rightascension_to_hourangle("02:00:00", "01:00:00") == "23:0:0"
+    assert utils.hms_to_dd(utils.rightascension_to_hourangle(30.0, 2.0)) == pytest.approx(332.0)
+    assert utils.hms_to_dd(utils.rightascension_to_hourangle("02:00:00", "01:00:00")) == pytest.approx(345.0)
 
     assert utils.dms_to_dd("12:30:00") == 12.5
     assert utils.dms_to_dd(["12:30:00", "-12:30:00"]) == [12.5, -12.5]
@@ -194,6 +193,7 @@ def test_small_coordinate_and_angle_helpers(capsys):
     assert utils.hms_to_dd("12:00:00") == 180.0
     assert utils.hms_to_dd(["12:00:00", "01:30:00"]) == [180.0, 22.5]
     assert utils.dd_to_hms(-180.0) == "12:0:0"
+    assert "cannot be negative" in capsys.readouterr().out
 
 
 def test_sun_ra_dec_matches_astropy_solar_position():
@@ -469,17 +469,17 @@ def test_coordinate_angle_edge_cases_and_errors(capsys):
     assert np.isfinite(az)
     assert np.isfinite(alt)
 
-    with pytest.warns(UserWarning, match="using hour_angle"):
-        az2, alt2 = utils.equatorial_to_horizontal(
-            observer_latitude=45.0,
-            declination=0.0,
-            right_ascension="01:00:00",
-            hour_angle="00:00:00",
-            local_time="02:00:00",
-            hms=True,
-        )
+    az2, alt2 = utils.equatorial_to_horizontal(
+        observer_latitude=45.0,
+        declination=0.0,
+        right_ascension="01:00:00",
+        hour_angle="00:00:00",
+        local_time="02:00:00",
+        hms=True,
+    )
     assert np.isfinite(az2)
     assert np.isfinite(alt2)
+    assert "Using hour_angle" in capsys.readouterr().out
 
     az3, alt3 = utils.equatorial_to_horizontal(
         observer_latitude=45.0,
