@@ -29,6 +29,9 @@ wrappers around coordinate conversions, Lambertian magnitude / brightness
 calculations, and related extensions, see the companion project
 `SSAPy-Toolkit <https://github.com/llnl/SSAPy-Toolkit>`__.
 
+Optional packaged datasets are available with ``llnl-ssapy[data]``. Install
+``llnl-ssapy[all-data]`` to install every split ``ssatk-data-*`` distribution.
+
 SSAPy includes:
 
 - Ability to define satellite parameters (area, mass, radiation and drag coefficients, etc.)
