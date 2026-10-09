@@ -28,10 +28,25 @@ dependencies = [
     "ipython_genutils",
     "jplephem",
     "tqdm",
-    "llnl-ssapy-data>=0.2.0",
 ]
 
 [project.optional-dependencies]
+data = [
+    "ssatk-data-core==0.0.1",
+    "ssatk-data-gravity==0.0.1",
+    "ssatk-data-lunar==0.0.1",
+    "ssatk-data-lunar-gravity==0.0.1",
+]
+
+all-data = [
+    "ssatk-data-core==0.0.1",
+    "ssatk-data-gravity==0.0.1",
+    "ssatk-data-lunar==0.0.1",
+    "ssatk-data-lunar-gravity==0.0.1",
+    "ssatk-data-propulsion==0.0.1",
+    "ssatk-data-benchmarks==0.0.1",
+]
+
 dev = [
     "pytest",
     "pytest-cov",
