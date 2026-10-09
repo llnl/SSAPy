@@ -10,7 +10,6 @@ sgp4
 pytest
 pytest-timeout
 tqdm
-llnl-ssapy-data>=0.1.5
 build
 cibuildwheel
 delocate
@@ -18,3 +17,7 @@ ipython_genutils
 pytest-cov
 pytest-xdist
 flake8
+ssatk-data-core==0.0.1
+ssatk-data-gravity==0.0.1
+ssatk-data-lunar==0.0.1
+ssatk-data-lunar-gravity==0.0.1

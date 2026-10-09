@@ -1,14 +1,18 @@
 import os
 
-__version__ = "1.1.10"
+__version__ = "1.1.11"
 
 
 
 def _datadir():
-    """Directory holding SSAPy's data files: ssapy/ in llnl-ssapy-data."""
+    """Best-effort directory for installed split SSATK data packages."""
     try:
         from importlib.resources import files
-        return os.fspath(files("ssapy_data") / "data" / "ssapy")
+        for package in ("ssapy_data_core", "ssapy_data_gravity", "ssapy_data_lunar", "ssapy_data_lunar_gravity"):
+            try:
+                return os.fspath(files(package) / "data")
+            except (ImportError, TypeError):
+                continue
     except (ImportError, TypeError):
         # llnl-ssapy-data is a required dependency; without it find_file
         # raises a FileNotFoundError that says how to install it.
