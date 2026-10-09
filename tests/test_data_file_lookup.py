@@ -25,7 +25,7 @@ def test_lfs_pointer_is_not_returned_as_data(tmp_path, monkeypatch):
 
 def test_ssapy_data_is_searched_when_the_package_data_is_missing(tmp_path, monkeypatch):
     # With the package copy only a pointer, a real file of the same name
-    # shipped by llnl-ssapy-data is returned instead.
+    # shipped by a split SSATK data package is returned instead.
     local = tmp_path / "local"
     shipped = tmp_path / "shipped" / "ephemerides"
     local.mkdir()

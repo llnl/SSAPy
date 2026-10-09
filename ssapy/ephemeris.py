@@ -2,7 +2,7 @@
 Planetary ephemeris selection and long-span kernels.
 
 SSAPy evaluates Sun, Moon and planet positions from JPL development
-ephemerides (DE). ``llnl-ssapy-data`` ships two short kernels:
+ephemerides (DE). The split SSATK data packages ship the supported kernels:
 
 ========== ======================== =========================
 Ephemeris  Shipped kernel           Coverage
@@ -18,7 +18,7 @@ with SSAPy <= 1.1.10, with :func:`set_planetary_ephemeris` or the
 For epochs outside the shipped kernel, SSAPy uses a longer kernel of the same
 ephemeris (``de440.bsp`` or ``de430.bsp``, 1550-2650) and, for DE440 beyond
 that, DE441 (-13200 to +17191). These are 120 MB to 1.65 GB, so they are not
-shipped: SSAPy looks for them in the working directory, ``llnl-ssapy-data``
+shipped: SSAPy looks for them in the working directory and split data packages
 and the cache directory, and otherwise downloads them from NAIF, checks their
 SHA-256, and caches them, warning with :class:`EphemerisDownloadWarning`
 before each download. Set ``SSAPY_EPHEMERIS_DOWNLOAD=0`` to forbid downloads
@@ -72,7 +72,7 @@ class Kernel:
     name: str
     start_jd: float  # TDB Julian dates covered by every segment SSAPy uses
     end_jd: float
-    sha256: Optional[str] = None  # None for kernels shipped in llnl-ssapy-data
+    sha256: Optional[str] = None  # None for kernels shipped in split data packages
     nbytes: Optional[int] = None
     solution: str = ""
 
@@ -194,7 +194,7 @@ def _path(kernel, reason):
         return path
     if kernel.sha256 is None:
         raise EphemerisUnavailableError(
-            f"{kernel.name} is missing; install 'llnl-ssapy-data>=0.2.0'."
+            f"{kernel.name} is missing; install the appropriate ssatk-data-* package."
         )
     destination = os.path.join(cache_dir(), kernel.name)
     manual = (f"Download {kernel.url} ({kernel.nbytes / 1e6:.0f} MB) into {cache_dir()} "

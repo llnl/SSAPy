@@ -14,8 +14,8 @@ def _datadir():
             except (ImportError, TypeError):
                 continue
     except (ImportError, TypeError):
-        # llnl-ssapy-data is a required dependency; without it find_file
-        # raises a FileNotFoundError that says how to install it.
+        # Split data packages are optional at import time; find_file reports
+        # the missing package when a resource is requested.
         return os.path.join(os.path.dirname(__file__), "data")
 
 

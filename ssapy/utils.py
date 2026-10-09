@@ -64,12 +64,12 @@ def _ssapy_data_files():
 
 
 def find_file(filename, ext=None):
-    """ Find a file in the current directory or the ssapy datadir (the
-    ``ssapy/`` tree of the ``llnl-ssapy-data`` package).  If ext is not None,
+    """Find a file in the current directory or installed split data packages.
+    If ext is not None,
     also try appending ext to the filename.
 
     Git LFS pointer files (left over from SSAPy versions that stored data
-    with Git LFS) are skipped, and the rest of ``llnl-ssapy-data`` is searched
+    with Git LFS) are skipped, and installed split data packages are searched
     by file name.
     """
     names = [filename] if ext is None else [filename, filename + ext]
