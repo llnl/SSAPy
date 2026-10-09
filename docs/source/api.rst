@@ -20,6 +20,7 @@ and/or heavy dependencies.  Below lists the packages available in the ``ssapy`` 
       ssapy.constants
       ssapy.correlate_tracks
       ssapy.ellipsoid
+      ssapy.ephemeris
       ssapy.gravity
       ssapy.io
       ssapy.linker

@@ -19,7 +19,7 @@ These requirements can be easily installed on most modern macOS and Linux system
        .. code-block:: console
 
           apt update
-          apt install build-essential git git-lfs python3 python3-distutils python3-venv graphviz
+          apt install build-essential git python3 python3-distutils python3-venv graphviz
 
     .. tab:: RHEL
 
@@ -27,14 +27,14 @@ These requirements can be easily installed on most modern macOS and Linux system
 
           dnf install epel-release
           dnf group install "Development Tools"
-          dnf install git git-lfs gcc-gfortran python3 python3-pip python3-setuptools graphviz
+          dnf install git gcc-gfortran python3 python3-pip python3-setuptools graphviz
 
     .. tab:: macOS Brew
 
        .. code-block:: console
 
           brew update
-          brew install gcc git git-lfs python3 graphviz
+          brew install gcc git python3 graphviz
 
 Installation
 ------------
@@ -44,6 +44,30 @@ As the package has been published on `PyPI <https://pypi.org/project/llnl-ssapy/
 .. code-block:: console
 
    pip install llnl-ssapy
+
+SSAPy's data (ephemerides, gravity models, textures) is installed with it
+from the ``llnl-ssapy-data`` package; no Git LFS is needed.
+
+Planetary ephemerides
+^^^^^^^^^^^^^^^^^^^^^
+
+SSAPy uses JPL DE440 by default, from the short kernel ``de440s.bsp``
+(1849-2150). A 1900-2150 excerpt of DE430 is also installed for reproducing
+results from SSAPy 1.1.10 and earlier; select it with
+``ssapy.ephemeris.set_planetary_ephemeris("de430")`` or
+``SSAPY_EPHEMERIS=de430``.
+
+For epochs outside those spans SSAPy downloads a longer kernel of the same
+ephemeris from NAIF (``de440.bsp`` or ``de430.bsp``, 1550-2650, 120 MB) and,
+for DE440 beyond 1550-2650, DE441 (1.65 GB per half), checks its SHA-256,
+caches it in ``~/.cache/ssapy`` (``SSAPY_DATA_CACHE``), and warns before
+downloading. Set ``SSAPY_EPHEMERIS_DOWNLOAD=0`` to forbid downloads, for
+example on compute nodes without network access, and prefetch on a node that
+has it:
+
+.. code-block:: console
+
+   SSAPY_DATA_CACHE=/shared/ssapy-cache python -c "import ssapy.ephemeris as e; e.fetch()"
 
 Orekit dependency
 ^^^^^^^^^^^^^^^^^

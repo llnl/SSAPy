@@ -18,6 +18,7 @@ def _datadir():
 datadir = _datadir()
 
 from . import _ssapy
+from . import ephemeris  # noqa: F401  (ssapy.ephemeris.set_planetary_ephemeris)
 from .orbit import Orbit, EarthObserver, OrbitalObserver
 from .propagator import (
     KeplerianPropagator, SeriesPropagator, RK4Propagator, SGP4Propagator,

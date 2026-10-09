@@ -15,28 +15,23 @@ def _close_if_possible(obj):
         close()
 
 
-#: Planetary ephemeris kernels, in order of preference. llnl-ssapy-data ships
-#: JPL DE440's short kernel ``de440s.bsp`` (1849-12-26 to 2150-01-22), consistent
-#: with the DE440 lunar orientation kernel; the full ``de440.bsp`` (1550-2650,
-#: 114 MB) placed in the working directory is used instead when present.
-PLANETARY_EPHEMERIS_FILES = ("de440.bsp", "de440s.bsp")
-
-
-def _planetary_ephemeris_path():
-    from .utils import find_file
-    for name in PLANETARY_EPHEMERIS_FILES:
-        try:
-            return find_file(name)
-        except FileNotFoundError:
-            continue
-    raise FileNotFoundError(
-        "No planetary ephemeris found ({}); install 'llnl-ssapy-data>=0.2.0'.".format(
-            ", ".join(PLANETARY_EPHEMERIS_FILES)
-        )
-    )
+def _planetary_ephemeris_path(family=None):
+    """Path of the shipped kernel of the selected planetary ephemeris."""
+    from .ephemeris import PlanetaryEphemeris
+    return PlanetaryEphemeris(family).shipped_path()
 
 
 class _KernelBacked:
+    _ephemeris = None
+
+    def _positions(self, chain, mjd_tt):
+        """Sum of SPK segment chains at TT/TDB MJDs, in km, choosing a longer
+        kernel of the selected ephemeris for epochs the shipped one lacks."""
+        if self._ephemeris is None:
+            from .ephemeris import PlanetaryEphemeris
+            self._ephemeris = PlanetaryEphemeris()
+        return self._ephemeris.compute(chain, 2400000.5, mjd_tt, self.kernel)
+
     def close(self):
         kernel = getattr(self, "kernel", None)
         if kernel is not None:
@@ -151,11 +146,17 @@ class MoonOrientation(_KernelBacked):
 class MoonPosition(_KernelBacked):
     """Position of moon in GCRF.  This is a callable class that returns the
     position vector at a given time.
+
+    Uses the planetary ephemeris selected with
+    ``ssapy.ephemeris.set_planetary_ephemeris`` (DE440 by default), switching
+    to a longer kernel for epochs outside the shipped one.
     """
     def __init__(self):
         from jplephem.spk import SPK
+        from .ephemeris import PlanetaryEphemeris
 
-        fn = _planetary_ephemeris_path()
+        self._ephemeris = PlanetaryEphemeris()
+        fn = _planetary_ephemeris_path(self._ephemeris.family)
         self.kernel = SPK.open(fn)
 
     def __call__(self, t):
@@ -172,8 +173,8 @@ class MoonPosition(_KernelBacked):
             Position vector at time t in meters.
         """
         mjd_tt = _gpsToTT(t)
-        pos = self.kernel[3, 301].compute(2400000.5, mjd_tt)  # Earth-moon barycenter -> moon
-        pos -= self.kernel[3, 399].compute(2400000.5, mjd_tt)  # Earth-moon barycenter -> earth
+        # Earth-moon barycenter -> moon, minus Earth-moon barycenter -> earth
+        pos = self._positions(((3, 301, 1), (3, 399, -1)), mjd_tt)
         return pos * 1e3
 
 
@@ -183,8 +184,10 @@ class SunPosition(_KernelBacked):
     """
     def __init__(self):
         from jplephem.spk import SPK
+        from .ephemeris import PlanetaryEphemeris
 
-        fn = _planetary_ephemeris_path()
+        self._ephemeris = PlanetaryEphemeris()
+        fn = _planetary_ephemeris_path(self._ephemeris.family)
         self.kernel = SPK.open(fn)
 
     def __call__(self, t):
@@ -201,10 +204,8 @@ class SunPosition(_KernelBacked):
             Position vector at time t in meters.
         """
         mjd_tt = _gpsToTT(t)
-
-        pos = self.kernel[0, 10].compute(2400000.5, mjd_tt)  # SS bary -> sun
-        pos -= self.kernel[0, 3].compute(2400000.5, mjd_tt)  # SS bary -> Earth-moon bary
-        pos -= self.kernel[3, 399].compute(2400000.5, mjd_tt)  # Earth-moon bary -> Earth
+        # SS bary -> sun, minus SS bary -> Earth-moon bary, minus Earth-moon bary -> Earth
+        pos = self._positions(((0, 10, 1), (0, 3, -1), (3, 399, -1)), mjd_tt)
         return pos * 1e3
 
 
@@ -214,8 +215,10 @@ class PlanetPosition(_KernelBacked):
     """
     def __init__(self, planet_index):
         from jplephem.spk import SPK
+        from .ephemeris import PlanetaryEphemeris
 
-        fn = _planetary_ephemeris_path()
+        self._ephemeris = PlanetaryEphemeris()
+        fn = _planetary_ephemeris_path(self._ephemeris.family)
         self.kernel = SPK.open(fn)
         self.planet_index = planet_index
 
@@ -233,9 +236,9 @@ class PlanetPosition(_KernelBacked):
             Position vector at time t in meters.
         """
         mjd_tt = _gpsToTT(t)
-        pos = self.kernel[0, self.planet_index].compute(2400000.5, mjd_tt)  # SS bary -> Jupiter
-        pos -= self.kernel[0, 3].compute(2400000.5, mjd_tt)  # SS bary -> Earth-moon bary
-        pos -= self.kernel[3, 399].compute(2400000.5, mjd_tt)  # Earth-moon bary -> Earth
+        # SS bary -> planet barycenter, minus SS bary -> Earth-moon bary, minus Earth-moon bary -> Earth
+        chain = ((0, self.planet_index, 1), (0, 3, -1), (3, 399, -1))
+        pos = self._positions(chain, mjd_tt)
         return pos * 1e3
 
 

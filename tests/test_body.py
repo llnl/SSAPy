@@ -164,7 +164,7 @@ def test_planet_position_init_loads_kernel(monkeypatch):
 
     assert planet_position.kernel == "planet-kernel"
     assert planet_position.planet_index == 5
-    assert os.path.basename(opened[0]) in body.PLANETARY_EPHEMERIS_FILES
+    assert os.path.basename(opened[0]) == "de440s.bsp"
 
 
 def test_orientation_helpers(monkeypatch):

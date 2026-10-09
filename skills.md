@@ -117,9 +117,11 @@ r, v = rv(orbit, times, propagator=KeplerianPropagator())
 
 SSAPy's data (ephemerides, gravity models, textures) comes from the required
 `llnl-ssapy-data` package, under its `ssapy/` tree; the repository no longer
-stores data or uses Git LFS. The planetary ephemeris is JPL DE440's short
-kernel (`de440s.bsp`, 1849-2150); a full `de440.bsp` in the working directory
-is used instead when present.
+stores data or uses Git LFS. Planetary ephemerides are handled by `ssapy.ephemeris`:
+DE440 (`de440s.bsp`, 1849-2150) by default and a 1900-2150 DE430 excerpt on
+request. Epochs outside those spans download the full-span kernel from NAIF
+(checksummed, cached, with a warning); `SSAPY_EPHEMERIS_DOWNLOAD=0` disables
+that.
 
 Use `ssapy.datadir` or `ssapy.utils.find_file()` when reading bundled
 resources. Some model loaders already resolve packaged gravity, SPICE, and Earth
