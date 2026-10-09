@@ -323,3 +323,41 @@ import ssapy.compute
 assert ssapy.compute.erfa is fake_erfa
 """
     subprocess.run([sys.executable, "-c", code], check=True)
+
+
+def test_groundTrack_accepts_list_of_scalar_orbits(monkeypatch):
+    _patch_identity_ground_track_frame(monkeypatch)
+    orbits = [
+        ssapy.Orbit(np.array([7.0e6, 0.0, 0.0]), np.array([0.0, 7.5e3, 0.0]), 0.0),
+        ssapy.Orbit(np.array([7.1e6, 0.0, 0.0]), np.array([0.0, 7.4e3, 0.0]), 0.0),
+    ]
+    time = np.array([0.0, 1.0])
+
+    with pytest.warns(DeprecationWarning, match="list of Orbit syntax"):
+        x, y, z = groundTrack(orbits, time, format="cartesian")
+    expected = np.stack([ssapy.rv(orbit, time)[0] for orbit in orbits])
+
+    np.testing.assert_allclose(x, expected[..., 0])
+    np.testing.assert_allclose(y, expected[..., 1])
+    np.testing.assert_allclose(z, expected[..., 2])
+
+
+def test_groundTrack_accepts_python_position_lists(monkeypatch):
+    _patch_identity_ground_track_frame(monkeypatch)
+    positions = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]
+
+    x, y, z = groundTrack(positions, [0.0, 1.0], format="cartesian")
+
+    np.testing.assert_allclose(x, [1.0, 4.0])
+    np.testing.assert_allclose(y, [2.0, 5.0])
+    np.testing.assert_allclose(z, [3.0, 6.0])
+
+
+def test_groundTrack_accepts_single_position_list(monkeypatch):
+    _patch_identity_ground_track_frame(monkeypatch)
+
+    x, y, z = groundTrack([1.0, 2.0, 3.0], 0.0, format="cartesian")
+
+    assert x == pytest.approx(1.0)
+    assert y == pytest.approx(2.0)
+    assert z == pytest.approx(3.0)

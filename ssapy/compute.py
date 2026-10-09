@@ -140,23 +140,26 @@ def _countTime(time):
 
 
 def _countR(r):
-    # orbit is one of:
-    # 1) scalar r
-    # 2) vector r
-    # 3) list of scalar Orbit
-    # convert to (2), set nOrbit, squeezeOrbit, and orbit.
+    # r is one of:
+    # 1) one position, shape (3,)
+    # 2) one trajectory, shape (nTime, 3)
+    # 3) multiple trajectories, shape (nOrbit, nTime, 3)
+    r = np.asarray(r, dtype=float)
     squeezeR = False
-    if np.shape(r)[-1] == 3:
-        pass
-    else:
-        raise ValueError(f"Incorrect r dimensions. Expected shape (n, 3), but got {np.shape(r)}.")
-    # check 1) and 2)
-    if r.ndim < 3:  # scalar r
+    if r.ndim == 1 and r.shape == (3,):
         nR = 1
-        r = np.reshape(np.atleast_3d(r), (nR, np.shape(r)[0], np.shape(r)[1]))
+        r = r.reshape(1, 1, 3)
         squeezeR = True
+    elif r.ndim == 2 and r.shape[-1] == 3:
+        nR = 1
+        r = r[None, ...]
+        squeezeR = True
+    elif r.ndim == 3 and r.shape[-1] == 3:
+        nR = r.shape[0]
     else:
-        nR = np.shape(r)[0]
+        raise ValueError(
+            f"Incorrect r dimensions. Expected shape (3,), (n, 3), or (m, n, 3), but got {r.shape}."
+        )
     return nR, squeezeR, r
 
 
@@ -392,7 +395,12 @@ def groundTrack(orbit, time, propagator=KeplerianPropagator(), format='geodetic'
         raise ValueError("Format must be either 'cartesian' or 'geodetic'")
 
     nTime, squeezeTime, time = _countTime(time)
-    if isinstance(orbit, Orbit):
+    orbit_sequence = (
+        isinstance(orbit, (list, tuple))
+        and len(orbit) > 0
+        and all(isinstance(item, Orbit) for item in orbit)
+    )
+    if isinstance(orbit, Orbit) or orbit_sequence:
         nOrbit, squeezeOrbit, orbit = _countOrbit(orbit)
         r, v = rv(orbit, time, propagator=propagator)  # (n, m, 3)
     else:
