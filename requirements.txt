@@ -2,7 +2,6 @@ graphviz
 numpy
 scipy
 jplephem
-llnl-ssapy-data>=0.2.0
 astropy
 pyerfa
 emcee
@@ -18,3 +17,7 @@ ipython_genutils
 pytest-cov
 pytest-xdist
 flake8
+ssatk-data-core==0.0.1
+ssatk-data-gravity==0.0.1
+ssatk-data-lunar==0.0.1
+ssatk-data-lunar-gravity==0.0.1

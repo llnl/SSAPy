@@ -6,6 +6,7 @@ import os
 import re
 import numpy as np
 import warnings
+from functools import lru_cache
 from astropy.time import Time as _Time
 import astropy.units as u
 from typing import Union, Tuple
@@ -45,25 +46,32 @@ def _is_lfs_pointer(path):
         return False
 
 
+@lru_cache(maxsize=1)
 def _ssapy_data_files():
-    """Paths of the files shipped by the optional ``llnl-ssapy-data`` package."""
-    try:
-        import ssapy_data
-    except ImportError:
-        return []
-    try:
-        return [os.fspath(path) for path in ssapy_data.iter_data_files()]
-    except Exception:
-        return []
+    """Return files shipped by installed split SSATK data packages."""
+    from importlib.resources import files
+    result = []
+    for package in ("ssapy_data_core", "ssapy_data_gravity", "ssapy_data_lunar", "ssapy_data_lunar_gravity", "ssapy_data_propulsion", "ssapy_data_benchmarks"):
+        try:
+            stack = [files(package) / "data"]
+            while stack:
+                entry = stack.pop()
+                if entry.is_dir(): stack.extend(entry.iterdir())
+                elif entry.is_file():
+                    try: result.append(os.fspath(entry))
+                    except TypeError: pass
+        except (ImportError, TypeError, FileNotFoundError):
+            continue
+    return result
 
 
 def find_file(filename, ext=None):
-    """ Find a file in the current directory or the ssapy datadir (the
-    ``ssapy/`` tree of the ``llnl-ssapy-data`` package).  If ext is not None,
+    """Find a file in the current directory or installed split data packages.
+    If ext is not None,
     also try appending ext to the filename.
 
     Git LFS pointer files (left over from SSAPy versions that stored data
-    with Git LFS) are skipped, and the rest of ``llnl-ssapy-data`` is searched
+    with Git LFS) are skipped, and installed split data packages are searched
     by file name.
     """
     names = [filename] if ext is None else [filename, filename + ext]
@@ -81,11 +89,10 @@ def find_file(filename, ext=None):
         if os.path.isfile(candidate):
             raise FileNotFoundError(
                 f"{candidate} is a git LFS pointer, not the data file. SSAPy's data now "
-                "comes from the llnl-ssapy-data package: pip install 'llnl-ssapy-data>=0.2.0'."
+                "comes from the split ssatk-data-* packages."
             )
     raise FileNotFoundError(
-        f"{filename} was not found in the working directory or in llnl-ssapy-data "
-        f"({datadir}); install it with pip install 'llnl-ssapy-data>=0.2.0'."
+        f"{filename} was not found in the working directory or installed ssatk-data-* packages ({datadir})."
     )
 
 
