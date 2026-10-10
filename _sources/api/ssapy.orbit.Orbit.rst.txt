@@ -1,0 +1,125 @@
+Orbit
+=====
+
+.. currentmodule:: ssapy.orbit
+
+.. autoclass:: Orbit
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~Orbit.LRL
+      ~Orbit.a
+      ~Orbit.angularMomentum
+      ~Orbit.apoapsis
+      ~Orbit.e
+      ~Orbit.eccentricAnomaly
+      ~Orbit.energy
+      ~Orbit.equinoctialElements
+      ~Orbit.ex
+      ~Orbit.ey
+      ~Orbit.hx
+      ~Orbit.hy
+      ~Orbit.i
+      ~Orbit.keplerianElements
+      ~Orbit.kozaiMeanKeplerianElements
+      ~Orbit.lE
+      ~Orbit.lM
+      ~Orbit.lonPa
+      ~Orbit.lv
+      ~Orbit.meanAnomaly
+      ~Orbit.meanMotion
+      ~Orbit.p
+      ~Orbit.pa
+      ~Orbit.periapsis
+      ~Orbit.period
+      ~Orbit.raan
+      ~Orbit.tle
+      ~Orbit.trueAnomaly
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~Orbit.at
+      ~Orbit.fromEquinoctialElements
+      ~Orbit.fromKeplerianElements
+      ~Orbit.fromKozaiMeanKeplerianElements
+      ~Orbit.fromTLE
+      ~Orbit.fromTLETuple
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: LRL
+      :noindex:
+   .. autoattribute:: a
+      :noindex:
+   .. autoattribute:: angularMomentum
+      :noindex:
+   .. autoattribute:: apoapsis
+      :noindex:
+   .. autoattribute:: e
+      :noindex:
+   .. autoattribute:: eccentricAnomaly
+      :noindex:
+   .. autoattribute:: energy
+      :noindex:
+   .. autoattribute:: equinoctialElements
+      :noindex:
+   .. autoattribute:: ex
+      :noindex:
+   .. autoattribute:: ey
+      :noindex:
+   .. autoattribute:: hx
+      :noindex:
+   .. autoattribute:: hy
+      :noindex:
+   .. autoattribute:: i
+      :noindex:
+   .. autoattribute:: keplerianElements
+      :noindex:
+   .. autoattribute:: kozaiMeanKeplerianElements
+      :noindex:
+   .. autoattribute:: lE
+      :noindex:
+   .. autoattribute:: lM
+      :noindex:
+   .. autoattribute:: lonPa
+      :noindex:
+   .. autoattribute:: lv
+      :noindex:
+   .. autoattribute:: meanAnomaly
+      :noindex:
+   .. autoattribute:: meanMotion
+      :noindex:
+   .. autoattribute:: p
+      :noindex:
+   .. autoattribute:: pa
+      :noindex:
+   .. autoattribute:: periapsis
+      :noindex:
+   .. autoattribute:: period
+      :noindex:
+   .. autoattribute:: raan
+      :noindex:
+   .. autoattribute:: tle
+      :noindex:
+   .. autoattribute:: trueAnomaly
+      :noindex:
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: at
+      :noindex:
+   .. automethod:: fromEquinoctialElements
+      :noindex:
+   .. automethod:: fromKeplerianElements
+      :noindex:
+   .. automethod:: fromKozaiMeanKeplerianElements
+      :noindex:
+   .. automethod:: fromTLE
+      :noindex:
+   .. automethod:: fromTLETuple
+      :noindex:

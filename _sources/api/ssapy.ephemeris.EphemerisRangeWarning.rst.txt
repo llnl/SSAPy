@@ -1,0 +1,6 @@
+EphemerisRangeWarning
+=====================
+
+.. currentmodule:: ssapy.ephemeris
+
+.. autoexception:: EphemerisRangeWarning

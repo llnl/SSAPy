@@ -1,0 +1,7 @@
+RKPropagator
+============
+
+.. currentmodule:: ssapy.propagator
+
+.. autoclass:: RKPropagator
+   :show-inheritance:

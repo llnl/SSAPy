@@ -1,0 +1,6 @@
+gcrf_to_teme
+============
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: gcrf_to_teme

@@ -1,0 +1,6 @@
+lonlat_distance
+===============
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: lonlat_distance

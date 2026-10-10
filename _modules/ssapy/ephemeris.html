@@ -1,0 +1,411 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ssapy.ephemeris &mdash; SSAPy 1.1.12 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
+
+  
+    <link rel="shortcut icon" href="../../_static/ssapy_logo.ico"/>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js?v=ce1df7ad"></script>
+      <script src="../../_static/doctools.js?v=888ff710"></script>
+      <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/ssapy_logo.svg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Basics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples.html">SSAPy by Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../benchmarks.html">SSAPy Benchmarks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../concepts.html">SSAPy Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribution_guide.html">Contribution Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../references.html">References</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API DOCS</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference Guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">SSAPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">ssapy.ephemeris</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for ssapy.ephemeris</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">Planetary ephemeris selection and long-span kernels.</span>
+
+<span class="sd">SSAPy evaluates Sun, Moon and planet positions from JPL development</span>
+<span class="sd">ephemerides (DE). The ``ssa-data-*`` packages ship the supported kernels:</span>
+
+<span class="sd">========== ======================== =========================</span>
+<span class="sd">Ephemeris  Shipped kernel           Coverage</span>
+<span class="sd">========== ======================== =========================</span>
+<span class="sd">``de440``  ``de440s.bsp``           1849-12-26 to 2150-01-22</span>
+<span class="sd">``de430``  ``de430_1900_2150.bsp``  1900-01-01 to 2150-01-01</span>
+<span class="sd">========== ======================== =========================</span>
+
+<span class="sd">DE440 is the default. Select DE430, for example to reproduce results made</span>
+<span class="sd">with SSAPy &lt;= 1.1.10, with :func:`set_planetary_ephemeris` or the</span>
+<span class="sd">``SSAPY_EPHEMERIS`` environment variable.</span>
+
+<span class="sd">For epochs outside the shipped kernel, SSAPy uses a longer kernel of the same</span>
+<span class="sd">ephemeris (``de440.bsp`` or ``de430.bsp``, 1550-2650) and, for DE440 beyond</span>
+<span class="sd">that, DE441 (-13200 to +17191). These are 120 MB to 1.65 GB, so they are not</span>
+<span class="sd">shipped: SSAPy looks for them in the working directory, the ssa-data-* packages,</span>
+<span class="sd">and the cache directory, and otherwise downloads them from NAIF, checks their</span>
+<span class="sd">SHA-256, and caches them, warning with :class:`EphemerisDownloadWarning`</span>
+<span class="sd">before each download. Set ``SSAPY_EPHEMERIS_DOWNLOAD=0`` to forbid downloads</span>
+<span class="sd">(e.g. on compute nodes without network access; prefetch on a login node with</span>
+<span class="sd">:func:`fetch`) and ``SSAPY_DATA_CACHE`` to choose the cache directory.</span>
+
+<span class="sd">The shipped and long kernels of one ephemeris hold the same solution, so</span>
+<span class="sd">positions are continuous where SSAPy switches between them. DE441 is a</span>
+<span class="sd">different solution from DE440 (no lunar core-mantle damping; less accurate</span>
+<span class="sd">in the current century), so using it raises :class:`EphemerisRangeWarning`.</span>
+<span class="sd">"""</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">._data_packages</span><span class="w"> </span><span class="kn">import</span> <span class="n">INSTALL_HINT</span> <span class="k">as</span> <span class="n">_DATA_INSTALL_HINT</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"EphemerisDownloadWarning"</span><span class="p">,</span>
+    <span class="s2">"EphemerisRangeWarning"</span><span class="p">,</span>
+    <span class="s2">"EphemerisUnavailableError"</span><span class="p">,</span>
+    <span class="s2">"set_planetary_ephemeris"</span><span class="p">,</span>
+    <span class="s2">"get_planetary_ephemeris"</span><span class="p">,</span>
+    <span class="s2">"fetch"</span><span class="p">,</span>
+    <span class="s2">"cache_dir"</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">NAIF_PLANETS_URL</span> <span class="o">=</span> <span class="s2">"https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/"</span>
+
+
+<div class="viewcode-block" id="EphemerisDownloadWarning"><a class="viewcode-back" href="../../api/ssapy.ephemeris.EphemerisDownloadWarning.html#ssapy.ephemeris.EphemerisDownloadWarning">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">EphemerisDownloadWarning</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A long-span ephemeris kernel is being downloaded."""</span></div>
+
+
+<div class="viewcode-block" id="EphemerisRangeWarning"><a class="viewcode-back" href="../../api/ssapy.ephemeris.EphemerisRangeWarning.html#ssapy.ephemeris.EphemerisRangeWarning">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">EphemerisRangeWarning</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""An epoch is evaluated with a different solution than the one selected."""</span></div>
+
+
+<div class="viewcode-block" id="EphemerisUnavailableError"><a class="viewcode-back" href="../../api/ssapy.ephemeris.EphemerisUnavailableError.html#ssapy.ephemeris.EphemerisUnavailableError">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">EphemerisUnavailableError</span><span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""No kernel of the selected ephemeris covers the requested epoch."""</span></div>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Kernel</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">start_jd</span><span class="p">:</span> <span class="nb">float</span>  <span class="c1"># TDB Julian dates covered by every segment SSAPy uses</span>
+    <span class="n">end_jd</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">sha256</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># None for kernels shipped in ssa-data-* packages</span>
+    <span class="n">nbytes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">solution</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">NAIF_PLANETS_URL</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">covers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jd</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">jd</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_jd</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">jd</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_jd</span><span class="p">)</span>
+
+
+<span class="n">EPHEMERIDES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"de440"</span><span class="p">:</span> <span class="p">(</span>
+        <span class="n">Kernel</span><span class="p">(</span><span class="s2">"de440s.bsp"</span><span class="p">,</span> <span class="mf">2396752.5</span><span class="p">,</span> <span class="mf">2506352.5</span><span class="p">,</span> <span class="n">solution</span><span class="o">=</span><span class="s2">"DE440"</span><span class="p">),</span>
+        <span class="n">Kernel</span><span class="p">(</span><span class="s2">"de440.bsp"</span><span class="p">,</span> <span class="mf">2287184.5</span><span class="p">,</span> <span class="mf">2688976.5</span><span class="p">,</span>
+               <span class="s2">"a4ce9bf9b3282becc9f4b2ac3cebe03a2ae7599981aabd7265fd8482fff7c4b5"</span><span class="p">,</span> <span class="mi">119799808</span><span class="p">,</span> <span class="s2">"DE440"</span><span class="p">),</span>
+        <span class="n">Kernel</span><span class="p">(</span><span class="s2">"de441_part-2.bsp"</span><span class="p">,</span> <span class="mf">2440400.5</span><span class="p">,</span> <span class="mf">8000016.5</span><span class="p">,</span>
+               <span class="s2">"3abb17dae2d78dd34880377544aacb54892104a0d4462b322cb9f4454d4887f6"</span><span class="p">,</span> <span class="mi">1656830976</span><span class="p">,</span> <span class="s2">"DE441"</span><span class="p">),</span>
+        <span class="n">Kernel</span><span class="p">(</span><span class="s2">"de441_part-1.bsp"</span><span class="p">,</span> <span class="o">-</span><span class="mf">3100015.5</span><span class="p">,</span> <span class="mf">2440432.5</span><span class="p">,</span>
+               <span class="s2">"13757827f5db41b835a24bbd637488636ce79a8ca754062fed17844f7d5b618e"</span><span class="p">,</span> <span class="mi">1651119104</span><span class="p">,</span> <span class="s2">"DE441"</span><span class="p">),</span>
+    <span class="p">),</span>
+    <span class="s2">"de430"</span><span class="p">:</span> <span class="p">(</span>
+        <span class="n">Kernel</span><span class="p">(</span><span class="s2">"de430_1900_2150.bsp"</span><span class="p">,</span> <span class="mf">2415020.5</span><span class="p">,</span> <span class="mf">2506331.5</span><span class="p">,</span> <span class="n">solution</span><span class="o">=</span><span class="s2">"DE430"</span><span class="p">),</span>
+        <span class="n">Kernel</span><span class="p">(</span><span class="s2">"de430.bsp"</span><span class="p">,</span> <span class="mf">2287184.5</span><span class="p">,</span> <span class="mf">2688976.5</span><span class="p">,</span>
+               <span class="s2">"6e1b277c5f07135a84950604b83e56b736be696a7f3560bcddb1d4aeb944fca1"</span><span class="p">,</span> <span class="mi">119741440</span><span class="p">,</span> <span class="s2">"DE430"</span><span class="p">),</span>
+    <span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">_selected</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">_open_kernels</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<div class="viewcode-block" id="set_planetary_ephemeris"><a class="viewcode-back" href="../../api/ssapy.ephemeris.set_planetary_ephemeris.html#ssapy.ephemeris.set_planetary_ephemeris">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">set_planetary_ephemeris</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Select the planetary ephemeris, ``"de440"`` (default) or ``"de430"``.</span>
+
+<span class="sd">    Affects Sun, Moon and planet positions created afterwards</span>
+<span class="sd">    (``get_body``, ``SunPosition``, ``MoonPosition``, ``PlanetPosition``).</span>
+<span class="sd">    """</span>
+    <span class="k">global</span> <span class="n">_selected</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">EPHEMERIDES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown planetary ephemeris </span><span class="si">{</span><span class="n">name</span><span class="si">!r}</span><span class="s2">; choose from </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">EPHEMERIDES</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">_selected</span> <span class="o">=</span> <span class="n">key</span></div>
+
+
+<div class="viewcode-block" id="get_planetary_ephemeris"><a class="viewcode-back" href="../../api/ssapy.ephemeris.get_planetary_ephemeris.html#ssapy.ephemeris.get_planetary_ephemeris">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">get_planetary_ephemeris</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Name of the selected planetary ephemeris."""</span>
+    <span class="k">if</span> <span class="n">_selected</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_selected</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"SSAPY_EPHEMERIS"</span><span class="p">,</span> <span class="s2">"de440"</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">EPHEMERIDES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"SSAPY_EPHEMERIS=</span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2"> is not one of </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">EPHEMERIDES</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">key</span></div>
+
+
+<div class="viewcode-block" id="cache_dir"><a class="viewcode-back" href="../../api/ssapy.ephemeris.cache_dir.html#ssapy.ephemeris.cache_dir">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">cache_dir</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">"""Directory where downloaded kernels are kept (``SSAPY_DATA_CACHE``)."""</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"SSAPY_DATA_CACHE"</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"~"</span><span class="p">,</span> <span class="s2">".cache"</span><span class="p">,</span> <span class="s2">"ssapy"</span><span class="p">)))</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_downloads_allowed</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"SSAPY_EPHEMERIS_DOWNLOAD"</span><span class="p">,</span> <span class="s2">"1"</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"0"</span><span class="p">,</span> <span class="s2">"false"</span><span class="p">,</span> <span class="s2">"no"</span><span class="p">,</span> <span class="s2">"off"</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sha256</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="n">digest</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">handle</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">20</span><span class="p">),</span> <span class="sa">b</span><span class="s2">""</span><span class="p">):</span>
+            <span class="n">digest</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">digest</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_open_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>  <span class="c1"># separated so tests can replace the network</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">urllib.request</span><span class="w"> </span><span class="kn">import</span> <span class="n">urlopen</span>
+    <span class="k">return</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_download</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">destination</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">destination</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">handle</span><span class="p">,</span> <span class="n">partial</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkstemp</span><span class="p">(</span><span class="nb">dir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">destination</span><span class="p">),</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">".part"</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">os</span><span class="o">.</span><span class="n">fdopen</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">out</span><span class="p">,</span> <span class="n">_open_url</span><span class="p">(</span><span class="n">kernel</span><span class="o">.</span><span class="n">url</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="n">response</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">20</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">partial</span><span class="p">)</span> <span class="o">!=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">nbytes</span> <span class="ow">or</span> <span class="n">_sha256</span><span class="p">(</span><span class="n">partial</span><span class="p">)</span> <span class="o">!=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">sha256</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">EphemerisUnavailableError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">kernel</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> downloaded from </span><span class="si">{</span><span class="n">kernel</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2"> does not match its recorded SHA-256"</span>
+            <span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">partial</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">partial</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">partial</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_local_path</span><span class="p">(</span><span class="n">kernel</span><span class="p">):</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_file</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">find_file</span><span class="p">(</span><span class="n">kernel</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="n">cached</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">(),</span> <span class="n">kernel</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cached</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">cached</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+
+
+<div class="viewcode-block" id="fetch"><a class="viewcode-back" href="../../api/ssapy.ephemeris.fetch.html#ssapy.ephemeris.fetch">[docs]</a><span class="k">def</span><span class="w"> </span><span class="nf">fetch</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_de441</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Download (if needed) the long-span kernels of an ephemeris and return</span>
+<span class="sd">    their paths. Use on a login node to fill ``SSAPY_DATA_CACHE`` before</span>
+<span class="sd">    running jobs without network access."""</span>
+    <span class="n">family</span> <span class="o">=</span> <span class="n">EPHEMERIDES</span><span class="p">[(</span><span class="n">name</span> <span class="ow">or</span> <span class="n">get_planetary_ephemeris</span><span class="p">())</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">_path</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="s2">"requested with ssapy.ephemeris.fetch"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="n">family</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="n">include_de441</span> <span class="ow">or</span> <span class="n">kernel</span><span class="o">.</span><span class="n">solution</span> <span class="o">==</span> <span class="n">family</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">solution</span>
+    <span class="p">]</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_path</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">reason</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">_local_path</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">path</span>
+    <span class="k">if</span> <span class="n">kernel</span><span class="o">.</span><span class="n">sha256</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">EphemerisUnavailableError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">kernel</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is missing; install the ssa-data-* packages with: "</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">_DATA_INSTALL_HINT</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+    <span class="n">destination</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">(),</span> <span class="n">kernel</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">manual</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"Download </span><span class="si">{</span><span class="n">kernel</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">kernel</span><span class="o">.</span><span class="n">nbytes</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> MB) into </span><span class="si">{</span><span class="n">cache_dir</span><span class="p">()</span><span class="si">}</span><span class="s2"> "</span>
+              <span class="sa">f</span><span class="s2">"(or set SSAPY_DATA_CACHE), or place it in the working directory."</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_downloads_allowed</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="n">EphemerisUnavailableError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">kernel</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> is needed (</span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="s2">) and downloads are disabled "</span>
+                                        <span class="sa">f</span><span class="s2">"(SSAPY_EPHEMERIS_DOWNLOAD=0). </span><span class="si">{</span><span class="n">manual</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"Downloading </span><span class="si">{</span><span class="n">kernel</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">kernel</span><span class="o">.</span><span class="n">nbytes</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2"> MB) from NAIF to </span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="s2">."</span><span class="p">,</span>
+        <span class="n">EphemerisDownloadWarning</span><span class="p">,</span>
+        <span class="n">stacklevel</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">_download</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">destination</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">EphemerisUnavailableError</span><span class="p">:</span>
+        <span class="k">raise</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># no network, proxy, HTTP error, disk full</span>
+        <span class="k">raise</span> <span class="n">EphemerisUnavailableError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Could not download </span><span class="si">{</span><span class="n">kernel</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">manual</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+    <span class="k">return</span> <span class="n">destination</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_open</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">jplephem.spk</span><span class="w"> </span><span class="kn">import</span> <span class="n">SPK</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_open_kernels</span><span class="p">:</span>
+        <span class="n">_open_kernels</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">SPK</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_open_kernels</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_jd_text</span><span class="p">(</span><span class="n">jd</span><span class="p">):</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
+    <span class="k">return</span> <span class="n">Time</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">jd</span><span class="p">),</span> <span class="nb">format</span><span class="o">=</span><span class="s2">"jd"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s2">"tdb"</span><span class="p">)</span><span class="o">.</span><span class="n">iso</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PlanetaryEphemeris</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Evaluate SPK segment chains, choosing a kernel per epoch.</span>
+
+<span class="sd">    The shipped kernel of ``family`` (passed to :meth:`compute` as</span>
+<span class="sd">    ``primary`` once opened) is used for every epoch it covers; other epochs</span>
+<span class="sd">    go to the first longer kernel of the family that covers them.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">family</span> <span class="o">=</span> <span class="p">(</span><span class="n">family</span> <span class="ow">or</span> <span class="n">get_planetary_ephemeris</span><span class="p">())</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernels</span> <span class="o">=</span> <span class="n">EPHEMERIDES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_kernel_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span> <span class="n">primary</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">kernel</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">primary</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">primary</span>
+        <span class="k">return</span> <span class="n">_open</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">_path</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">reason</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">shipped_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kernels</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">"shipped kernel"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chain</span><span class="p">,</span> <span class="n">jd1</span><span class="p">,</span> <span class="n">jd2</span><span class="p">,</span> <span class="n">primary</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Sum ``sign * kernel[center, target].compute(jd1, jd2)`` over the</span>
+<span class="sd">        ``(center, target, sign)`` terms in ``chain``; returns km."""</span>
+        <span class="n">jd2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">jd2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">shipped</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">primary</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">shipped</span><span class="o">.</span><span class="n">covers</span><span class="p">(</span><span class="n">jd1</span> <span class="o">+</span> <span class="n">jd2</span><span class="p">)):</span>
+            <span class="c1"># Fast path (every call in normal use): one kernel, no masking.</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">for</span> <span class="n">center</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">sign</span> <span class="ow">in</span> <span class="n">chain</span><span class="p">:</span>
+                <span class="n">total</span> <span class="o">=</span> <span class="n">total</span> <span class="o">+</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">primary</span><span class="p">[</span><span class="n">center</span><span class="p">,</span> <span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">jd1</span><span class="p">,</span> <span class="n">jd2</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">total</span>
+        <span class="n">scalar</span> <span class="o">=</span> <span class="n">jd2</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="n">jd2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">jd2</span><span class="p">)</span>
+        <span class="n">jd</span> <span class="o">=</span> <span class="n">jd1</span> <span class="o">+</span> <span class="n">jd2</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">jd2</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+        <span class="n">pending</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">jd2</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">kernel</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernels</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">pending</span> <span class="o">&amp;</span> <span class="n">kernel</span><span class="o">.</span><span class="n">covers</span><span class="p">(</span><span class="n">jd</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="n">reason</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">kernel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">shipped</span><span class="p">:</span>
+                <span class="n">reason</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"epochs </span><span class="si">{</span><span class="n">_jd_text</span><span class="p">(</span><span class="n">jd</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">_jd_text</span><span class="p">(</span><span class="n">jd</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span><span class="si">}</span><span class="s2"> are outside "</span>
+                          <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">shipped</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">_jd_text</span><span class="p">(</span><span class="n">shipped</span><span class="o">.</span><span class="n">start_jd</span><span class="p">)</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">_jd_text</span><span class="p">(</span><span class="n">shipped</span><span class="o">.</span><span class="n">end_jd</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+            <span class="n">spk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_for</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">reason</span><span class="p">,</span> <span class="n">primary</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">kernel</span><span class="o">.</span><span class="n">solution</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">solution</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Using </span><span class="si">{</span><span class="n">kernel</span><span class="o">.</span><span class="n">solution</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">kernel</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">) for </span><span class="si">{</span><span class="n">reason</span><span class="si">}</span><span class="s2">; </span><span class="si">{</span><span class="n">kernel</span><span class="o">.</span><span class="n">solution</span><span class="si">}</span><span class="s2"> differs from "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">kernels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">solution</span><span class="si">}</span><span class="s2">, and the switch makes positions jump slightly at its boundary."</span><span class="p">,</span>
+                    <span class="n">EphemerisRangeWarning</span><span class="p">,</span>
+                    <span class="n">stacklevel</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">for</span> <span class="n">center</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">sign</span> <span class="ow">in</span> <span class="n">chain</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[:,</span> <span class="n">mask</span><span class="p">]</span> <span class="o">+=</span> <span class="n">sign</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">spk</span><span class="p">[</span><span class="n">center</span><span class="p">,</span> <span class="n">target</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">jd1</span><span class="p">,</span> <span class="n">jd2</span><span class="p">[</span><span class="n">mask</span><span class="p">]))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">pending</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">mask</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">pending</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">EphemerisUnavailableError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"No </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span><span class="si">}</span><span class="s2"> kernel covers </span><span class="si">{</span><span class="n">_jd_text</span><span class="p">(</span><span class="n">jd</span><span class="p">[</span><span class="n">pending</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="si">}</span><span class="s2"> to "</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">_jd_text</span><span class="p">(</span><span class="n">jd</span><span class="p">[</span><span class="n">pending</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span><span class="si">}</span><span class="s2">."</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">scalar</span> <span class="k">else</span> <span class="n">out</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2018, Lawrence Livermore National Security, LLC.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+<map id="inheritance2ba7b4cea8" name="inheritance2ba7b4cea8">
+<area shape="rect" id="node1" href="../api/ssapy.ephemeris.EphemerisDownloadWarning.html#ssapy.ephemeris.EphemerisDownloadWarning" target="_top" title="A long&#45;span ephemeris kernel is being downloaded." alt="" coords="5,104,215,129"/>
+<area shape="rect" id="node2" href="../api/ssapy.ephemeris.EphemerisRangeWarning.html#ssapy.ephemeris.EphemerisRangeWarning" target="_top" title="An epoch is evaluated with a different solution than the one selected." alt="" coords="17,55,203,80"/>
+<area shape="rect" id="node3" href="../api/ssapy.ephemeris.EphemerisUnavailableError.html#ssapy.ephemeris.EphemerisUnavailableError" target="_top" title="No kernel of the selected ephemeris covers the requested epoch." alt="" coords="10,5,210,31"/>
+</map>

@@ -1,0 +1,27 @@
+TrackGauss
+==========
+
+.. currentmodule:: ssapy.correlate_tracks
+
+.. autoclass:: TrackGauss
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~TrackGauss.addto
+      ~TrackGauss.at
+      ~TrackGauss.gaussian_approximation
+      ~TrackGauss.update
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: addto
+      :noindex:
+   .. automethod:: at
+      :noindex:
+   .. automethod:: gaussian_approximation
+      :noindex:
+   .. automethod:: update
+      :noindex:

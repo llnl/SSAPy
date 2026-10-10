@@ -1,0 +1,6 @@
+unit_vector
+===========
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: unit_vector

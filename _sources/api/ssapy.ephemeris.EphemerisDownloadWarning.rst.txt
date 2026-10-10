@@ -1,0 +1,6 @@
+EphemerisDownloadWarning
+========================
+
+.. currentmodule:: ssapy.ephemeris
+
+.. autoexception:: EphemerisDownloadWarning

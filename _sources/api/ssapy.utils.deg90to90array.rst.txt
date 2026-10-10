@@ -1,0 +1,6 @@
+deg90to90array
+==============
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: deg90to90array

@@ -1,0 +1,6 @@
+EphemerisUnavailableError
+=========================
+
+.. currentmodule:: ssapy.ephemeris
+
+.. autoexception:: EphemerisUnavailableError

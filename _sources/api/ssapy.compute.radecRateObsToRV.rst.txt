@@ -1,0 +1,6 @@
+radecRateObsToRV
+================
+
+.. currentmodule:: ssapy.compute
+
+.. autofunction:: radecRateObsToRV

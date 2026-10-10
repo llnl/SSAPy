@@ -1,0 +1,6 @@
+resample
+========
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: resample

@@ -1,0 +1,6 @@
+xyz_to_equatorial
+=================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: xyz_to_equatorial

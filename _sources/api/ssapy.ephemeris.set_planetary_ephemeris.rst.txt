@@ -1,0 +1,6 @@
+set_planetary_ephemeris
+=======================
+
+.. currentmodule:: ssapy.ephemeris
+
+.. autofunction:: set_planetary_ephemeris

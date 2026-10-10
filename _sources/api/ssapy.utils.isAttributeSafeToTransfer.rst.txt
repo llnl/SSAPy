@@ -1,0 +1,6 @@
+isAttributeSafeToTransfer
+=========================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: isAttributeSafeToTransfer

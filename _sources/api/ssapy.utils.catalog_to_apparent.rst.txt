@@ -1,0 +1,6 @@
+catalog_to_apparent
+===================
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: catalog_to_apparent

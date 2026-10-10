@@ -1,0 +1,18 @@
+OrbitalObserver
+===============
+
+.. currentmodule:: ssapy.orbit
+
+.. autoclass:: OrbitalObserver
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~OrbitalObserver.getRV
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: getRV
+      :noindex:

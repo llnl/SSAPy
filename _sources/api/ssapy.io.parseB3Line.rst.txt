@@ -1,0 +1,6 @@
+parseB3Line
+===========
+
+.. currentmodule:: ssapy.io
+
+.. autofunction:: parseB3Line

@@ -1,0 +1,7 @@
+HashableArrayContainer
+======================
+
+.. currentmodule:: ssapy.compute
+
+.. autoclass:: HashableArrayContainer
+   :show-inheritance:

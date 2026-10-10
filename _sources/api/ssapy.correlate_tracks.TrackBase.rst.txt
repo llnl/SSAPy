@@ -1,0 +1,38 @@
+TrackBase
+=========
+
+.. currentmodule:: ssapy.correlate_tracks
+
+.. autoclass:: TrackBase
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~TrackBase.lnprob
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~TrackBase.gate
+      ~TrackBase.predict
+      ~TrackBase.propagaterdz
+      ~TrackBase.update
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: lnprob
+      :noindex:
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: gate
+      :noindex:
+   .. automethod:: predict
+      :noindex:
+   .. automethod:: propagaterdz
+      :noindex:
+   .. automethod:: update
+      :noindex:

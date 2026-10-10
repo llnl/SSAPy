@@ -1,0 +1,7 @@
+lazy_property
+=============
+
+.. currentmodule:: ssapy.utils
+
+.. autoclass:: lazy_property
+   :show-inheritance:

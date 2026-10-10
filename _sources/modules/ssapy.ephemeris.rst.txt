@@ -1,0 +1,5 @@
+ssapy.ephemeris
+===============
+
+.. automodapi:: ssapy.ephemeris
+    :no-heading:

@@ -1,0 +1,6 @@
+radec
+=====
+
+.. currentmodule:: ssapy.compute
+
+.. autofunction:: radec

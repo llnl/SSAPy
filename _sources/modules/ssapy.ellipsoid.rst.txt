@@ -1,0 +1,5 @@
+ssapy.ellipsoid
+===============
+
+.. automodapi:: ssapy.ellipsoid
+    :no-heading:

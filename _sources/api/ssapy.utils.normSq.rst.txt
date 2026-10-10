@@ -1,0 +1,6 @@
+normSq
+======
+
+.. currentmodule:: ssapy.utils
+
+.. autofunction:: normSq

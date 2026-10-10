@@ -1,0 +1,6 @@
+fetch
+=====
+
+.. currentmodule:: ssapy.ephemeris
+
+.. autofunction:: fetch

@@ -1,0 +1,18 @@
+Body
+====
+
+.. currentmodule:: ssapy.body
+
+.. autoclass:: Body
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~Body.close
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: close
+      :noindex:
