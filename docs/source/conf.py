@@ -43,7 +43,9 @@ def linkcode_resolve(domain, info):
     return "https://github.com/LLNL/SSAPy/tree/main/%s.py" % filename
 
 autosummary_generate = True
-autosummary_imported_members = True
+# Document objects implemented by SSAPy rather than imported implementation
+# helpers (for example ``functools.lru_cache``).
+autosummary_imported_members = False
 numpydoc_show_class_members = False
 sphinx_tabs_valid_builders = ['linkcheck']
 source_suffix = ['.rst', '.md']

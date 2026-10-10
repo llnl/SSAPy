@@ -45,8 +45,8 @@ As the package has been published on `PyPI <https://pypi.org/project/llnl-ssapy/
 
    pip install llnl-ssapy
 
-SSAPy's data (ephemerides, gravity models, textures) is installed with it
-from the split ``ssatk-data-*`` packages; no Git LFS is needed.
+SSAPy's data (ephemerides, gravity models, and textures) is installed with the
+package; no Git LFS is needed.
 
 Planetary ephemerides
 ^^^^^^^^^^^^^^^^^^^^^

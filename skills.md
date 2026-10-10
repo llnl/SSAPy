@@ -9,8 +9,6 @@ installed from PyPI or cloned from GitHub.
 - Import package: `ssapy`
 - GitHub repository: `https://github.com/LLNL/SSAPy`
 - Documentation: `https://software.llnl.gov/SSAPy/` or `https://LLNL.github.io/SSAPy/`
-- Companion toolkit: `ssapy-toolkit`, imported as `ssapy_toolkit`
-- Companion data packages: `ssatk-data-*`, imported through their `ssapy_data_*` namespaces
 - Minimum Python version: Python 3.10
 
 ## Install and Import
@@ -44,9 +42,9 @@ SSAPy is the base astrodynamics and orbit-determination engine. Prefer SSAPy
 for core orbit models, propagators, accelerations, observers, TLE/SGP4 support,
 coordinate transforms, sampling, and track association.
 
-Use `ssapy-toolkit` for higher-level workflows, plotting dashboards, convenience
-wrappers, brightness calculations, and reusable analysis utilities. New reusable
-datasets should generally live in the appropriate split `ssatk-data-*` repository rather than this repository.
+For higher-fidelity simulation, visualization, and mission-level workflows, see
+the Space Situational Awareness Toolkit (SSATK):
+`https://github.com/LLNL/ssatk`.
 
 SSAPy builds a compiled extension, `ssapy._ssapy`, through `scikit-build` and
 `CMakeLists.txt`. If an import fails immediately after cloning, install the
@@ -115,9 +113,10 @@ r, v = rv(orbit, times, propagator=KeplerianPropagator())
 
 ## Data and Binary Rules
 
-SSAPy's data (ephemerides, gravity models, textures) comes from the required
-split `ssatk-data-*` packages; the repository no longer
-stores data or uses Git LFS. Planetary ephemerides are handled by `ssapy.ephemeris`:
+SSAPy's packaged data includes ephemerides, gravity models, and textures. Install
+the optional data dependencies with `python -m pip install 'llnl-ssapy[data]'`,
+or install the complete data set with `python -m pip install 'llnl-ssapy[all-data]'`.
+Planetary ephemerides are handled by `ssapy.ephemeris`:
 DE440 (`de440s.bsp`, 1849-2150) by default and a 1900-2150 DE430 excerpt on
 request. Epochs outside those spans download the full-span kernel from NAIF
 (checksummed, cached, with a warning); `SSAPY_EPHEMERIS_DOWNLOAD=0` disables
@@ -129,8 +128,8 @@ orientation files internally; prefer those public loaders over hard-coded paths.
 
 Avoid adding new large datasets, generated images, movies, notebooks with
 embedded outputs, archives, local shared libraries, or binary payloads to this
-repository. If new reusable data are needed, prefer adding them to the appropriate
-split `ssatk-data-*` repository and consuming its released wheel.
+repository. Keep reusable data additions aligned with the package's existing
+data-loading and packaging conventions.
 
 Packaging should not include local compiled artifacts such as `_ssapy*.so` from
 developer builds. Generated build outputs belong outside the repository or in
@@ -188,7 +187,8 @@ python -m twine check dist/*
 
 ## Common Pitfalls
 
-- Do not add data files to this repository; add them to the appropriate split `ssatk-data-*` repository.
+- Do not add large data files or generated artifacts to this repository; follow
+  the existing package-data and data-loading conventions for required resources.
 - Do not add Git LFS as a default solution for new data in this repository.
 - Do not commit generated `_ssapy*.so`, `build/`, `dist/`, egg-info, docs build output, caches, or local environments.
 - Do not rely on unbuilt in-tree imports for code paths that require `ssapy._ssapy`.

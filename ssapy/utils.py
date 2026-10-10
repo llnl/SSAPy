@@ -6,7 +6,7 @@ import os
 import re
 import numpy as np
 import warnings
-from functools import lru_cache
+from functools import lru_cache as _lru_cache
 from astropy.time import Time as _Time
 import astropy.units as u
 from typing import Union, Tuple
@@ -46,7 +46,7 @@ def _is_lfs_pointer(path):
         return False
 
 
-@lru_cache(maxsize=1)
+@_lru_cache(maxsize=1)
 def _ssapy_data_files():
     """Return files shipped by installed split SSATK data packages."""
     from importlib.resources import files
