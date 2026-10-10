@@ -19,7 +19,7 @@ from ssapy.constants import EARTH_MU, EARTH_RADIUS
 
 
 def _has_data(name):
-    # SSAPy's data comes from split SSATK data packages; skip only if missing.
+    # SSAPy's data comes from the ssa-data-* packages; skip only if missing.
     try:
         ssapy.utils.find_file(name)
         return True
@@ -151,7 +151,7 @@ else:
     earth = moon = sun = earth_MG = moon_MG = sun_MG = None
 
 
-@pytest.mark.skipif(not HAS_EGM84, reason="EGM84 gravity file unavailable (split data package not installed)")
+@pytest.mark.skipif(not HAS_EGM84, reason="EGM84 gravity file unavailable (ssa-data-* package not installed)")
 @timer
 def test_MG_3_1():
     """Exercise 3.1 from Montenbruck and Gill

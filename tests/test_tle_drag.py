@@ -16,9 +16,9 @@ from ssapy.tle_drag import (bstar_to_cd_a_over_m, numerical_from_tle,
 
 
 # The numerical drag propagator needs the gravity and ephemeris data from
-# split SSATK data packages; skip those tests if unavailable.
+# the ssa-data-* packages; skip those tests if unavailable.
 def _has_data(name):
-    # SSAPy's data comes from split SSATK data packages; skip only if missing.
+    # SSAPy's data comes from the ssa-data-* packages; skip only if missing.
     try:
         ssapy.utils.find_file(name)
         return True
@@ -39,7 +39,7 @@ HAS_EPHEMERIS = _has_ephemeris()
 HAS_MOON_PA = _has_data("moon_pa_de440_200625.bpc")
 HAS_BODY_DATA = HAS_EGM84 and HAS_EPHEMERIS and HAS_MOON_PA
 needs_body_data = pytest.mark.skipif(
-    not HAS_BODY_DATA, reason="body data unavailable (split data package not installed)")
+    not HAS_BODY_DATA, reason="body data unavailable (ssa-data-* package not installed)")
 
 ISS = ("1 25544U 98067A   24015.54791435  .00016717  00000-0  30074-3 0  9993",
        "2 25544  51.6416 247.4627 0006703 130.5360 325.0288 15.49514637123456")

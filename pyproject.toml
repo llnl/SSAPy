@@ -28,23 +28,30 @@ dependencies = [
     "ipython_genutils",
     "jplephem",
     "tqdm",
+    # Ephemerides, gravity models, and textures. Required so that a plain
+    # `pip install llnl-ssapy` can propagate; pins match ssatk's.
+    "ssa-data-core==0.0.1",
+    "ssa-data-gravity==0.0.1",
+    "ssa-data-lunar==0.0.1",
+    "ssa-data-lunar-gravity==0.0.1",
 ]
 
 [project.optional-dependencies]
+# Kept so `llnl-ssapy[data]` still resolves; the same packages are required.
 data = [
-    "ssatk-data-core==0.0.1",
-    "ssatk-data-gravity==0.0.1",
-    "ssatk-data-lunar==0.0.1",
-    "ssatk-data-lunar-gravity==0.0.1",
+    "ssa-data-core==0.0.1",
+    "ssa-data-gravity==0.0.1",
+    "ssa-data-lunar==0.0.1",
+    "ssa-data-lunar-gravity==0.0.1",
 ]
 
 all-data = [
-    "ssatk-data-core==0.0.1",
-    "ssatk-data-gravity==0.0.1",
-    "ssatk-data-lunar==0.0.1",
-    "ssatk-data-lunar-gravity==0.0.1",
-    "ssatk-data-propulsion==0.0.1",
-    "ssatk-data-benchmarks==0.0.1",
+    "ssa-data-core==0.0.1",
+    "ssa-data-gravity==0.0.1",
+    "ssa-data-lunar==0.0.1",
+    "ssa-data-lunar-gravity==0.0.1",
+    "ssa-data-propulsion==0.0.1",
+    "ssa-data-benchmarks==0.0.1",
 ]
 
 dev = [
