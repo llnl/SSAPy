@@ -1,9 +1,7 @@
 SSAPy by Example
 ================
 
-The examples below use base SSAPy APIs that are part of the current package.
-Higher-level plotting workflows and apparent-magnitude calculations are
-maintained in `SSAPy-Toolkit <https://github.com/LLNL/SSAPy-Toolkit>`_.
+The examples below demonstrate the core SSAPy APIs.
 
 Define an epoch and a simple geosynchronous orbit:
 

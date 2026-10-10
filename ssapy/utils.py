@@ -6,12 +6,13 @@ import os
 import re
 import numpy as np
 import warnings
-from functools import lru_cache
+from functools import lru_cache as _lru_cache
 from astropy.time import Time as _Time
 import astropy.units as u
 from typing import Union, Tuple
 
 from . import datadir
+from ._data_packages import ALL as _DATA_PACKAGES, INSTALL_HINT as _DATA_INSTALL_HINT
 from .constants import RGEO, EARTH_RADIUS, MOON_RADIUS, WGS84_EARTH_OMEGA
 
 
@@ -46,12 +47,12 @@ def _is_lfs_pointer(path):
         return False
 
 
-@lru_cache(maxsize=1)
+@_lru_cache(maxsize=1)
 def _ssapy_data_files():
-    """Return files shipped by installed split SSATK data packages."""
+    """Return files shipped by the installed ``ssa-data-*`` packages."""
     from importlib.resources import files
     result = []
-    for package in ("ssapy_data_core", "ssapy_data_gravity", "ssapy_data_lunar", "ssapy_data_lunar_gravity", "ssapy_data_propulsion", "ssapy_data_benchmarks"):
+    for package in _DATA_PACKAGES:
         try:
             stack = [files(package) / "data"]
             while stack:
@@ -66,13 +67,13 @@ def _ssapy_data_files():
 
 
 def find_file(filename, ext=None):
-    """Find a file in the current directory or installed split data packages.
+    """Find a file in the current directory or the installed ``ssa-data-*`` packages.
     If ext is not None,
     also try appending ext to the filename.
 
     Git LFS pointer files (left over from SSAPy versions that stored data
-    with Git LFS) are skipped, and installed split data packages are searched
-    by file name.
+    with Git LFS) are skipped, and the installed ``ssa-data-*`` packages are
+    searched by file name.
     """
     names = [filename] if ext is None else [filename, filename + ext]
     candidates = []
@@ -89,10 +90,11 @@ def find_file(filename, ext=None):
         if os.path.isfile(candidate):
             raise FileNotFoundError(
                 f"{candidate} is a git LFS pointer, not the data file. SSAPy's data now "
-                "comes from the split ssatk-data-* packages."
+                f"comes from the ssa-data-* packages; install them with: {_DATA_INSTALL_HINT}"
             )
     raise FileNotFoundError(
-        f"{filename} was not found in the working directory or installed ssatk-data-* packages ({datadir})."
+        f"{filename} was not found in the working directory or installed ssa-data-* packages ({datadir}). "
+        f"Install them with: {_DATA_INSTALL_HINT}"
     )
 
 

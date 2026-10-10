@@ -1,22 +1,21 @@
 import os
 
-__version__ = "1.1.11"
+__version__ = "1.1.12"
 
 
 
 def _datadir():
-    """Best-effort directory for installed split SSATK data packages."""
-    try:
-        from importlib.resources import files
-        for package in ("ssapy_data_core", "ssapy_data_gravity", "ssapy_data_lunar", "ssapy_data_lunar_gravity"):
-            try:
-                return os.fspath(files(package) / "data")
-            except (ImportError, TypeError):
-                continue
-    except (ImportError, TypeError):
-        # Split data packages are optional at import time; find_file reports
-        # the missing package when a resource is requested.
-        return os.path.join(os.path.dirname(__file__), "data")
+    """Data directory of the first installed ``ssa-data-*`` package."""
+    from importlib.resources import files
+    from ._data_packages import REQUIRED
+    for package in REQUIRED:
+        try:
+            return os.fspath(files(package) / "data")
+        except (ImportError, TypeError):
+            continue
+    # No data package is installed. Return a path (never None) so find_file
+    # raises FileNotFoundError with install instructions instead of TypeError.
+    return os.path.join(os.path.dirname(__file__), "data")
 
 
 datadir = _datadir()

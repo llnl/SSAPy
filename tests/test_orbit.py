@@ -20,7 +20,7 @@ from .ssapy_test_helpers import timer, checkAngle, checkSphere, sample_orbit, sa
 
 
 def _has_ephemeris():
-    # SSAPy's ephemeris comes from split SSATK data packages; skip only if missing.
+    # SSAPy's ephemeris comes from the ssa-data-* packages; skip only if missing.
     try:
         ssapy.body._planetary_ephemeris_path()
         return True
@@ -1570,7 +1570,7 @@ def test_light_time_correction():
         np.testing.assert_allclose(dircos, dc_linear, rtol=0, atol=1e-7)
         np.testing.assert_allclose(dircos, dc_exact, rtol=0, atol=1e-14)
 
-@pytest.mark.skipif(not _has_ephemeris(), reason="planetary ephemeris unavailable (split data package not installed)")
+@pytest.mark.skipif(not _has_ephemeris(), reason="planetary ephemeris unavailable (ssa-data-* package not installed)")
 @pytest.mark.timeout(90)
 @timer
 def test_find_passes():

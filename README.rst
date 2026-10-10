@@ -23,14 +23,12 @@ SSAPy - Space Situational Awareness for Python
 orbital modeling and analysis tool for orbits spanning from low-Earth orbit
 into the cislunar regime.
 
-SSAPy retains the core coordinate, observer-geometry, and propagation routines.
-For higher-level utilities, convenience workflows, plotting tools, workflow
-wrappers around coordinate conversions, Lambertian magnitude / brightness
-calculations, and related extensions, see the companion project
-`SSAPy-Toolkit <https://github.com/llnl/SSAPy-Toolkit>`__.
+SSAPy provides physics-based orbital modeling and analysis for space-domain
+applications.
 
-Optional packaged datasets are available with ``llnl-ssapy[data]``. Install
-``llnl-ssapy[all-data]`` to install every split ``ssatk-data-*`` distribution.
+Ephemerides, gravity models, and textures install automatically from the
+``ssa-data-*`` packages; ``pip install "llnl-ssapy[all-data]"`` adds the
+propulsion and benchmark data sets.
 
 SSAPy includes:
 
@@ -65,36 +63,12 @@ SSAPy includes:
   including GCRF, IERS, GCRS Cartesian, TEME Cartesian, RA/Dec, NTW,
   zenith/azimuth, apparent positions, and orthogonal tangent plane coordinates
 
-SSAPy-Toolkit
--------------
-
-SSAPy provides the core propagation and modeling engine. Many
-higher-level, analysis-ready capabilities built on top of it live in the
-companion project
-`SSAPy-Toolkit <https://github.com/LLNL/SSAPy-Toolkit>`__ (sometimes abbreviated
-*SSATK*), including:
-
-- Higher-level utilities and convenience workflows that wrap common SSAPy tasks
-- Plotting tools for orbit and analysis visualization
-- Workflow-level wrappers around SSAPy's coordinate and observer-geometry
-  routines
-- Lambertian magnitude / brightness calculations
-- Additional related extensions
-
-If your work centers on plotting, dashboards, convenience utilities, or
-higher-level workflows, SSAPy-Toolkit is often the best place to start — and the
-natural home for contributions of that kind.
-
 Installation
 ------------
 
 For installation details, see the
 `Installing SSAPy <https://software.llnl.gov/SSAPy/installation.html>`_
 section of the documentation.
-
-If you are looking for higher-level utilities or plotting-oriented workflows,
-you may also want to install or explore
-`SSAPy-Toolkit <https://github.com/llnl/SSAPy-Toolkit>`__.
 
 Strict dependencies
 -------------------
@@ -113,9 +87,9 @@ The following Python packages are installed automatically when you install SSAPy
 - `ipython_genutils <https://pypi.org/project/ipython-genutils/>`_
 - `jplephem <https://pypi.org/project/jplephem/>`_
 - `tqdm <https://pypi.org/project/tqdm/>`_
-
-Earth/Moon mesh helpers and other visualization tools are maintained in
-`SSAPy-Toolkit <https://github.com/llnl/SSAPy-Toolkit>`__.
+- `ssa-data-core <https://pypi.org/project/ssa-data-core/>`_,
+  ``ssa-data-gravity``, ``ssa-data-lunar``, and ``ssa-data-lunar-gravity``
+  (packaged data)
 
 Documentation
 -------------
@@ -143,16 +117,15 @@ Contributing to SSAPy is straightforward. Please open a
 targeting the ``main`` branch of the
 `SSAPy repository <https://github.com/LLNL/SSAPy>`_.
 
-For work that primarily concerns plotting, dashboards, convenience utilities,
-or higher-level workflows, please also consider whether the contribution belongs
-in the companion repository
-`SSAPy-Toolkit <https://github.com/llnl/SSAPy-Toolkit>`__.
-
 Your PR must pass SSAPy's required CI checks. For local testing guidance,
 documentation builds, and Git workflow tips, see the
 `Contribution Guide <https://software.llnl.gov/SSAPy/contribution_guide.html>`_.
 
 SSAPy's ``main`` branch contains the latest development work.
+
+For six-degree-of-freedom (6-DOF) propagation, visualization, and mission-level
+workflows, see the
+`Space Situational Awareness Toolkit (SSATK) <https://github.com/LLNL/ssatk>`__.
 
 Releases
 --------
