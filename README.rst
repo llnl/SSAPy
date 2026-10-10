@@ -26,7 +26,9 @@ into the cislunar regime.
 SSAPy provides physics-based orbital modeling and analysis for space-domain
 applications.
 
-Optional packaged datasets are available with the ``data`` extra.
+Ephemerides, gravity models, and textures install automatically from the
+``ssa-data-*`` packages; ``pip install "llnl-ssapy[all-data]"`` adds the
+propulsion and benchmark data sets.
 
 SSAPy includes:
 
@@ -85,6 +87,9 @@ The following Python packages are installed automatically when you install SSAPy
 - `ipython_genutils <https://pypi.org/project/ipython-genutils/>`_
 - `jplephem <https://pypi.org/project/jplephem/>`_
 - `tqdm <https://pypi.org/project/tqdm/>`_
+- `ssa-data-core <https://pypi.org/project/ssa-data-core/>`_,
+  ``ssa-data-gravity``, ``ssa-data-lunar``, and ``ssa-data-lunar-gravity``
+  (packaged data)
 
 Documentation
 -------------
@@ -118,8 +123,8 @@ documentation builds, and Git workflow tips, see the
 
 SSAPy's ``main`` branch contains the latest development work.
 
-For higher-fidelity simulation, visualization, and mission-level workflows,
-see the
+For six-degree-of-freedom (6-DOF) propagation, visualization, and mission-level
+workflows, see the
 `Space Situational Awareness Toolkit (SSATK) <https://github.com/LLNL/ssatk>`__.
 
 Releases

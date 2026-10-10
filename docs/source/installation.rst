@@ -45,8 +45,13 @@ As the package has been published on `PyPI <https://pypi.org/project/llnl-ssapy/
 
    pip install llnl-ssapy
 
-SSAPy's data (ephemerides, gravity models, and textures) is installed with the
-package; no Git LFS is needed.
+SSAPy's data (ephemerides, gravity models, and textures) ships in the
+``ssa-data-*`` packages, which install automatically with SSAPy; no Git LFS
+is needed. The ``all-data`` extra adds the propulsion and benchmark data sets:
+
+.. code-block:: console
+
+   pip install "llnl-ssapy[all-data]"
 
 Planetary ephemerides
 ^^^^^^^^^^^^^^^^^^^^^
