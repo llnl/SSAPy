@@ -49,6 +49,18 @@ The exact test matrix may change over time. Refer to the repository's GitHub
 Actions workflow files for the current platforms and Python versions being
 tested.
 
+Windows, Linux, and macOS share the same CMake build and wheel test pipeline.
+Release wheels are built from the source distribution with ``cibuildwheel``,
+which bundles platform runtime libraries and tests the installed wheel outside
+the source checkout. The matrix covers 64-bit Python 3.10--3.14; editable
+installations are tested on all three operating systems as well.
+
+For a local development environment, install with
+``python -m pip install -e ".[dev]"``. Build a source distribution and wheel
+with ``python -m build``. To reproduce the release wheel pipeline, use
+Python 3.12 or newer, install ``cibuildwheel>=4,<5``, and run
+``python -m cibuildwheel``. Linux wheel builds also require Docker or Podman.
+
 ^^^^^^^^^^
 Unit Tests
 ^^^^^^^^^^

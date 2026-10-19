@@ -12,7 +12,6 @@ pytest-timeout
 tqdm
 build
 cibuildwheel
-delocate
 ipython_genutils
 pytest-cov
 pytest-xdist

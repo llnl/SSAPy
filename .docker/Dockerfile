@@ -48,8 +48,7 @@ RUN ls -la / && \
     ls -la /opt/SSAPy && \
     tree -r /opt/SSAPy && \
     cd /opt/SSAPy && \
-    python3 setup.py build && \
-    python3 setup.py install && \
+    python3 -m pip install . && \
     chmod -R go+rwX ./ && \
     chmod -R go+rwX /usr/lib64/python3.12/site-packages/ && \
     chmod -R go+rwX /usr/local/lib64/python3.12/site-packages/

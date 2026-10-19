@@ -11,9 +11,12 @@ from ssapy.utils import normed
 from .ssapy_test_helpers import checkSphere, timer
 
 
-def test_find_file_without_extension_finds_existing_file():
-    path = utils.find_file("pyproject.toml")
-    assert Path(path).name == "pyproject.toml"
+def test_find_file_without_extension_finds_existing_file(tmp_path, monkeypatch):
+    local_file = tmp_path / "model"
+    local_file.write_text("local model data")
+    monkeypatch.chdir(tmp_path)
+    path = utils.find_file(local_file.name)
+    assert Path(path).resolve() == local_file
 
 
 def test_wrap_and_num_wraps():

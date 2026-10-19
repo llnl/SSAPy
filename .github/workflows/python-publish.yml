@@ -9,7 +9,11 @@ permissions:
   contents: read
 
 jobs:
+  wheels:
+    uses: ./.github/workflows/wheels.yml
+
   build-and-publish:
+    needs: wheels
     runs-on: ubuntu-latest
     environment:
       name: pypi
@@ -19,18 +23,22 @@ jobs:
       
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          submodules: 'recursive'
-          
+          python-version: '3.12'
+
       - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install build-essential git cmake
-          python -m pip install --upgrade pip build twine
-          python -m pip install -r requirements.txt
+        run: python -m pip install build twine
           
       - name: Build source distribution
         run: python -m build --sdist
+
+      - name: Download tested wheels
+        uses: actions/download-artifact@v4
+        with:
+          pattern: wheels-*
+          path: dist
+          merge-multiple: true
 
       - name: Check distributions
         run: python -m twine check dist/*

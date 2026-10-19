@@ -178,7 +178,7 @@ git diff --check
 Check Python syntax for changed package and test files:
 
 ```bash
-python -m py_compile $(git ls-files 'ssapy/*.py' 'tests/*.py') setup.py
+python -m compileall -q ssapy tests
 ```
 
 Build-check docs and release metadata when docs, packaging, or README content

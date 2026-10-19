@@ -15,6 +15,7 @@ __pycache__/
 
 # C extensions
 *.so
+*.pyd
 
 # Distribution / packaging
 .Python
@@ -23,6 +24,7 @@ develop-eggs/
 dist/
 downloads/
 wheels/
+wheelhouse/
 
 # Python egg metadata, regenerated from source files by setuptools.
 eggs/

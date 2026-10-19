@@ -1,173 +1,84 @@
 name: CI/CD
 
-permissions:
-  contents: write
 on:
-  # Run on pushes that modify this branch or tag the repo
   push:
-    branches:
-      - main
-    tags:
-      - v*.*.*
-  # Run on pull requests that modify this branch/file
+    branches: [main]
+    tags: ['v*.*.*']
   pull_request:
-    branches:
-      - main
-  # Let's also run the workflow on releases
+    branches: [main]
   release:
     types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  CI_PROJECT_DIR: ${{ github.workspace }}
-
 jobs:
   test:
+    if: github.event_name != 'release' && !startsWith(github.ref, 'refs/tags/')
+    uses: ./.github/workflows/wheels.yml
+
+  editable:
+    if: github.event_name != 'release' && !startsWith(github.ref, 'refs/tags/')
+    name: Editable / ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macOS-latest]  # other options: windows-latest
-        python-version: ["3.10", "3.12"]
-
-    name: test SSAPy (${{ matrix.os }}) - python ${{ matrix.python-version }}
-
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: 'recursive'
-        token: ${{ github.token }}
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies (Linux)
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        # Install dependencies
-        sudo apt-get update
-        sudo apt-get install build-essential git python3 python3-setuptools python3-venv graphviz cmake
-    
-        # Initialize and update submodules
-        git submodule update --init --recursive
-    
-        # Upgrade pip and install Python dependencies
-        python -m pip install --upgrade pip setuptools flake8
-        python -m pip install -r requirements.txt
-    
-        # Build and install the project
-        rm -rf build dist *.egg-info
-        python3 -m build
-        pip install dist/*.whl
-        mv ssapy ssapy_src_backup
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install editable package and test dependencies
+        run: python -m pip install -e . pytest pytest-cov pytest-timeout pytest-xdist
+      - name: Test editable installation outside the checkout
+        working-directory: ${{ runner.temp }}
+        run: python -m pytest "${{ github.workspace }}/tests" --import-mode=importlib -n 2 --timeout=120 --cov=ssapy --cov-report=xml:"${{ github.workspace }}/coverage.xml" --durations=10
+      - name: Upload coverage
+        if: matrix.os == 'ubuntu-latest'
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          flags: unittests
 
-        # List installed Python packages
-        python -m pip list
-    - name: Install dependencies (MacOS)
-      if: matrix.os == 'macOS-latest'
-      run: |
-        # Use the actions/setup-python toolchain and avoid Homebrew updates,
-        # which can fail CI when the hosted runner's brew state is stale.
-        python -m pip install --upgrade pip setuptools flake8 cmake
-        git config --global credential.helper ""   # avoid Keychain prompts
-
-        # Use the actions/setup-python toolchain consistently
-        python -m pip install -r requirements.txt
-
-        PYTHON_VERSION=$(python -c "import sys; print(f'cp{sys.version_info.major}{sys.version_info.minor}')")
-        export ARCHFLAGS="-arch arm64"
-        export CMAKE_OSX_ARCHITECTURES=arm64
-        export CIBW_BUILD="${PYTHON_VERSION}-macosx_*"
-
-        echo "ARCHFLAGS=$ARCHFLAGS"
-        echo "CMAKE_OSX_ARCHITECTURES=$CMAKE_OSX_ARCHITECTURES"
-        echo "CIBW_BUILD=$CIBW_BUILD"
-
-        python -m pip install --upgrade cibuildwheel delocate
-        python -m cibuildwheel --platform macos
-
-        # Check wheel deps
-        find wheelhouse -name '*.whl' -exec delocate-listdeps {} \;
-
-        # Install the generated wheel into the SAME interpreter
-        python -m pip install wheelhouse/*.whl
-
-        # Hide source tree so imports resolve to the wheel
-        mv ssapy ssapy_src_backup
-
-        python -m pip list
-    - name: Debug build artifacts
-      run: |
-        find . -name "*_ssapy*.so"
-    #- name: Install dependencies (Windows)
-    #  if: matrix.os == 'windows-latest'
-    #  run: |
-    #    python -m pip install --upgrade pip setuptools
-    #    python -m pip install -r requirements.txt
-    #    # install checked out SSAPy
-    #    python setup.py build
-    #    python setup.py install
-    #    python -m pip list
-    #- name: Lint code
-    #  if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.12
-    #  run: |
-    #    python3 --version
-    #    flake8 --version
-    #    flake8 ssapy/ tests/ devel/
-    - name: Install pytest plugins
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        pip install pytest pytest-cov pytest-xdist
-    - name: Test with pytest
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        # Limit xdist workers to avoid memory exhaustion on Linux runners.
-        pytest -v -n 2 --cov-report=xml --cov=ssapy --durations=20
-    - name: Upload coverage reports to Codecov
-      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
-      uses: codecov/codecov-action@v4
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}  # Only needed for private repos
-        slug: LLNL/SSAPy                     # Correct slug: owner/repo
-        files: coverage.xml                  # Optional if coverage.xml is in root
-        flags: unittests                     # Optional, helps categorize
-        name: codecov-ubuntu-py312           # Optional, helps identify the upload
-    - name: Debug Python environment
-      run: python -c "import ssapy; print('ssapy imported successfully')"
-    - name: Build documentation
-      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
-      run: |
-        pip install -r docs/requirements.txt
-
-        # python3 ${CI_PROJECT_DIR}/ssapy/update_benchmarks.py
-        cd docs
-        # Ensure necessary directories exist
-        mkdir -p source/modules source/_templates
-        
-        rm -rf build
-        sphinx-build -b html source build/html
-        sphinx-autogen source/api.rst -t source/_templates -o source/modules
-
-        # Build the HTML docs once
-        make html
-
-        # Add .nojekyll for GitHub Pages
-        touch _build/html/.nojekyll
-        cd ..
-
-    - name: Deploy documentation
-      if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'release') && matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
-      uses: crazy-max/ghaction-github-pages@v4
-      with:
-        target_branch: gh-pages
-        build_dir: docs/_build/html
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  docs:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install documentation dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz
+          python -m pip install -e '.[docs]' -r docs/requirements.txt
+      - name: Build documentation
+        run: |
+          mkdir -p docs/source/modules docs/source/_templates
+          sphinx-autogen docs/source/api.rst -t docs/source/_templates -o docs/source/modules
+          sphinx-build -b html docs/source docs/_build/html
+          touch docs/_build/html/.nojekyll
+      - name: Deploy documentation
+        if: github.event_name == 'push' || github.event_name == 'release'
+        uses: crazy-max/ghaction-github-pages@v4
+        with:
+          target_branch: gh-pages
+          build_dir: docs/_build/html
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   pass:
-    needs: [test]
+    needs: [test, editable, docs]
     runs-on: ubuntu-latest
     steps:
       - run: echo "All jobs passed"

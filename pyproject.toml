@@ -14,7 +14,12 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Operating System :: OS Independent",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
 ]
 
 dependencies = [
@@ -62,7 +67,6 @@ dev = [
     "flake8",
     "build",
     "cibuildwheel",
-    "delocate",
 ]
 
 docs = [
@@ -85,15 +89,20 @@ Issues = "https://github.com/LLNL/SSAPy/issues"
 Documentation = "https://software.llnl.gov/SSAPy/"
 
 [build-system]
-requires = ["setuptools>=77", "wheel", "scikit-build", "cmake"]
-build-backend = "setuptools.build_meta"
+requires = ["scikit-build-core>=0.11", "pybind11>=3.0"]
+build-backend = "scikit_build_core.build"
 
-[tool.setuptools]
-packages = { find = { include = ["ssapy", "ssapy.*"], namespaces = true } }
-include-package-data = true
+[tool.scikit-build]
+minimum-version = "build-system.requires"
+wheel.packages = ["ssapy"]
 
-[tool.setuptools.package-data]
-ssapy = ["*.cpp", "*.h"]
+[tool.cibuildwheel]
+build = "cp3{10,11,12,13,14}-*"
+skip = "*-musllinux*"
+archs = ["auto64"]
+test-requires = ["pytest", "pytest-timeout", "pytest-xdist"]
+test-sources = ["tests"]
+test-command = "python -m pytest tests -n 2 --timeout=120 --durations=10"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
